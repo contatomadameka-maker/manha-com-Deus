@@ -264,3 +264,102 @@ ___________
 
     return StreamingResponse(stream_generator(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ── PLANOS TEMÁTICOS ──────────────────────────────────
+PLANOS = {
+    "ansiedade": {"nome": "Vencendo a Ansiedade", "dias": 7, "emoji": "🧘", "desc": "7 dias encontrando paz em Deus", "cor": "#4A7FA5"},
+    "gratidao": {"nome": "Coração Grato", "dias": 7, "emoji": "🙏", "desc": "7 dias cultivando gratidão", "cor": "#5C7A5E"},
+    "proposito": {"nome": "Descobrindo seu Propósito", "dias": 30, "emoji": "🧭", "desc": "30 dias buscando direção divina", "cor": "#C9A84C"},
+    "casamento": {"nome": "Amor que Transforma", "dias": 30, "emoji": "💑", "desc": "30 dias fortalecendo seu relacionamento", "cor": "#CC7B7B"},
+    "trabalho": {"nome": "Fé no Trabalho", "dias": 7, "emoji": "💼", "desc": "7 dias integrando fé e carreira", "cor": "#7B8FCC"},
+    "cura": {"nome": "Cura Interior", "dias": 30, "emoji": "💚", "desc": "30 dias de restauração e cura", "cor": "#5C7A5E"},
+    "novo_comeco": {"nome": "Novo Começo", "dias": 7, "emoji": "✨", "desc": "7 dias recomeçando com Deus", "cor": "#C9A84C"},
+}
+
+@app.post("/devocional-plano")
+async def devocional_plano(request: Request):
+    body = await request.json()
+    plano_id = body.get("plano_id")
+    dia = body.get("dia", 1)
+
+    if plano_id not in PLANOS:
+        from fastapi import HTTPException
+        raise HTTPException(400, "Plano não encontrado")
+
+    plano = PLANOS[plano_id]
+    agora = datetime.now()
+    data_formatada = agora.strftime("%A, %d de %B de %Y").capitalize()
+
+    prompt = f"""Você é o gerador de devocionais do app "Manhã com Deus". Gere o devocional do DIA {dia} de {plano['dias']} do plano "{plano['nome']}".
+
+CONTEXTO DO PLANO: {plano['desc']}
+DIA: {dia} de {plano['dias']}
+DATA: {data_formatada}
+
+REGRAS:
+- O devocional deve ser específico para o tema "{plano['nome']}" no dia {dia}
+- Deve haver uma progressão — dia 1 é introdução, dias seguintes aprofundam
+- Versículo deve ser diretamente relacionado ao tema do dia
+- Personagem bíblico que viveu o tema
+- Tom acolhedor, profundo, sem jargão excessivo
+- Título conceitual forte (3-6 palavras)
+
+USE EXATAMENTE este formato:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{plano['emoji']} {plano['nome']} · Dia {dia} de {plano['dias']}
+📅 {data_formatada}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✦ [TÍTULO CONCEITUAL]
+
+📖 VERSÍCULO:
+"[versículo relacionado ao tema do dia {dia}]"
+— [Livro Cap:Ver]
+
+💭 REFLEXÃO:
+[parágrafo 1 — introduce o aspecto do tema para o dia {dia}]
+
+[parágrafo 2 — aprofundamento bíblico]
+
+[parágrafo 3 — personagem bíblico que viveu isso]
+
+[parágrafo 4 — aplicação prática para hoje]
+
+[parágrafo 5 — encorajamento e conexão com o próximo dia]
+
+✦ "[FRASE DE DESTAQUE]"
+
+🙏 ORAÇÃO:
+[oração específica para o tema {plano['nome']} no dia {dia}]
+
+💡 AÇÃO PRÁTICA PARA HOJE:
+[ação concreta relacionada ao tema]
+
+📝 ANOTAÇÕES:
+___________
+___________
+___________
+
+🎵 LOUVOR DO DIA:
+[Música gospel alinhada ao tema + Artista + Link YouTube]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+
+    def stream_generator():
+        with client.messages.stream(
+            model="claude-sonnet-4-20250514",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": prompt}]
+        ) as stream:
+            for text in stream.text_stream:
+                yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream_generator(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+@app.get("/planos")
+async def listar_planos():
+    return PLANOS
