@@ -1397,6 +1397,19 @@ async function carregarPlanos() {
 
 async function iniciarPlano(planoId) {
   if (!userAtual) return;
+  
+  // Verifica se tem plano mensal
+  if (planoUser !== "mensal") {
+    tela("paywall");
+    // Volta para aba devocional para mostrar o paywall
+    document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+    document.querySelector("[onclick*="devocional"]").classList.add("active");
+    document.getElementById("abaDevocional").style.display="block";
+    document.getElementById("abaHistorico").style.display="none";
+    document.getElementById("abaPlanos").style.display="none";
+    return;
+  }
+  
   const info = PLANOS_INFO[planoId];
   if (!confirm(`Iniciar o plano "${info.nome}" (${info.dias} dias)?`)) return;
 
