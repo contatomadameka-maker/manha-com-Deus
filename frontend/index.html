@@ -514,9 +514,12 @@ async function iniciarApp(user){
   userAtual=user;
   document.getElementById("authScreen").style.display="none";
   document.getElementById("appScreen").style.display="block";
-  document.getElementById("headerEmail").textContent=user.email;
-  const{data}=await sb.from("profiles").select("plano").eq("id",user.id).single();
-  planoUser=data?.plano||"gratis";
+  const emailEl=document.getElementById("headerEmail");
+  if(emailEl)emailEl.textContent=user.email;
+  try{
+    const{data}=await sb.from("profiles").select("plano").eq("id",user.id).single();
+    planoUser=data?.plano||"gratis";
+  }catch(e){planoUser="gratis";}
   await carregarStreak();
   await carregarVersiculo();
   setTimeout(mostrarModalInstalacao, 1500);
