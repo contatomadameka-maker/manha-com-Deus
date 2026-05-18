@@ -526,6 +526,8 @@ function mostrarAuth(){
   document.getElementById("authScreen").style.display="flex";
   document.getElementById("appScreen").style.display="none";
   userAtual=null;
+  const btn=document.getElementById("btnAuth");
+  if(btn){btn.disabled=false;btn.textContent="Entrar";}
 }
 
 async function carregarVersiculo(){
@@ -675,12 +677,24 @@ async function submitAuth(){
   const email=document.getElementById("authEmail").value.trim();
   const senha=document.getElementById("authSenha").value;
   const btn=document.getElementById("btnAuth");
+  const labelBtn=tabAtual==="login"?"Entrar":"Criar conta";
+
+  // Sempre reseta o botão primeiro
+  btn.disabled=false;btn.textContent=labelBtn;
+
   if(!email||!senha){showMsg("Preencha email e senha","erro");return;}
+
   btn.disabled=true;btn.textContent="Aguarde...";
   let result;
-  if(tabAtual==="login")result=await sb.auth.signInWithPassword({email,password:senha});
-  else result=await sb.auth.signUp({email,password:senha});
-  btn.disabled=false;btn.textContent=tabAtual==="login"?"Entrar":"Criar conta";
+  try{
+    if(tabAtual==="login")result=await sb.auth.signInWithPassword({email,password:senha});
+    else result=await sb.auth.signUp({email,password:senha});
+  }catch(e){
+    btn.disabled=false;btn.textContent=labelBtn;
+    showMsg("Erro de conexão. Tente novamente.","erro");
+    return;
+  }
+  btn.disabled=false;btn.textContent=labelBtn;
   if(result.error){
     const erros={"Invalid login credentials":"Email ou senha incorretos","User already registered":"Email já cadastrado","Password should be at least 6 characters":"Senha deve ter ao menos 6 caracteres"};
     showMsg(erros[result.error.message]||result.error.message,"erro");
