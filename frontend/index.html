@@ -20,16 +20,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulsar{0%,100%{opacity:1}50%{opacity:0.4}}
 
-/* HEADER */
-.site-header{background:var(--deep);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.site-header{background:var(--deep);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem}
 .logo span{color:#fff;font-style:italic}
 .header-right{display:flex;align-items:center;gap:12px}
-.header-user{color:rgba(255,255,255,0.6);font-size:0.72rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.btn-logout{background:transparent;border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:0.65rem;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
-.btn-logout:hover{border-color:var(--gold)}
+.header-streak{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--gold-light)}
+.header-user{color:rgba(255,255,255,0.5);font-size:0.7rem;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-logout{background:transparent;border:1px solid rgba(201,168,76,0.25);color:var(--gold);font-size:0.62rem;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
 
-/* AUTH SCREEN */
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--deep) 0%,#2C1F0E 100%);padding:20px}
 .auth-card{background:var(--white);border-radius:20px;padding:36px 32px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,0.3);animation:slideUp 0.5s ease}
 .auth-logo{text-align:center;margin-bottom:28px}
@@ -41,61 +39,70 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .auth-tab.active{background:var(--white);color:var(--deep);box-shadow:0 1px 4px rgba(0,0,0,0.1)}
 .form-group{margin-bottom:16px}
 .form-label{font-size:0.75rem;font-weight:600;color:var(--ink);display:block;margin-bottom:6px}
-.form-input{width:100%;background:var(--cream);border:1.5px solid var(--borda);border-radius:10px;padding:12px 14px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:var(--ink);transition:border-color 0.2s;outline:none}
+.form-input{width:100%;background:var(--cream);border:1.5px solid var(--borda);border-radius:10px;padding:12px 14px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;transition:border-color 0.2s}
 .form-input:focus{border-color:var(--gold)}
 .btn-auth{width:100%;background:linear-gradient(135deg,var(--gold),#A8873A);border:none;color:var(--deep);padding:14px;border-radius:10px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.25s;margin-top:4px}
-.btn-auth:hover{opacity:0.9;transform:translateY(-1px)}
-.btn-auth:disabled{opacity:0.5;cursor:default;transform:none}
+.btn-auth:disabled{opacity:0.5;cursor:default}
 .auth-msg{text-align:center;font-size:0.8rem;margin-top:14px;padding:10px;border-radius:8px}
 .auth-msg.erro{background:#FFF0F0;color:#C0392B}
 .auth-msg.ok{background:#EAFAF1;color:#27AE60}
-.auth-divider{text-align:center;color:var(--muted);font-size:0.72rem;margin:16px 0;position:relative}
-.auth-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--borda)}
-.auth-divider span{background:var(--white);padding:0 10px;position:relative}
 
-/* HERO */
-.hero{background:linear-gradient(135deg,var(--deep) 0%,#2C1F0E 60%,#1A3020 100%);padding:40px 28px 48px;text-align:center;position:relative;overflow:hidden}
+.hero{background:linear-gradient(135deg,var(--deep) 0%,#2C1F0E 60%,#1A3020 100%);padding:36px 28px 44px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,168,76,0.12) 0%,transparent 60%)}
-.hero-data{font-size:0.7rem;color:var(--gold-light);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;position:relative}
-.hero h1{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);margin-bottom:8px;position:relative}
-.hero p{color:rgba(255,255,255,0.6);font-size:0.9rem;position:relative}
-.verse-hero{margin:24px 28px -28px;background:linear-gradient(135deg,#C9A84C,#8B6914);border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;z-index:2;box-shadow:0 8px 32px rgba(26,18,8,0.3)}
+.hero-data{font-size:0.68rem;color:var(--gold-light);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;position:relative}
+.hero h1{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--gold);margin-bottom:6px;position:relative}
+.hero p{color:rgba(255,255,255,0.55);font-size:0.88rem;position:relative}
+
+/* STREAK BANNER */
+.streak-banner{background:linear-gradient(90deg,#8B4513,#A0522D);padding:12px 28px;display:flex;align-items:center;justify-content:center;gap:16px}
+.streak-item{display:flex;align-items:center;gap:8px;color:#fff}
+.streak-num{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold-light);font-weight:700}
+.streak-txt{font-size:0.72rem;color:rgba(255,255,255,0.75);line-height:1.3}
+.streak-div{width:1px;height:32px;background:rgba(255,255,255,0.2)}
+
+.verse-hero{margin:20px 28px -24px;background:linear-gradient(135deg,#C9A84C,#8B6914);border-radius:16px;padding:18px 22px;position:relative;overflow:hidden;z-index:2;box-shadow:0 8px 32px rgba(26,18,8,0.3)}
 .verse-hero::before{content:'"';position:absolute;top:-16px;left:8px;font-family:'Playfair Display',serif;font-size:6rem;color:rgba(255,255,255,0.1);line-height:1}
-.verse-hero-text{font-family:'Playfair Display',serif;font-size:0.95rem;color:#fff;line-height:1.6;font-style:italic;position:relative}
-.verse-hero-ref{font-size:0.72rem;color:rgba(255,255,255,0.7);margin-top:8px;display:block;position:relative}
+.verse-hero-text{font-family:'Playfair Display',serif;font-size:0.9rem;color:#fff;line-height:1.6;font-style:italic;position:relative}
+.verse-hero-ref{font-size:0.7rem;color:rgba(255,255,255,0.7);margin-top:6px;display:block;position:relative}
 
-.container{max-width:680px;margin:0 auto;padding:48px 20px 80px}
-.section-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px;text-align:center}
-.intro-titulo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--deep);text-align:center;margin-bottom:6px}
-.intro-sub{color:var(--muted);font-size:0.88rem;text-align:center;margin-bottom:28px}
+.container{max-width:680px;margin:0 auto;padding:44px 20px 80px}
 
-.modos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+/* TABS NAVEGAÇÃO */
+.nav-tabs{display:flex;background:var(--white);border:1px solid var(--borda);border-radius:12px;padding:4px;margin-bottom:28px;gap:4px}
+.nav-tab{flex:1;text-align:center;padding:10px 8px;border-radius:9px;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all 0.2s;white-space:nowrap}
+.nav-tab.active{background:var(--deep);color:var(--gold)}
+
+.section-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:14px;text-align:center}
+.intro-titulo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--deep);text-align:center;margin-bottom:6px}
+.intro-sub{color:var(--muted);font-size:0.85rem;text-align:center;margin-bottom:24px}
+
+.modos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
 .modo-card{background:var(--white);border:2px solid var(--borda);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
-.modo-card:hover{border-color:rgba(201,168,76,0.5);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,18,8,0.1)}
+.modo-card:hover{border-color:rgba(201,168,76,0.5);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,18,8,0.08)}
 .modo-card.sel{border-color:var(--gold);background:var(--gold-pale);transform:translateY(-2px)}
 .modo-emoji{font-size:1.8rem;margin-bottom:10px;display:block}
 .modo-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--deep);margin-bottom:6px}
 .modo-desc{color:var(--muted);font-size:0.78rem;line-height:1.5}
 .badge-mensal{position:absolute;top:10px;right:10px;background:var(--gold);color:var(--deep);font-size:0.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px}
-.badge-free{display:inline-block;background:var(--gold-pale);border:1px solid var(--borda);color:var(--gold);font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-top:10px}
+.badge-free{display:inline-block;background:var(--gold-pale);border:1px solid var(--borda);color:var(--gold);font-size:0.6rem;font-weight:700;padding:2px 9px;border-radius:20px;margin-top:10px}
 
 .estados-box{background:var(--white);border:1px solid var(--borda);border-radius:14px;padding:20px;margin-bottom:20px;animation:fadeIn 0.4s ease}
 .estados-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--deep);margin-bottom:4px}
 .estados-sub{color:var(--muted);font-size:0.78rem;margin-bottom:16px}
 .estados-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .estado-chip{background:var(--cream);border:1.5px solid var(--borda);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:9px}
-.estado-chip:hover{border-color:rgba(201,168,76,0.5);background:#fff}
+.estado-chip:hover{border-color:rgba(201,168,76,0.5)}
 .estado-chip.sel{border-color:var(--gold);background:var(--gold-pale)}
 .estado-icon{font-size:1.2rem}
 .estado-label{font-size:0.75rem;font-weight:500;color:var(--ink);line-height:1.3}
 
 .btn-principal{width:100%;background:linear-gradient(135deg,var(--gold),#A8873A);border:none;color:var(--deep);padding:15px 28px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:10px}
-.btn-principal:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.35)}
-.btn-principal:disabled{opacity:0.5;cursor:default}
+.btn-principal:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.3)}
+.btn-principal:disabled{opacity:0.45;cursor:default}
 .btn-sec{background:var(--white);border:1.5px solid var(--borda);color:var(--ink);padding:13px 24px;border-radius:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s}
-.btn-sec:hover{border-color:var(--gold);color:var(--deep)}
+.btn-sec:hover{border-color:var(--gold)}
 
-.loading-wrap{text-align:center;padding:60px 20px;animation:fadeIn 0.4s ease}
+.loading-wrap{text-align:center;padding:60px 20px}
 .spinner{width:44px;height:44px;border:3px solid var(--borda);border-top-color:var(--gold);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 20px}
 .loading-txt{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--muted);font-style:italic}
 
@@ -121,9 +128,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .devo-body{padding:24px}
 .devo-versiculo{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:20px}
 .devo-versiculo p{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--deep);font-style:italic;line-height:1.6}
-.devo-versiculo span{font-size:0.72rem;color:var(--gold);display:block;margin-top:5px;font-style:normal}
+.devo-versiculo span{font-size:0.72rem;color:var(--gold);display:block;margin-top:5px}
 .devo-secao{font-size:0.62rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin:20px 0 8px}
-.devo-paragrafo{font-size:0.9rem;color:var(--ink);line-height:1.8;margin-bottom:12px;font-weight:300}
+.devo-paragrafo{font-size:0.9rem;color:var(--ink);line-height:1.85;margin-bottom:12px;font-weight:300}
 .devo-destaque{background:linear-gradient(135deg,var(--gold-pale),#FFF8E8);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:16px 20px;margin:20px 0;text-align:center}
 .devo-destaque p{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--deep);font-style:italic;line-height:1.5}
 .devo-oracao{background:linear-gradient(135deg,#EAF4FF,#F0F7FF);border-radius:12px;padding:16px;margin-bottom:16px}
@@ -143,29 +150,50 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulsar 1s ease-in-out infinite}
 .estado-banner{background:linear-gradient(90deg,var(--sage),#3D6B40);padding:10px 24px;display:flex;align-items:center;gap:10px}
 .estado-banner p{color:#fff;font-size:0.78rem}
-.estado-banner strong{font-weight:700}
+
+/* STREAK CELEBRAÇÃO */
+.streak-celebracao{background:linear-gradient(135deg,#8B4513,#C9A84C);border-radius:12px;padding:16px 20px;margin-bottom:16px;text-align:center;animation:slideUp 0.4s ease}
+.streak-celebracao h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:4px}
+.streak-celebracao p{color:rgba(255,255,255,0.85);font-size:0.82rem}
+
+/* HISTÓRICO */
+.historico-lista{display:flex;flex-direction:column;gap:12px}
+.hist-card{background:var(--white);border:1px solid var(--borda);border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s}
+.hist-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+.hist-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hist-data{font-size:0.7rem;color:var(--muted);font-weight:600}
+.hist-badge{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:20px}
+.hist-badge.m1{background:var(--gold-pale);color:var(--gold)}
+.hist-badge.m2{background:#EAF4FF;color:var(--sky)}
+.hist-titulo{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--deep);margin-bottom:4px}
+.hist-preview{font-size:0.78rem;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hist-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.hist-empty-icon{font-size:2.5rem;margin-bottom:12px}
+.hist-empty p{font-size:0.88rem;line-height:1.6}
 
 .acoes-wrap{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
 .acoes-wrap .btn-principal{flex:1;min-width:180px}
 .acoes-wrap .btn-sec{flex:1;min-width:140px}
-.erro-wrap{background:#FFF0F0;border:1.5px solid rgba(192,57,43,0.3);border-radius:12px;padding:20px;text-align:center;margin:20px 0}
+.erro-wrap{background:#FFF0F0;border:1.5px solid rgba(192,57,43,0.25);border-radius:12px;padding:20px;text-align:center;margin:20px 0}
 .erro-txt{color:#C0392B;font-size:0.88rem}
 .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--borda)}
 .footer p{color:var(--muted);font-size:0.72rem}
-.footer small{color:rgba(138,117,96,0.5);font-size:0.65rem;display:block;margin-top:4px}
+.footer small{color:rgba(138,117,96,0.4);font-size:0.65rem;display:block;margin-top:4px}
 
 @media(max-width:480px){
   .modos-grid{grid-template-columns:1fr}
   .hero h1{font-size:1.6rem}
   .devo-body{padding:16px}
   .acoes-wrap{flex-direction:column}
-  .auth-card{padding:24px 20px}
+  .auth-card{padding:24px 18px}
+  .streak-banner{flex-direction:column;gap:8px}
+  .streak-div{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
+<!-- AUTH -->
 <div id="authScreen" class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">
@@ -194,6 +222,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   <header class="site-header">
     <div class="logo">Manhã <span>com Deus</span></div>
     <div class="header-right">
+      <div class="header-streak" id="headerStreak" style="display:none">
+        🔥 <span id="headerStreakNum">0</span> dias
+      </div>
       <span class="header-user" id="headerEmail"></span>
       <button class="btn-logout" onclick="logout()">Sair</button>
     </div>
@@ -204,105 +235,147 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     <h1>Sua Palavra para Hoje</h1>
     <p>Devocional diário com Inteligência Artificial</p>
   </div>
+
+  <div class="streak-banner" id="streakBanner" style="display:none">
+    <div class="streak-item">
+      <span style="font-size:1.5rem">🔥</span>
+      <div>
+        <div class="streak-num" id="streakAtual">0</div>
+        <div class="streak-txt">dias seguidos</div>
+      </div>
+    </div>
+    <div class="streak-div"></div>
+    <div class="streak-item">
+      <span style="font-size:1.5rem">🏆</span>
+      <div>
+        <div class="streak-num" id="streakMax">0</div>
+        <div class="streak-txt">recorde pessoal</div>
+      </div>
+    </div>
+    <div class="streak-div"></div>
+    <div class="streak-item">
+      <span style="font-size:1.5rem">📖</span>
+      <div>
+        <div class="streak-num" id="totalLidos">0</div>
+        <div class="streak-txt">devocionais lidos</div>
+      </div>
+    </div>
+  </div>
+
   <div class="verse-hero">
     <p class="verse-hero-text">"Porque sou eu que conheço os planos que tenho para vocês, planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro."</p>
     <span class="verse-hero-ref">— Jeremias 29:11</span>
   </div>
 
   <div class="container">
-
-    <!-- TELA INICIAL -->
-    <div id="telaInicial">
-      <p class="section-label" style="margin-top:8px">Escolha sua experiência</p>
-      <h2 class="intro-titulo">Como você quer começar?</h2>
-      <p class="intro-sub">Selecione o modo e receba seu devocional gerado por IA</p>
-      <div class="modos-grid">
-        <div class="modo-card" id="cardM1" onclick="selecionarModo(1)">
-          <span class="modo-emoji">📖</span>
-          <div class="modo-titulo">Devocional do Dia</div>
-          <div class="modo-desc">Reflexão de hoje para todos. Como um livro devocional — abre e já está pronto.</div>
-          <span class="badge-free">Gratuito</span>
-        </div>
-        <div class="modo-card" id="cardM2" onclick="selecionarModo(2)">
-          <div class="badge-mensal">Mensal</div>
-          <span class="modo-emoji">💫</span>
-          <div class="modo-titulo">Como estou hoje?</div>
-          <div class="modo-desc">Devocional personalizado para seu estado emocional agora. Único no mundo.</div>
-        </div>
-      </div>
-      <div id="estadosBox" style="display:none">
-        <div class="estados-box">
-          <div class="estados-titulo">Como você está se sentindo?</div>
-          <div class="estados-sub">Seu devocional será gerado especialmente para este momento</div>
-          <div class="estados-grid" id="estadosGrid"></div>
-        </div>
-      </div>
-      <button class="btn-principal" id="btnGerar" onclick="gerarOuPaywall()" style="display:none">
-        ✦ Abrir o Devocional de Hoje
-      </button>
+    <!-- NAVEGAÇÃO -->
+    <div class="nav-tabs" style="margin-top:8px">
+      <div class="nav-tab active" onclick="navTab('devocional',this)">✦ Devocional</div>
+      <div class="nav-tab" onclick="navTab('historico',this)">📚 Histórico</div>
     </div>
 
-    <!-- PAYWALL -->
-    <div id="telaPaywall" style="display:none">
-      <div class="paywall-wrap">
-        <div class="paywall-header">
-          <h2>💫 Como estou hoje?</h2>
-          <p>Este modo exclusivo gera um devocional personalizado para exatamente como você está se sentindo agora.</p>
+    <!-- ABA DEVOCIONAL -->
+    <div id="abaDevocional">
+      <div id="telaInicial">
+        <p class="section-label">Escolha sua experiência</p>
+        <h2 class="intro-titulo">Como você quer começar?</h2>
+        <p class="intro-sub">Selecione o modo e receba seu devocional gerado por IA</p>
+        <div class="modos-grid">
+          <div class="modo-card" id="cardM1" onclick="selecionarModo(1)">
+            <span class="modo-emoji">📖</span>
+            <div class="modo-titulo">Devocional do Dia</div>
+            <div class="modo-desc">Reflexão de hoje para todos. Como um livro devocional — abre e já está pronto.</div>
+            <span class="badge-free">Gratuito</span>
+          </div>
+          <div class="modo-card" id="cardM2" onclick="selecionarModo(2)">
+            <div class="badge-mensal">Mensal</div>
+            <span class="modo-emoji">💫</span>
+            <div class="modo-titulo">Como estou hoje?</div>
+            <div class="modo-desc">Devocional personalizado para seu estado emocional agora. Único no mundo.</div>
+          </div>
         </div>
-        <div class="paywall-body">
-          <div class="paywall-preco">R$9,90<span>/mês</span></div>
-          <p style="color:var(--muted);font-size:0.82rem;margin-top:4px">Plano Mensal — o mais completo</p>
-          <ul class="paywall-lista">
-            <li>Modo 2 — Devocional por estado emocional</li>
-            <li>Devocional do Dia versão completa e rica</li>
-            <li>Áudio do devocional (em breve)</li>
-            <li>Oração guiada + meditação noturna</li>
-            <li>Quiz bíblico semanal</li>
-            <li>Planos temáticos 7/30/90 dias</li>
-            <li>Desafios em grupo e streak diário</li>
-            <li>Relatório espiritual mensal</li>
-          </ul>
-          <button class="btn-principal" onclick="assinar()" style="margin-bottom:12px">✦ Assinar por R$9,90/mês</button>
-          <button class="btn-sec" style="width:100%" onclick="voltarInicial()">Voltar</button>
-          <p class="paywall-nota">Cancele quando quiser · Pagamento seguro</p>
+        <div id="estadosBox" style="display:none">
+          <div class="estados-box">
+            <div class="estados-titulo">Como você está se sentindo?</div>
+            <div class="estados-sub">Seu devocional será gerado especialmente para este momento</div>
+            <div class="estados-grid" id="estadosGrid"></div>
+          </div>
+        </div>
+        <button class="btn-principal" id="btnGerar" onclick="gerarOuPaywall()" style="display:none">
+          ✦ Abrir o Devocional de Hoje
+        </button>
+      </div>
+
+      <div id="telaPaywall" style="display:none">
+        <div class="paywall-wrap">
+          <div class="paywall-header">
+            <h2>💫 Como estou hoje?</h2>
+            <p>Devocional personalizado para exatamente como você está se sentindo agora.</p>
+          </div>
+          <div class="paywall-body">
+            <div class="paywall-preco">R$9,90<span>/mês</span></div>
+            <p style="color:var(--muted);font-size:0.82rem;margin-top:4px">Plano Mensal — o mais completo</p>
+            <ul class="paywall-lista">
+              <li>Modo 2 — Devocional por estado emocional</li>
+              <li>Devocional completo e rico com áudio</li>
+              <li>Oração guiada + meditação noturna</li>
+              <li>Quiz bíblico semanal com ranking</li>
+              <li>Planos temáticos 7/30/90 dias</li>
+              <li>Desafios em grupo e streak diário</li>
+              <li>Relatório espiritual mensal</li>
+            </ul>
+            <button class="btn-principal" onclick="assinar()" style="margin-bottom:12px">✦ Assinar por R$9,90/mês</button>
+            <button class="btn-sec" style="width:100%" onclick="voltarInicial()">Voltar</button>
+            <p class="paywall-nota">Cancele quando quiser · Pagamento seguro</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="telaLoading" style="display:none">
+        <div class="loading-wrap">
+          <div class="spinner"></div>
+          <p class="loading-txt">Preparando sua Palavra para hoje...</p>
+        </div>
+      </div>
+
+      <div id="telaErro" style="display:none">
+        <div class="erro-wrap"><p class="erro-txt" id="erroTxt"></p></div>
+        <button class="btn-principal" style="margin-top:16px" onclick="reiniciar()">Tentar Novamente</button>
+      </div>
+
+      <div id="telaDevocional" style="display:none">
+        <div class="devo-wrap">
+          <div id="estadoBanner" style="display:none" class="estado-banner">
+            <span id="estadoBannerIcon"></span>
+            <p>Gerado para você · Estado: <strong id="estadoBannerLabel"></strong></p>
+          </div>
+          <div class="devo-header">
+            <div class="devo-label" id="devoData"></div>
+            <div class="devo-titulo" id="devoTitulo">Carregando...</div>
+          </div>
+          <div class="devo-body" id="devoBody"></div>
+          <div id="devoStreaming" class="devo-streaming" style="display:none">
+            <div class="dot"></div><span>Gerando devocional...</span>
+          </div>
+        </div>
+        <div id="streakCelebracao" style="display:none" class="streak-celebracao">
+          <h3 id="streakCelebTitulo">🔥 Incrível!</h3>
+          <p id="streakCelebMsg">Continue assim!</p>
+        </div>
+        <div class="acoes-wrap" id="acoesWrap" style="display:none">
+          <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
+          <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
         </div>
       </div>
     </div>
 
-    <!-- LOADING -->
-    <div id="telaLoading" style="display:none">
-      <div class="loading-wrap">
-        <div class="spinner"></div>
-        <p class="loading-txt">Preparando sua Palavra para hoje...</p>
-      </div>
-    </div>
-
-    <!-- ERRO -->
-    <div id="telaErro" style="display:none">
-      <div class="erro-wrap"><p class="erro-txt" id="erroTxt"></p></div>
-      <button class="btn-principal" style="margin-top:16px" onclick="reiniciar()">Tentar Novamente</button>
-    </div>
-
-    <!-- DEVOCIONAL -->
-    <div id="telaDevocional" style="display:none">
-      <div class="devo-wrap">
-        <div id="estadoBanner" style="display:none" class="estado-banner">
-          <span id="estadoBannerIcon"></span>
-          <p>Gerado para você · Estado: <strong id="estadoBannerLabel"></strong></p>
-        </div>
-        <div class="devo-header">
-          <div class="devo-label" id="devoData"></div>
-          <div class="devo-titulo" id="devoTitulo">Carregando...</div>
-        </div>
-        <div class="devo-body" id="devoBody"></div>
-        <div id="devoStreaming" class="devo-streaming" style="display:none">
-          <div class="dot"></div>
-          <span>Gerando devocional...</span>
-        </div>
-      </div>
-      <div class="acoes-wrap" id="acoesWrap" style="display:none">
-        <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
-        <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
+    <!-- ABA HISTÓRICO -->
+    <div id="abaHistorico" style="display:none">
+      <p class="section-label">Sua jornada espiritual</p>
+      <h2 class="intro-titulo">Histórico de Leituras</h2>
+      <p class="intro-sub">Todos os devocionais que você já leu</p>
+      <div id="historicoLista" class="historico-lista">
+        <div class="loading-wrap"><div class="spinner"></div></div>
       </div>
     </div>
 
@@ -334,17 +407,10 @@ const ESTADOS=[
 ];
 
 let modo=null,estado=null,textoCompleto="",planoUser="gratis",tabAtual="login";
+let userAtual=null,streakData={streak_atual:0,streak_maximo:0};
 
 // ── INIT ──────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded",async()=>{
-  const{data:{session}}=await sb.auth.getSession();
-  if(session)await iniciarApp(session.user);
-
-  sb.auth.onAuthStateChange(async(_,session)=>{
-    if(session)await iniciarApp(session.user);
-    else mostrarAuth();
-  });
-
   const ag=new Date();
   const dia=Math.floor((ag-new Date(ag.getFullYear(),0,0))/86400000);
   document.getElementById("heroData").textContent=ag.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})+" · Dia "+dia+" do ano";
@@ -356,21 +422,142 @@ document.addEventListener("DOMContentLoaded",async()=>{
     c.innerHTML=`<span class="estado-icon">${e.icon}</span><span class="estado-label">${e.label}</span>`;
     c.onclick=()=>selEstado(e);grid.appendChild(c);
   });
+
+  const{data:{session}}=await sb.auth.getSession();
+  if(session)await iniciarApp(session.user);
+  sb.auth.onAuthStateChange(async(_,session)=>{
+    if(session)await iniciarApp(session.user);
+    else mostrarAuth();
+  });
 });
 
 async function iniciarApp(user){
+  userAtual=user;
   document.getElementById("authScreen").style.display="none";
   document.getElementById("appScreen").style.display="block";
   document.getElementById("headerEmail").textContent=user.email;
-
-  // Buscar plano
   const{data}=await sb.from("profiles").select("plano").eq("id",user.id).single();
   planoUser=data?.plano||"gratis";
+  await carregarStreak();
 }
 
 function mostrarAuth(){
   document.getElementById("authScreen").style.display="flex";
   document.getElementById("appScreen").style.display="none";
+  userAtual=null;
+}
+
+// ── STREAK ────────────────────────────────────────────
+async function carregarStreak(){
+  if(!userAtual)return;
+  const{data}=await sb.from("streaks").select("*").eq("user_id",userAtual.id).single();
+  if(data){
+    streakData=data;
+    atualizarUIStreak();
+  }
+  // total lidos
+  const{count}=await sb.from("devocionais").select("*",{count:"exact",head:true}).eq("user_id",userAtual.id);
+  document.getElementById("totalLidos").textContent=count||0;
+}
+
+function atualizarUIStreak(){
+  const s=streakData.streak_atual||0;
+  const m=streakData.streak_maximo||0;
+  document.getElementById("streakAtual").textContent=s;
+  document.getElementById("streakMax").textContent=m;
+  document.getElementById("headerStreakNum").textContent=s;
+  if(s>0){
+    document.getElementById("streakBanner").style.display="flex";
+    document.getElementById("headerStreak").style.display="flex";
+  }
+}
+
+async function atualizarStreak(){
+  if(!userAtual)return;
+  const hoje=new Date().toISOString().split("T")[0];
+  const{data:existing}=await sb.from("streaks").select("*").eq("user_id",userAtual.id).single();
+
+  let novoStreak=1;
+  let novoMax=1;
+
+  if(existing){
+    const ultima=existing.ultima_leitura;
+    const ontem=new Date();ontem.setDate(ontem.getDate()-1);
+    const ontemStr=ontem.toISOString().split("T")[0];
+
+    if(ultima===hoje){
+      // já leu hoje, não muda
+      return{novo:false,streak:existing.streak_atual};
+    }else if(ultima===ontemStr){
+      // sequência mantida
+      novoStreak=existing.streak_atual+1;
+    }else{
+      // quebrou
+      novoStreak=1;
+    }
+    novoMax=Math.max(novoStreak,existing.streak_maximo||0);
+
+    await sb.from("streaks").update({
+      streak_atual:novoStreak,streak_maximo:novoMax,
+      ultima_leitura:hoje,updated_at:new Date().toISOString()
+    }).eq("user_id",userAtual.id);
+  }else{
+    await sb.from("streaks").insert({
+      user_id:userAtual.id,streak_atual:1,streak_maximo:1,ultima_leitura:hoje
+    });
+  }
+
+  streakData={streak_atual:novoStreak,streak_maximo:novoMax};
+  atualizarUIStreak();
+  return{novo:true,streak:novoStreak};
+}
+
+async function salvarDevocional(titulo,conteudo){
+  if(!userAtual)return;
+  await sb.from("devocionais").insert({
+    user_id:userAtual.id,
+    modo:modo,
+    estado:estado?.label||null,
+    titulo:titulo,
+    conteudo:conteudo,
+    data:new Date().toISOString().split("T")[0]
+  });
+  const{count}=await sb.from("devocionais").select("*",{count:"exact",head:true}).eq("user_id",userAtual.id);
+  document.getElementById("totalLidos").textContent=count||0;
+}
+
+// ── HISTÓRICO ─────────────────────────────────────────
+async function carregarHistorico(){
+  const lista=document.getElementById("historicoLista");
+  lista.innerHTML=`<div class="loading-wrap"><div class="spinner"></div></div>`;
+  const{data}=await sb.from("devocionais").select("*").eq("user_id",userAtual.id).order("created_at",{ascending:false}).limit(30);
+  if(!data||data.length===0){
+    lista.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon">📖</div><p>Você ainda não leu nenhum devocional.<br>Comece agora e construa sua jornada!</p></div>`;
+    return;
+  }
+  lista.innerHTML=data.map(d=>{
+    const dt=new Date(d.created_at).toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"});
+    const preview=d.conteudo?d.conteudo.replace(/[━✦📖💭🙏💡📝🎵\n]/g," ").slice(0,100)+"...":"";
+    const badgeClass=d.modo===2?"m2":"m1";
+    const badgeLabel=d.modo===2?`💫 ${d.estado||"Personalizado"}`:"📖 Do Dia";
+    return `<div class="hist-card">
+      <div class="hist-card-top">
+        <span class="hist-data">${dt}</span>
+        <span class="hist-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+      <div class="hist-titulo">${d.titulo||"Devocional"}</div>
+      <div class="hist-preview">${preview}</div>
+    </div>`;
+  }).join("");
+}
+
+// ── NAVEGAÇÃO ─────────────────────────────────────────
+function navTab(aba,el){
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("abaDevocional").style.display=aba==="devocional"?"block":"none";
+  document.getElementById("abaHistorico").style.display=aba==="historico"?"block":"none";
+  if(aba==="historico")carregarHistorico();
 }
 
 // ── AUTH ──────────────────────────────────────────────
@@ -386,25 +573,17 @@ async function submitAuth(){
   const email=document.getElementById("authEmail").value.trim();
   const senha=document.getElementById("authSenha").value;
   const btn=document.getElementById("btnAuth");
-  const msg=document.getElementById("authMsg");
-
   if(!email||!senha){showMsg("Preencha email e senha","erro");return;}
   btn.disabled=true;btn.textContent="Aguarde...";
-
   let result;
-  if(tabAtual==="login"){
-    result=await sb.auth.signInWithPassword({email,password:senha});
-  }else{
-    result=await sb.auth.signUp({email,password:senha});
-  }
-
+  if(tabAtual==="login")result=await sb.auth.signInWithPassword({email,password:senha});
+  else result=await sb.auth.signUp({email,password:senha});
   btn.disabled=false;btn.textContent=tabAtual==="login"?"Entrar":"Criar conta";
-
   if(result.error){
     const erros={"Invalid login credentials":"Email ou senha incorretos","User already registered":"Email já cadastrado","Password should be at least 6 characters":"Senha deve ter ao menos 6 caracteres"};
     showMsg(erros[result.error.message]||result.error.message,"erro");
   }else if(tabAtual==="cadastro"&&!result.data.session){
-    showMsg("✓ Conta criada! Verifique seu email para confirmar.","ok");
+    showMsg("✓ Conta criada! Verifique seu email.","ok");
   }
 }
 
@@ -413,9 +592,7 @@ function showMsg(txt,tipo){
   el.textContent=txt;el.className="auth-msg "+tipo;el.style.display="block";
 }
 
-async function logout(){
-  await sb.auth.signOut();
-}
+async function logout(){await sb.auth.signOut();}
 
 // ── MODOS ─────────────────────────────────────────────
 function selecionarModo(m){
@@ -438,16 +615,10 @@ function selEstado(e){
 }
 
 function gerarOuPaywall(){
-  if(modo===2&&planoUser==="gratis"){
-    tela("paywall");return;
-  }
+  if(modo===2&&planoUser==="gratis"){tela("paywall");return;}
   gerarDevocional();
 }
-
-function assinar(){
-  alert("Em breve: integração com Stripe!\n\nPor enquanto, entre em contato para assinar o plano Mensal.");
-}
-
+function assinar(){alert("Em breve: integração com Stripe!\n\nEntre em contato para assinar o Plano Mensal.");}
 function voltarInicial(){tela("inicial");}
 
 // ── GERAR ─────────────────────────────────────────────
@@ -461,6 +632,7 @@ async function gerarDevocional(){
     tela("devocional");
     document.getElementById("devoStreaming").style.display="flex";
     document.getElementById("acoesWrap").style.display="none";
+    document.getElementById("streakCelebracao").style.display="none";
     if(modo===2&&estado){
       document.getElementById("estadoBanner").style.display="flex";
       document.getElementById("estadoBannerIcon").textContent=estado.icon;
@@ -483,8 +655,21 @@ async function gerarDevocional(){
         try{const p=JSON.parse(d);if(p.text){textoCompleto+=p.text;renderDevo(textoCompleto);}}catch{}
       }
     }
+
     document.getElementById("devoStreaming").style.display="none";
     document.getElementById("acoesWrap").style.display="flex";
+
+    // Salvar e atualizar streak
+    const tituloEl=document.getElementById("devoTitulo");
+    await salvarDevocional(tituloEl.textContent,textoCompleto);
+    const{novo,streak}=await atualizarStreak();
+    if(novo){
+      const cel=document.getElementById("streakCelebracao");
+      const msgs={1:"Que bom ter você aqui! Continue amanhã! 🌅",2:"2 dias seguidos! O hábito está nascendo! ✨",3:"3 dias! Você está construindo algo lindo! 🌱",7:"UMA SEMANA COMPLETA! Incrível! 🎉",14:"14 dias! Você é uma inspiração! 💪",30:"30 DIAS! Um mês de crescimento! 🏆"};
+      document.getElementById("streakCelebTitulo").textContent=`🔥 ${streak} ${streak===1?"dia":"dias"} seguidos!`;
+      document.getElementById("streakCelebMsg").textContent=msgs[streak]||`${streak} dias de caminhada com Deus! Continue! 🙏`;
+      cel.style.display="block";
+    }
   }catch{
     tela("erro");document.getElementById("erroTxt").textContent="Não foi possível gerar o devocional. Tente novamente.";
   }
@@ -514,7 +699,6 @@ function renderDevo(txt){
     if(t.startsWith("📝")){secaoAtual="anotacoes";continue;}
     if(t.startsWith("🎵")){secaoAtual="louvor";continue;}
     if(t.startsWith("___"))continue;
-
     if(secaoAtual==="versiculo"){
       if(t.startsWith('"'))versiculoTexto=t;
       else if(t.startsWith("—"))versiculoRef=t.replace("—","").trim();
