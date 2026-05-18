@@ -1109,6 +1109,207 @@ async function concluirDiaPlano(planoId, diaAtual, totalDias) {
 }
 </script>
 
+<script>
+var _PLANOS = {
+  ansiedade: {nome:"Vencendo a Ansiedade",dias:7,emoji:"🧘",desc:"7 dias encontrando paz em Deus",cor:"#4A7FA5"},
+  gratidao: {nome:"Coração Grato",dias:7,emoji:"🙏",desc:"7 dias cultivando gratidão",cor:"#5C7A5E"},
+  proposito: {nome:"Descobrindo seu Propósito",dias:30,emoji:"🧭",desc:"30 dias buscando direção divina",cor:"#C9A84C"},
+  casamento: {nome:"Amor que Transforma",dias:30,emoji:"💑",desc:"30 dias fortalecendo seu relacionamento",cor:"#CC7B7B"},
+  trabalho: {nome:"Fé no Trabalho",dias:7,emoji:"💼",desc:"7 dias integrando fé e carreira",cor:"#7B8FCC"},
+  cura: {nome:"Cura Interior",dias:30,emoji:"💚",desc:"30 dias de restauração e cura",cor:"#5C7A5E"},
+  novo_comeco: {nome:"Novo Começo",dias:7,emoji:"✨",desc:"7 dias recomeçando com Deus",cor:"#C9A84C"}
+};
+
+function criarCardPlano(id, p, ativo) {
+  var div = document.createElement("div");
+  div.style.cssText = "background:#fff;border:1.5px solid " + p.cor + "30;border-radius:14px;padding:16px;cursor:pointer;position:relative;overflow:hidden;transition:all 0.2s";
+  div.dataset.planoid = id;
+  div.dataset.diaatual = ativo ? ativo.dia_atual : 0;
+  div.addEventListener("click", function() {
+    iniciarPlanoNovo(this.dataset.planoid, parseInt(this.dataset.diaatual));
+  });
+  if (ativo) {
+    var badge = document.createElement("div");
+    badge.style.cssText = "position:absolute;top:8px;right:8px;background:" + p.cor + ";color:#fff;font-size:0.55rem;font-weight:700;padding:2px 7px;border-radius:20px";
+    badge.textContent = "ATIVO";
+    div.appendChild(badge);
+  }
+  div.innerHTML += "<div style='font-size:1.8rem;margin-bottom:8px'>" + p.emoji + "</div>" +
+    "<div style='font-family:Playfair Display,serif;font-size:0.88rem;color:#1A1208;margin-bottom:4px;line-height:1.3'>" + p.nome + "</div>" +
+    "<div style='font-size:0.7rem;color:#8A7560;line-height:1.4;margin-bottom:10px'>" + p.desc + "</div>" +
+    "<div style='background:" + p.cor + "15;color:" + p.cor + ";font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-block'>" + p.dias + " dias</div>";
+  return div;
+}
+
+function renderGridPlanos(ativos) {
+  var grid = document.getElementById("planosGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  Object.keys(_PLANOS).forEach(function(id) {
+    var p = _PLANOS[id];
+    var ativo = ativos && ativos.find(function(a) { return a.plano_id === id; });
+    grid.appendChild(criarCardPlano(id, p, ativo));
+  });
+}
+
+async function carregarPlanos() {
+  renderGridPlanos([]);
+  if (!userAtual) return;
+  try {
+    var result = await sb.from("planos_usuario").select("*").eq("user_id", userAtual.id).eq("concluido", false);
+    var ativos = result.data || [];
+    renderGridPlanos(ativos);
+    var wrapAtivos = document.getElementById("planosAtivos");
+    var listaAtivos = document.getElementById("planosAtivosLista");
+    if (ativos.length > 0 && wrapAtivos && listaAtivos) {
+      wrapAtivos.style.display = "block";
+      listaAtivos.innerHTML = "";
+      ativos.forEach(function(p) {
+        var info = _PLANOS[p.plano_id];
+        if (!info) return;
+        var pct = Math.round((p.dia_atual / p.total_dias) * 100);
+        var card = document.createElement("div");
+        card.style.cssText = "background:#fff;border:1.5px solid " + info.cor + "40;border-radius:14px;padding:16px;margin-bottom:10px";
+        card.innerHTML = "<div style='display:flex;align-items:center;gap:10px;margin-bottom:10px'>" +
+          "<span style='font-size:1.5rem'>" + info.emoji + "</span>" +
+          "<div><div style='font-family:Playfair Display,serif;font-size:0.95rem;color:#1A1208'>" + info.nome + "</div>" +
+          "<div style='font-size:0.72rem;color:#8A7560'>Dia " + p.dia_atual + " de " + p.total_dias + "</div></div></div>" +
+          "<div style='background:#f0f0f0;border-radius:20px;height:6px;overflow:hidden;margin-bottom:12px'>" +
+          "<div style='background:" + info.cor + ";height:100%;width:" + pct + "%;border-radius:20px'></div></div>";
+        var btn = document.createElement("button");
+        btn.style.cssText = "width:100%;background:" + info.cor + ";border:none;color:#fff;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer";
+        btn.textContent = "▶ Continuar — Dia " + p.dia_atual;
+        btn.dataset.planoid = p.plano_id;
+        btn.dataset.dia = p.dia_atual;
+        btn.addEventListener("click", function() {
+          iniciarPlanoNovo(this.dataset.planoid, parseInt(this.dataset.dia));
+        });
+        card.appendChild(btn);
+        listaAtivos.appendChild(card);
+      });
+    }
+  } catch(e) { console.error("Erro planos:", e); }
+}
+
+async function iniciarPlanoNovo(planoId, diaAtual) {
+  if (!userAtual) return;
+  var info = _PLANOS[planoId];
+  if (!info) return;
+
+  if (planoUser !== "mensal") {
+    document.querySelectorAll(".nav-tab").forEach(function(t) { t.classList.remove("active"); });
+    var devTab = document.querySelector(".nav-tab");
+    if (devTab) devTab.classList.add("active");
+    document.getElementById("abaDevocional").style.display = "block";
+    document.getElementById("abaHistorico").style.display = "none";
+    document.getElementById("abaPlanos").style.display = "none";
+    tela("paywall");
+    return;
+  }
+
+  var dia = diaAtual > 0 ? diaAtual : 1;
+  if (diaAtual === 0) {
+    if (!confirm("Iniciar o plano " + info.nome + " (" + info.dias + " dias)?")) return;
+    await sb.from("planos_usuario").upsert({
+      user_id: userAtual.id, plano_id: planoId, plano_nome: info.nome,
+      dia_atual: 1, total_dias: info.dias,
+      iniciado_em: new Date().toISOString().split("T")[0], concluido: false
+    }, {onConflict: "user_id,plano_id"});
+    dia = 1;
+  }
+
+  document.querySelectorAll(".nav-tab").forEach(function(t) { t.classList.remove("active"); });
+  var devTab = document.querySelector(".nav-tab");
+  if (devTab) devTab.classList.add("active");
+  document.getElementById("abaDevocional").style.display = "block";
+  document.getElementById("abaHistorico").style.display = "none";
+  document.getElementById("abaPlanos").style.display = "none";
+
+  tela("loading");
+  textoCompleto = "";
+
+  try {
+    var resp = await fetch("/devocional-plano", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({plano_id: planoId, dia: dia})
+    });
+    if (!resp.ok) throw new Error();
+    tela("devocional");
+    document.getElementById("devoStreaming").style.display = "flex";
+    document.getElementById("acoesWrap").style.display = "none";
+    document.getElementById("streakCelebracao").style.display = "none";
+    document.getElementById("estadoBanner").style.display = "flex";
+    document.getElementById("estadoBannerIcon").textContent = info.emoji;
+    document.getElementById("estadoBannerLabel").textContent = info.nome + " · Dia " + dia + " de " + info.dias;
+    var ag = new Date();
+    var diaAno = Math.floor((ag - new Date(ag.getFullYear(),0,0)) / 86400000);
+    document.getElementById("devoData").textContent = ag.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"}) + " · Dia " + diaAno;
+
+    var reader = resp.body.getReader();
+    var dec = new TextDecoder();
+    var buf = "";
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buf += dec.decode(chunk.value, {stream: true});
+      var lines = buf.split("
+"); buf = lines.pop();
+      for (var i = 0; i < lines.length; i++) {
+        if (!lines[i].startsWith("data: ")) continue;
+        var d = lines[i].slice(6).trim();
+        if (d === "[DONE]") continue;
+        try { var parsed = JSON.parse(d); if (parsed.text) { textoCompleto += parsed.text; renderDevo(textoCompleto); } } catch(e2) {}
+      }
+    }
+    document.getElementById("devoStreaming").style.display = "none";
+
+    var acoes = document.getElementById("acoesWrap");
+    var concluido = dia >= info.dias;
+    var btn1 = document.createElement("button");
+    btn1.className = "btn-principal";
+    btn1.textContent = concluido ? "🏆 Concluir plano!" : "▶ Concluir Dia " + dia;
+    btn1.dataset.planoid = planoId;
+    btn1.dataset.dia = dia;
+    btn1.dataset.total = info.dias;
+    btn1.addEventListener("click", function() {
+      concluirDiaPlano(this.dataset.planoid, parseInt(this.dataset.dia), parseInt(this.dataset.total));
+    });
+    var btn2 = document.createElement("button");
+    btn2.className = "btn-sec";
+    btn2.textContent = "Voltar";
+    btn2.addEventListener("click", reiniciar);
+    acoes.innerHTML = "";
+    acoes.appendChild(btn1);
+    acoes.appendChild(btn2);
+    acoes.style.display = "flex";
+
+    var titulo = document.getElementById("devoTitulo").textContent;
+    await sb.from("devocionais").insert({
+      user_id: userAtual.id, modo: 1,
+      estado: info.emoji + " " + info.nome + " - Dia " + dia,
+      titulo: titulo, conteudo: textoCompleto,
+      data: new Date().toISOString().split("T")[0]
+    });
+    await atualizarStreak();
+  } catch(e) {
+    tela("erro");
+    document.getElementById("erroTxt").textContent = "Não foi possível carregar o devocional.";
+  }
+}
+
+async function concluirDiaPlano(planoId, diaAtual, totalDias) {
+  if (!userAtual) return;
+  var info = _PLANOS[planoId];
+  var concluido = diaAtual >= totalDias;
+  await sb.from("planos_usuario").update({
+    dia_atual: concluido ? diaAtual : diaAtual + 1,
+    concluido: concluido
+  }).eq("user_id", userAtual.id).eq("plano_id", planoId);
+  mostrarToast(concluido ? "🏆 Parabéns! Plano concluído!" : "✓ Dia " + diaAtual + " concluído! Volte amanhã!");
+  reiniciar();
+}
+</script>
 </body>
 </html>
 <script>
