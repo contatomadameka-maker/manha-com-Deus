@@ -793,62 +793,56 @@ const el=document.createElement('style');el.textContent=css;document.head.append
 function mostrarModalInstalacao(){
   if(localStorage.getItem('installShown4'))return;
   if(window.matchMedia('(display-mode: standalone)').matches)return;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid=/Android/.test(navigator.userAgent);
+  if(!isIOS&&!isAndroid)return;
 
   const css=`
-.imodal-overlay{position:fixed;inset:0;background:rgba(26,18,8,0.95);z-index:9999;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.3s ease;overflow-y:auto}
-.imodal{background:#FAF6EE;border-radius:24px 24px 0 0;padding:20px 20px 40px;width:100%;max-width:500px;animation:slideUp 0.4s ease}
-.imodal-handle{width:40px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:0 auto 16px}
-.imodal h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:#1A1208;margin-bottom:6px;text-align:center}
-.imodal-sub{color:#8A7560;font-size:0.82rem;text-align:center;margin-bottom:16px;line-height:1.5}
-.imodal-tabs{display:flex;gap:8px;margin-bottom:16px}
-.imodal-tab{flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(201,168,76,0.2);background:#F7EDD6;font-size:0.82rem;font-weight:600;cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;color:#8A7560;transition:all 0.2s}
+.imodal-overlay{position:fixed;inset:0;background:rgba(26,18,8,0.92);z-index:9999;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.3s ease}
+.imodal{background:#FAF6EE;border-radius:24px 24px 0 0;padding:24px 20px 44px;width:100%;max-width:500px;animation:slideUp 0.4s ease}
+.imodal-handle{width:40px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:0 auto 18px}
+.imodal h2{font-family:'Playfair Display',serif;font-size:1.35rem;color:#1A1208;margin-bottom:6px;text-align:center}
+.imodal-sub{color:#8A7560;font-size:0.83rem;text-align:center;margin-bottom:18px;line-height:1.5}
+.imodal-tabs{display:flex;gap:8px;margin-bottom:18px}
+.imodal-tab{flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(201,168,76,0.2);background:#F7EDD6;font-size:0.82rem;font-weight:600;cursor:pointer;text-align:center;font-family:"DM Sans",sans-serif;color:#8A7560;transition:all 0.2s;min-height:42px}
 .imodal-tab.active{border-color:#C9A84C;background:#C9A84C;color:#1A1208}
-.imodal-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
-.imodal-step{background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:14px;overflow:hidden}
-.imodal-step-header{display:flex;align-items:center;gap:10px;padding:12px 14px}
-.imodal-step-num{background:#C9A84C;color:#1A1208;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0}
-.imodal-step-title{font-size:0.88rem;font-weight:600;color:#1A1208}
-.imodal-step-desc{font-size:0.75rem;color:#8A7560;line-height:1.4;margin-top:2px}
-.imodal-img-wrap{position:relative;background:#111;border-top:1px solid rgba(201,168,76,0.1)}
-.imodal-img-wrap img{width:100%;display:block;max-height:180px;object-fit:cover;object-position:center top}
-.imodal-arrow{position:absolute;pointer-events:none}
-.btn-imodal-ok{width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:16px;border-radius:12px;font-size:1rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:10px;min-height:52px}
-.btn-imodal-skip{width:100%;background:transparent;border:none;color:#8A7560;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:8px}
+.imodal-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.imodal-step{background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:12px;padding:14px;display:flex;align-items:flex-start;gap:12px}
+.imodal-step-num{background:#C9A84C;color:#1A1208;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.imodal-step-icon{font-size:1.3rem;flex-shrink:0}
+.imodal-step-title{font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:3px}
+.imodal-step-desc{font-size:0.76rem;color:#8A7560;line-height:1.45}
+.btn-imodal-ok{width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:16px;border-radius:12px;font-size:1rem;font-weight:700;font-family:"DM Sans",sans-serif;cursor:pointer;margin-bottom:10px;min-height:52px}
+.btn-imodal-skip{width:100%;background:transparent;border:none;color:#8A7560;font-size:0.82rem;font-family:"DM Sans",sans-serif;cursor:pointer;padding:8px}
 `;
-  const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
+  const style=document.createElement("style");style.textContent=css;document.head.appendChild(style);
 
-  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-  let osAtual=isIOS?'ios':'android';
+  const stepsIOS=[
+    {icon:"🌐",num:1,title:"Abra no Safari ou Chrome",desc:"O app funciona nos dois navegadores do iPhone."},
+    {icon:"⬆️",num:2,title:"Toque em Compartilhar",desc:"Ícone de seta no canto superior direito da barra do navegador."},
+    {icon:"📲",num:3,title:'Toque em "Adicionar à Tela de Início"',desc:"Role o menu para baixo até encontrar esta opção."},
+    {icon:"✅",num:4,title:"Confirme",desc:'Toque em "Adicionar". O app aparece na sua tela inicial!'},
+  ];
+  const stepsAndroid=[
+    {icon:"🌐",num:1,title:"Abra no Chrome",desc:"Use o Google Chrome para instalar o app."},
+    {icon:"⋮",num:2,title:"Toque nos 3 pontinhos",desc:"Menu no canto superior direito do Chrome."},
+    {icon:"📲",num:3,title:'Toque em "Adicionar à tela inicial"',desc:'Ou "Instalar app" dependendo da versão do Chrome.'},
+    {icon:"✅",num:4,title:"Confirme",desc:'Toque em "Adicionar". Pronto!'},
+  ];
 
-  function getSteps(os){
-    if(os==='ios') return [
-      {num:1,title:'Toque em Compartilhar',desc:'Ícone de seta na barra do navegador (canto superior direito)',img:'/install-imgs/passo1.jpg',arrow:{x:'88%',y:'12%',dir:'right'}},
-      {num:2,title:'Role e toque em "Adicionar à Tela de Início"',desc:'Está no menu que aparece após tocar em Compartilhar',img:'/install-imgs/passo3.jpg',arrow:{x:'50%',y:'88%',dir:'down'}},
-      {num:3,title:'Toque em "Adicionar à Tela de Início"',desc:'Confirme tocando no botão que aparece',img:'/install-imgs/passo2.jpg',arrow:{x:'50%',y:'50%',dir:'left'}},
-    ];
-    return [
-      {num:1,title:'Toque nos 3 pontinhos',desc:'Menu no canto superior direito do Chrome',img:null,arrow:null},
-      {num:2,title:'Toque em "Adicionar à tela inicial"',desc:'Ou "Instalar app" dependendo da versão',img:null,arrow:null},
-      {num:3,title:'Confirme',desc:'Toque em "Adicionar" ou "Instalar"',img:null,arrow:null},
-    ];
-  }
+  let osAtual=isIOS?"ios":"android";
 
   function renderSteps(os){
-    return getSteps(os).map(s=>`
+    const steps=os==="ios"?stepsIOS:stepsAndroid;
+    return steps.map(s=>`
       <div class="imodal-step">
-        <div class="imodal-step-header">
-          <div class="imodal-step-num">${s.num}</div>
-          <div><div class="imodal-step-title">${s.title}</div><div class="imodal-step-desc">${s.desc}</div></div>
+        <div class="imodal-step-icon">${s.icon}</div>
+        <div class="imodal-step-num">${s.num}</div>
+        <div>
+          <div class="imodal-step-title">${s.title}</div>
+          <div class="imodal-step-desc">${s.desc}</div>
         </div>
-        ${s.img?`<div class="imodal-img-wrap">
-          <img src="${s.img}" alt="passo ${s.num}">
-          ${s.arrow?`<svg class="imodal-arrow" style="top:0;left:0;width:100%;height:100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <circle cx="${s.arrow.x}" cy="${s.arrow.y}" r="6" fill="none" stroke="#FF3B30" stroke-width="2"/>
-            <circle cx="${s.arrow.x}" cy="${s.arrow.y}" r="3" fill="#FF3B30"/>
-            <circle cx="${s.arrow.x}" cy="${s.arrow.y}" r="8" fill="none" stroke="#FF3B30" stroke-width="1.5" opacity="0.5"/>
-          </svg>`:''}
-        </div>`:''}
-      </div>`).join('');
+      </div>`).join("");
   }
 
   const html=`
@@ -858,28 +852,27 @@ function mostrarModalInstalacao(){
       <h2>📲 Instale o App!</h2>
       <p class="imodal-sub">Adicione à sua tela inicial e acesse como um app de verdade — sem abrir o navegador.</p>
       <div class="imodal-tabs">
-        <div class="imodal-tab ${isIOS?'active':''}" onclick="trocarOsTab2('ios',this)">🍎 iPhone</div>
-        <div class="imodal-tab ${!isIOS?'active':''}" onclick="trocarOsTab2('android',this)">🤖 Android</div>
+        <div class="imodal-tab ${isIOS?"active":""}" onclick="trocarOsTab(this,'ios')">🍎 iPhone</div>
+        <div class="imodal-tab ${isAndroid?"active":""}" onclick="trocarOsTab(this,'android')">🤖 Android</div>
       </div>
       <div class="imodal-steps" id="iModalSteps">${renderSteps(osAtual)}</div>
-      <button class="btn-imodal-ok" onclick="fecharModalInstalacao2()">✓ Entendido, vou instalar!</button>
-      <button class="btn-imodal-skip" onclick="fecharModalInstalacao2()">Fazer isso depois</button>
+      <button class="btn-imodal-ok" onclick="fecharModal()">✓ Entendido, vou instalar!</button>
+      <button class="btn-imodal-skip" onclick="fecharModal()">Fazer isso depois</button>
     </div>
   </div>`;
 
-  document.body.insertAdjacentHTML('beforeend',html);
-  localStorage.setItem('installShown4','1');
+  document.body.insertAdjacentHTML("beforeend",html);
+  localStorage.setItem("installShown4","1");
 
-  window.trocarOsTab2=function(os,el){
-    document.querySelectorAll('.imodal-tab').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('iModalSteps').innerHTML=renderSteps(os);
+  window.trocarOsTab=function(el,os){
+    document.querySelectorAll(".imodal-tab").forEach(t=>t.classList.remove("active"));
+    el.classList.add("active");
+    document.getElementById("iModalSteps").innerHTML=renderSteps(os);
   };
-  window.fecharModalInstalacao2=function(){
-    const el=document.getElementById('iModalOverlay');if(el)el.remove();
+  window.fecharModal=function(){
+    const el=document.getElementById("iModalOverlay");if(el)el.remove();
   };
 }
-
 
 const stepsIOS=[
   {icon:'🌐',num:1,titulo:'Abra no Safari',desc:'Funciona no Safari OU no Chrome do iPhone.'},
