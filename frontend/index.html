@@ -529,16 +529,33 @@ function mostrarAuth(){
 }
 
 async function carregarVersiculo(){
-  try{
-    const r=await fetch("/versiculo-do-dia");const d=await r.json();
-    versiculoAtual={texto:d.texto,ref:d.ref};
-    document.getElementById("versiculoTexto").textContent=`"${d.texto}"`;
-    document.getElementById("versiculoRef").textContent=`— ${d.ref}`;
-    document.getElementById("shareCardTexto").textContent=`"${d.texto}"`;
-    document.getElementById("shareCardRef").textContent=`— ${d.ref}`;
-  }catch{
-    document.getElementById("versiculoTexto").textContent='"O Senhor é o meu pastor e nada me faltará."';
-    document.getElementById("versiculoRef").textContent="— Salmos 23:1";
+  // Tenta até 3 vezes
+  for(let i=0;i<3;i++){
+    try{
+      const r=await fetch("/versiculo-do-dia");
+      if(!r.ok) throw new Error("status "+r.status);
+      const d=await r.json();
+      versiculoAtual={texto:d.texto,ref:d.ref};
+      document.getElementById("versiculoTexto").textContent=`"${d.texto}"`;
+      document.getElementById("versiculoRef").textContent=`— ${d.ref}`;
+      document.getElementById("shareCardTexto").textContent=`"${d.texto}"`;
+      document.getElementById("shareCardRef").textContent=`— ${d.ref}`;
+      return;
+    }catch(e){
+      if(i===2){
+        // Fallback local
+        const fallbacks=[
+          {texto:"O Senhor é o meu pastor e nada me faltará.",ref:"Salmos 23:1"},
+          {texto:"Tudo posso naquele que me fortalece.",ref:"Filipenses 4:13"},
+          {texto:"Não temas, porque eu sou contigo.",ref:"Isaías 41:10"},
+        ];
+        const f=fallbacks[new Date().getDay()%fallbacks.length];
+        versiculoAtual=f;
+        document.getElementById("versiculoTexto").textContent=`"${f.texto}"`;
+        document.getElementById("versiculoRef").textContent=`— ${f.ref}`;
+      }
+      await new Promise(r=>setTimeout(r,1000));
+    }
   }
 }
 
@@ -620,11 +637,21 @@ async function carregarHistorico(){
   if(!data||data.length===0){
     lista.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon">📖</div><p>Você ainda não leu nenhum devocional.<br>Comece agora!</p></div>`;return;
   }
-  lista.innerHTML=data.map(d=>{
+  lista.innerHTML=data.map((d,idx)=>{
     const dt=new Date(d.created_at).toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"});
     const preview=d.conteudo?d.conteudo.replace(/[━✦📖💭🙏💡📝🎵\n]/g," ").replace(/\s+/g," ").slice(0,100)+"...":"";
     const bc=d.modo===2?"m2":"m1",bl=d.modo===2?`💫 ${d.estado||"Personalizado"}`:"📖 Do Dia";
-    return `<div class="hist-card"><div class="hist-card-top"><span class="hist-data">${dt}</span><span class="hist-badge ${bc}">${bl}</span></div><div class="hist-titulo">${d.titulo||"Devocional"}</div><div class="hist-preview">${preview}</div></div>`;
+    // Salva conteúdo no window para acesso
+    window._histDevocionais = window._histDevocionais || {};
+    window._histDevocionais[d.id] = d;
+    return `<div class="hist-card">
+      <div class="hist-card-top"><span class="hist-data">${dt}</span><span class="hist-badge ${bc}">${bl}</span></div>
+      <div class="hist-titulo">${d.titulo||"Devocional"}</div>
+      <div class="hist-preview">${preview}</div>
+      <button onclick="relerDevocional('${d.id}')" style="margin-top:10px;width:100%;background:transparent;border:1px solid rgba(201,168,76,0.25);color:#C9A84C;padding:8px;border-radius:8px;font-size:0.78rem;font-family:'DM Sans',sans-serif;cursor:pointer">
+        📖 Reler devocional completo
+      </button>
+    </div>`;
   }).join("");
 }
 
@@ -1462,4 +1489,44 @@ window.navTab = function(aba, el) {
   if (aba === 'historico') carregarHistorico();
   if (aba === 'planos') carregarPlanos();
 };
+</script>
+<script>
+function relerDevocional(id) {
+  const d = window._histDevocionais?.[id];
+  if (!d || !d.conteudo) { mostrarToast('Conteúdo não disponível'); return; }
+
+  // Muda para aba devocional
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[onclick*="devocional"]').classList.add('active');
+  document.getElementById('abaDevocional').style.display = 'block';
+  document.getElementById('abaHistorico').style.display = 'none';
+  document.getElementById('abaPlanos').style.display = 'none';
+
+  tela('devocional');
+  textoCompleto = d.conteudo;
+
+  // Banner
+  if (d.estado) {
+    document.getElementById('estadoBanner').style.display = 'flex';
+    document.getElementById('estadoBannerIcon').textContent = '📖';
+    document.getElementById('estadoBannerLabel').textContent = `Releitura · ${d.estado}`;
+  } else {
+    document.getElementById('estadoBanner').style.display = 'none';
+  }
+
+  const dt = new Date(d.created_at).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('devoData').textContent = dt + ' · Releitura';
+  document.getElementById('devoTitulo').textContent = d.titulo || 'Devocional';
+  document.getElementById('devoStreaming').style.display = 'none';
+
+  renderDevo(d.conteudo);
+
+  // Ações
+  document.getElementById('acoesWrap').innerHTML = `
+    <button class="btn-principal" onclick="reiniciar()">✦ Voltar ao início</button>
+    <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>`;
+  document.getElementById('acoesWrap').style.display = 'flex';
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 </script>
