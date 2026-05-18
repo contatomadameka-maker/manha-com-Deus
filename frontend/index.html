@@ -791,7 +791,7 @@ const el=document.createElement('style');el.textContent=css;document.head.append
 
 
 function mostrarModalInstalacao(){
-  if(localStorage.getItem('installShown4'))return;
+  if(localStorage.getItem('installShown5'))return;
   if(window.matchMedia('(display-mode: standalone)').matches)return;
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
   const isAndroid=/Android/.test(navigator.userAgent);
@@ -862,7 +862,7 @@ function mostrarModalInstalacao(){
   </div>`;
 
   document.body.insertAdjacentHTML("beforeend",html);
-  localStorage.setItem("installShown4","1");
+  localStorage.setItem("installShown5","1");
 
   window.trocarOsTab=function(el,os){
     document.querySelectorAll(".imodal-tab").forEach(t=>t.classList.remove("active"));
