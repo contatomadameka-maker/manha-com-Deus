@@ -206,3 +206,14 @@ async def install_imgs(filename: str):
     if p.exists():
         return FileResponse(str(p))
     return {"error": "not found"}
+
+
+from fastapi.responses import FileResponse as FR
+
+@app.get("/install-imgs/{filename}")
+async def install_imgs(filename: str):
+    p = FRONTEND_PATH / "install-imgs" / filename
+    if p.exists():
+        return FR(str(p))
+    from fastapi import HTTPException
+    raise HTTPException(404)
