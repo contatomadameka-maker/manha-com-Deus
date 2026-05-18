@@ -1008,23 +1008,29 @@ function usarPrompt(el) {
 
 async function salvarDiario() {
   const texto = document.getElementById('diarioTexto')?.value?.trim();
-  if (!texto) { alert('Escreva algo antes de salvar!'); return; }
-  if (!userAtual) return;
+  if (!texto) { mostrarToast('✏️ Escreva algo antes de salvar!'); return; }
+  if (!userAtual) { mostrarToast('⚠️ Faça login primeiro'); return; }
+
+  const btn = document.querySelector('#diarioOverlay button');
+  if (btn) { btn.textContent = '⏳ Salvando...'; btn.disabled = true; }
 
   const hoje = new Date().toISOString().split('T')[0];
-  const {error} = await sb.from('diario').upsert({
-    user_id: userAtual.id,
-    data: hoje,
-    texto,
-    titulo_devocional: document.getElementById('devoTitulo')?.textContent || '',
-    updated_at: new Date().toISOString()
-  }, {onConflict: 'user_id,data'});
+  try {
+    const {error} = await sb.from('diario').upsert({
+      user_id: userAtual.id,
+      data: hoje,
+      texto,
+      titulo_devocional: document.getElementById('devoTitulo')?.textContent || '',
+      updated_at: new Date().toISOString()
+    }, {onConflict: 'user_id,data'});
 
-  if (!error) {
+    if (error) throw error;
     document.getElementById('diarioOverlay')?.remove();
     mostrarToast('📔 Reflexão salva com sucesso!');
-  } else {
-    alert('Erro ao salvar. Tente novamente.');
+  } catch(e) {
+    console.error('Erro diario:', e);
+    mostrarToast('❌ Erro ao salvar: ' + (e.message || 'tente novamente'));
+    if (btn) { btn.textContent = '💾 Salvar reflexão'; btn.disabled = false; }
   }
 }
 
@@ -1146,40 +1152,57 @@ async function solicitarPermissaoNotificacao() {
 }
 
 async function salvarConfiguracoes() {
-  if (!userAtual) return;
+  if (!userAtual) { mostrarToast('⚠️ Faça login primeiro'); return; }
+
   const ativa = document.getElementById('notifAtiva')?.checked || false;
   const horario = document.getElementById('notifHorario')?.value || '07:00';
-  const mensagem = document.getElementById('notifMensagem')?.value || 'Bom dia! Sua Palavra de hoje está esperando. ☀️';
+  const mensagem = document.getElementById('notifMensagem')?.value?.trim() || 'Bom dia! Sua Palavra de hoje está esperando. ☀️';
   const marketing = document.getElementById('notifMarketing')?.checked !== false;
 
-  if (ativa) {
-    const ok = await solicitarPermissaoNotificacao();
-    if (!ok) return;
+  // Botão feedback
+  const btns = document.querySelectorAll('#configOverlay button');
+  const btnSalvar = Array.from(btns).find(b => b.textContent.includes('Salvar'));
+  if (btnSalvar) { btnSalvar.textContent = '⏳ Salvando...'; btnSalvar.disabled = true; }
+
+  try {
+    if (ativa) {
+      const ok = await solicitarPermissaoNotificacao();
+      if (!ok) {
+        if (btnSalvar) { btnSalvar.textContent = '✓ Salvar configurações'; btnSalvar.disabled = false; }
+        return;
+      }
+    }
+
+    // Salva no Supabase direto pelo cliente
+    const {error} = await sb.from('profiles').update({
+      notif_horario: horario,
+      notif_mensagem: mensagem,
+      notif_ativa: ativa,
+      notif_marketing: marketing
+    }).eq('id', userAtual.id);
+
+    if (error) throw error;
+
+    // Salva localmente
+    if (ativa) {
+      localStorage.setItem('notif_horario', horario);
+      localStorage.setItem('notif_mensagem', mensagem);
+      localStorage.setItem('notif_ativa', '1');
+      agendarNotificacaoLocal(horario, mensagem);
+    } else {
+      localStorage.removeItem('notif_ativa');
+      localStorage.removeItem('notif_horario');
+      localStorage.removeItem('notif_mensagem');
+    }
+
+    document.getElementById('configOverlay')?.remove();
+    mostrarToast('✓ Configurações salvas!');
+
+  } catch(e) {
+    console.error('Erro config:', e);
+    mostrarToast('❌ Erro ao salvar: ' + (e.message || 'tente novamente'));
+    if (btnSalvar) { btnSalvar.textContent = '✓ Salvar configurações'; btnSalvar.disabled = false; }
   }
-
-  await fetch('/salvar-notificacao', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      user_id: userAtual.id,
-      horario, mensagem,
-      ativa,
-      marketing
-    })
-  });
-
-  // Salva localmente para o service worker agendar
-  if (ativa) {
-    localStorage.setItem('notif_horario', horario);
-    localStorage.setItem('notif_mensagem', mensagem);
-    localStorage.setItem('notif_ativa', '1');
-    agendarNotificacaoLocal(horario, mensagem);
-  } else {
-    localStorage.removeItem('notif_ativa');
-  }
-
-  document.getElementById('configOverlay')?.remove();
-  mostrarToast('✓ Configurações salvas!');
 }
 
 function agendarNotificacaoLocal(horario, mensagem) {
