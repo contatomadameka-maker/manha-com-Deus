@@ -6,6 +6,7 @@
 <title>Manhã com Deus</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -23,7 +24,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .site-header{background:var(--deep);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem}
 .logo span{color:#fff;font-style:italic}
-.header-right{display:flex;align-items:center;gap:12px}
+.header-right{display:flex;align-items:center;gap:10px}
 .header-streak{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--gold-light)}
 .header-user{color:rgba(255,255,255,0.5);font-size:0.7rem;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn-logout{background:transparent;border:1px solid rgba(201,168,76,0.25);color:var(--gold);font-size:0.62rem;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
@@ -41,7 +42,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .form-label{font-size:0.75rem;font-weight:600;color:var(--ink);display:block;margin-bottom:6px}
 .form-input{width:100%;background:var(--cream);border:1.5px solid var(--borda);border-radius:10px;padding:12px 14px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;transition:border-color 0.2s}
 .form-input:focus{border-color:var(--gold)}
-.btn-auth{width:100%;background:linear-gradient(135deg,var(--gold),#A8873A);border:none;color:var(--deep);padding:14px;border-radius:10px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.25s;margin-top:4px}
+.btn-auth{width:100%;background:linear-gradient(135deg,var(--gold),#A8873A);border:none;color:var(--deep);padding:14px;border-radius:10px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px}
 .btn-auth:disabled{opacity:0.5;cursor:default}
 .auth-msg{text-align:center;font-size:0.8rem;margin-top:14px;padding:10px;border-radius:8px}
 .auth-msg.erro{background:#FFF0F0;color:#C0392B}
@@ -53,21 +54,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .hero h1{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--gold);margin-bottom:6px;position:relative}
 .hero p{color:rgba(255,255,255,0.55);font-size:0.88rem;position:relative}
 
-/* STREAK BANNER */
-.streak-banner{background:linear-gradient(90deg,#8B4513,#A0522D);padding:12px 28px;display:flex;align-items:center;justify-content:center;gap:16px}
+.streak-banner{background:linear-gradient(90deg,#6B3410,#8B4513);padding:12px 28px;display:flex;align-items:center;justify-content:center;gap:24px}
 .streak-item{display:flex;align-items:center;gap:8px;color:#fff}
 .streak-num{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold-light);font-weight:700}
-.streak-txt{font-size:0.72rem;color:rgba(255,255,255,0.75);line-height:1.3}
-.streak-div{width:1px;height:32px;background:rgba(255,255,255,0.2)}
+.streak-txt{font-size:0.7rem;color:rgba(255,255,255,0.7);line-height:1.3}
+.streak-div{width:1px;height:32px;background:rgba(255,255,255,0.15)}
 
-.verse-hero{margin:20px 28px -24px;background:linear-gradient(135deg,#C9A84C,#8B6914);border-radius:16px;padding:18px 22px;position:relative;overflow:hidden;z-index:2;box-shadow:0 8px 32px rgba(26,18,8,0.3)}
-.verse-hero::before{content:'"';position:absolute;top:-16px;left:8px;font-family:'Playfair Display',serif;font-size:6rem;color:rgba(255,255,255,0.1);line-height:1}
-.verse-hero-text{font-family:'Playfair Display',serif;font-size:0.9rem;color:#fff;line-height:1.6;font-style:italic;position:relative}
-.verse-hero-ref{font-size:0.7rem;color:rgba(255,255,255,0.7);margin-top:6px;display:block;position:relative}
+/* VERSÍCULO DO DIA CARD */
+.versiculo-section{padding:0 20px;margin-top:-20px;position:relative;z-index:2;max-width:680px;margin-left:auto;margin-right:auto}
+.versiculo-card{background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:20px;padding:28px 28px 20px;box-shadow:0 12px 40px rgba(26,18,8,0.4);border:1px solid rgba(201,168,76,0.2);position:relative;overflow:hidden}
+.versiculo-card::before{content:'"';position:absolute;top:-20px;left:12px;font-family:'Playfair Display',serif;font-size:8rem;color:rgba(201,168,76,0.08);line-height:1;pointer-events:none}
+.versiculo-card-tag{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.versiculo-card-tag::after{content:'';flex:1;height:1px;background:rgba(201,168,76,0.2)}
+.versiculo-card-texto{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--cream);line-height:1.7;font-style:italic;margin-bottom:14px;position:relative}
+.versiculo-card-ref{font-size:0.75rem;color:var(--gold);font-weight:600;letter-spacing:0.5px}
+.versiculo-card-acoes{display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(201,168,76,0.1)}
+.btn-versiculo{flex:1;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:var(--gold-light);padding:9px 12px;border-radius:8px;font-size:0.72rem;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-versiculo:hover{background:rgba(201,168,76,0.2);border-color:var(--gold)}
 
-.container{max-width:680px;margin:0 auto;padding:44px 20px 80px}
+/* CARD PARA COMPARTILHAR (oculto, usado para captura) */
+.share-card-wrap{position:fixed;top:-9999px;left:-9999px;z-index:-1}
+.share-card{width:400px;height:400px;background:linear-gradient(135deg,#1A1208 0%,#2C1F0E 50%,#1A3020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;text-align:center;position:relative;overflow:hidden;font-family:'Playfair Display',serif}
+.share-card::before{content:'"';position:absolute;top:-30px;left:10px;font-size:12rem;color:rgba(201,168,76,0.06);line-height:1}
+.share-card-logo{font-size:0.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;font-family:'DM Sans',sans-serif}
+.share-card-texto{font-size:1.05rem;color:#FAF6EE;line-height:1.65;font-style:italic;margin-bottom:20px;position:relative}
+.share-card-ref{font-size:0.78rem;color:var(--gold);font-weight:600;letter-spacing:1px;margin-bottom:24px}
+.share-card-linha{width:40px;height:2px;background:var(--gold);margin:0 auto 20px;opacity:0.5}
+.share-card-tag{font-size:0.6rem;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase}
 
-/* TABS NAVEGAÇÃO */
+.container{max-width:680px;margin:0 auto;padding:32px 20px 80px}
+
 .nav-tabs{display:flex;background:var(--white);border:1px solid var(--borda);border-radius:12px;padding:4px;margin-bottom:28px;gap:4px}
 .nav-tab{flex:1;text-align:center;padding:10px 8px;border-radius:9px;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all 0.2s;white-space:nowrap}
 .nav-tab.active{background:var(--deep);color:var(--gold)}
@@ -106,7 +122,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .spinner{width:44px;height:44px;border:3px solid var(--borda);border-top-color:var(--gold);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 20px}
 .loading-txt{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--muted);font-style:italic}
 
-/* PAYWALL */
 .paywall-wrap{background:var(--white);border:1px solid var(--borda);border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(26,18,8,0.07);animation:slideUp 0.5s ease;text-align:center}
 .paywall-header{background:linear-gradient(135deg,var(--deep),var(--warm));padding:32px 24px}
 .paywall-header h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);margin-bottom:8px}
@@ -120,7 +135,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .paywall-lista li::before{content:'✦';color:var(--gold);font-size:0.7rem;flex-shrink:0}
 .paywall-nota{color:var(--muted);font-size:0.72rem;margin-top:12px}
 
-/* DEVOCIONAL */
 .devo-wrap{background:var(--white);border:1px solid var(--borda);border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(26,18,8,0.07);animation:slideUp 0.5s ease}
 .devo-header{background:linear-gradient(135deg,var(--deep),var(--warm));padding:20px 24px;text-align:center}
 .devo-label{font-size:0.6rem;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
@@ -151,14 +165,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .estado-banner{background:linear-gradient(90deg,var(--sage),#3D6B40);padding:10px 24px;display:flex;align-items:center;gap:10px}
 .estado-banner p{color:#fff;font-size:0.78rem}
 
-/* STREAK CELEBRAÇÃO */
-.streak-celebracao{background:linear-gradient(135deg,#8B4513,#C9A84C);border-radius:12px;padding:16px 20px;margin-bottom:16px;text-align:center;animation:slideUp 0.4s ease}
+.streak-celebracao{background:linear-gradient(135deg,#6B3410,#C9A84C);border-radius:12px;padding:16px 20px;margin-bottom:16px;text-align:center;animation:slideUp 0.4s ease}
 .streak-celebracao h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:4px}
 .streak-celebracao p{color:rgba(255,255,255,0.85);font-size:0.82rem}
 
-/* HISTÓRICO */
 .historico-lista{display:flex;flex-direction:column;gap:12px}
-.hist-card{background:var(--white);border:1px solid var(--borda);border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s}
+.hist-card{background:var(--white);border:1px solid var(--borda);border-radius:12px;padding:16px;transition:all 0.2s}
 .hist-card:hover{border-color:var(--gold);transform:translateY(-1px)}
 .hist-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .hist-data{font-size:0.7rem;color:var(--muted);font-weight:600}
@@ -169,7 +181,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .hist-preview{font-size:0.78rem;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .hist-empty{text-align:center;padding:40px 20px;color:var(--muted)}
 .hist-empty-icon{font-size:2.5rem;margin-bottom:12px}
-.hist-empty p{font-size:0.88rem;line-height:1.6}
 
 .acoes-wrap{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
 .acoes-wrap .btn-principal{flex:1;min-width:180px}
@@ -186,12 +197,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   .devo-body{padding:16px}
   .acoes-wrap{flex-direction:column}
   .auth-card{padding:24px 18px}
-  .streak-banner{flex-direction:column;gap:8px}
-  .streak-div{display:none}
+  .streak-banner{gap:12px}
+  .versiculo-section{padding:0 14px}
 }
 </style>
 </head>
 <body>
+
+<!-- SHARE CARD (oculto, para captura) -->
+<div class="share-card-wrap">
+  <div class="share-card" id="shareCard">
+    <div class="share-card-logo">✦ Manhã com Deus</div>
+    <div class="share-card-texto" id="shareCardTexto"></div>
+    <div class="share-card-linha"></div>
+    <div class="share-card-ref" id="shareCardRef"></div>
+    <div class="share-card-tag">manhacomdeus.com.br</div>
+  </div>
+</div>
 
 <!-- AUTH -->
 <div id="authScreen" class="auth-wrap">
@@ -222,9 +244,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   <header class="site-header">
     <div class="logo">Manhã <span>com Deus</span></div>
     <div class="header-right">
-      <div class="header-streak" id="headerStreak" style="display:none">
-        🔥 <span id="headerStreakNum">0</span> dias
-      </div>
+      <div class="header-streak" id="headerStreak" style="display:none">🔥 <span id="headerStreakNum">0</span> dias</div>
       <span class="header-user" id="headerEmail"></span>
       <button class="btn-logout" onclick="logout()">Sair</button>
     </div>
@@ -238,37 +258,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
   <div class="streak-banner" id="streakBanner" style="display:none">
     <div class="streak-item">
-      <span style="font-size:1.5rem">🔥</span>
-      <div>
-        <div class="streak-num" id="streakAtual">0</div>
-        <div class="streak-txt">dias seguidos</div>
-      </div>
+      <span style="font-size:1.4rem">🔥</span>
+      <div><div class="streak-num" id="streakAtual">0</div><div class="streak-txt">dias seguidos</div></div>
     </div>
     <div class="streak-div"></div>
     <div class="streak-item">
-      <span style="font-size:1.5rem">🏆</span>
-      <div>
-        <div class="streak-num" id="streakMax">0</div>
-        <div class="streak-txt">recorde pessoal</div>
-      </div>
+      <span style="font-size:1.4rem">🏆</span>
+      <div><div class="streak-num" id="streakMax">0</div><div class="streak-txt">recorde pessoal</div></div>
     </div>
     <div class="streak-div"></div>
     <div class="streak-item">
-      <span style="font-size:1.5rem">📖</span>
-      <div>
-        <div class="streak-num" id="totalLidos">0</div>
-        <div class="streak-txt">devocionais lidos</div>
-      </div>
+      <span style="font-size:1.4rem">📖</span>
+      <div><div class="streak-num" id="totalLidos">0</div><div class="streak-txt">devocionais lidos</div></div>
     </div>
   </div>
 
-  <div class="verse-hero">
-    <p class="verse-hero-text">"Porque sou eu que conheço os planos que tenho para vocês, planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro."</p>
-    <span class="verse-hero-ref">— Jeremias 29:11</span>
+  <!-- VERSÍCULO DO DIA -->
+  <div class="versiculo-section" style="margin-top:24px">
+    <div class="versiculo-card" id="versiculoCard">
+      <div class="versiculo-card-tag">✦ Versículo do Dia</div>
+      <div class="versiculo-card-texto" id="versiculoTexto">Carregando...</div>
+      <div class="versiculo-card-ref" id="versiculoRef"></div>
+      <div class="versiculo-card-acoes">
+        <button class="btn-versiculo" onclick="copiarVersiculo()">📋 Copiar</button>
+        <button class="btn-versiculo" onclick="compartilharVersiculo()">📤 Compartilhar</button>
+        <button class="btn-versiculo" onclick="salvarImagemVersiculo()">🖼️ Salvar como imagem</button>
+      </div>
+    </div>
   </div>
 
   <div class="container">
-    <!-- NAVEGAÇÃO -->
     <div class="nav-tabs" style="margin-top:8px">
       <div class="nav-tab active" onclick="navTab('devocional',this)">✦ Devocional</div>
       <div class="nav-tab" onclick="navTab('historico',this)">📚 Histórico</div>
@@ -301,9 +320,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
             <div class="estados-grid" id="estadosGrid"></div>
           </div>
         </div>
-        <button class="btn-principal" id="btnGerar" onclick="gerarOuPaywall()" style="display:none">
-          ✦ Abrir o Devocional de Hoje
-        </button>
+        <button class="btn-principal" id="btnGerar" onclick="gerarOuPaywall()" style="display:none">✦ Abrir o Devocional de Hoje</button>
       </div>
 
       <div id="telaPaywall" style="display:none">
@@ -359,8 +376,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
           </div>
         </div>
         <div id="streakCelebracao" style="display:none" class="streak-celebracao">
-          <h3 id="streakCelebTitulo">🔥 Incrível!</h3>
-          <p id="streakCelebMsg">Continue assim!</p>
+          <h3 id="streakCelebTitulo">🔥</h3>
+          <p id="streakCelebMsg"></p>
         </div>
         <div class="acoes-wrap" id="acoesWrap" style="display:none">
           <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
@@ -390,39 +407,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 const SUPABASE_URL="https://ttcdhthjtdnudczakuhu.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0Y2RodGhqdGRudWRjemFrdWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTkxODIsImV4cCI6MjA5NDYzNTE4Mn0.fDVyCS3uj2qIJHDJOqMvRSLhkW_aGC5lXzQnLNdH6AI";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
 const ESTADOS=[
-  {id:"ansioso",label:"Ansioso",icon:"😰"},
-  {id:"triste",label:"Triste / Deprimido",icon:"😔"},
-  {id:"raiva",label:"Com Raiva",icon:"😤"},
-  {id:"medo",label:"Com Medo",icon:"😨"},
-  {id:"feliz",label:"Feliz / Celebrando",icon:"😊"},
-  {id:"grato",label:"Grato",icon:"🙏"},
-  {id:"perdido",label:"Perdido / Sem Direção",icon:"🧭"},
-  {id:"cansado",label:"Cansado",icon:"😴"},
-  {id:"duvida",label:"Com Dúvida na Fé",icon:"🤔"},
-  {id:"luto",label:"Em Luto",icon:"💔"},
-  {id:"espera",label:"Em Espera",icon:"⏳"},
-  {id:"so",label:"Sentindo-me Só",icon:"🌙"},
+  {id:"ansioso",label:"Ansioso",icon:"😰"},{id:"triste",label:"Triste / Deprimido",icon:"😔"},
+  {id:"raiva",label:"Com Raiva",icon:"😤"},{id:"medo",label:"Com Medo",icon:"😨"},
+  {id:"feliz",label:"Feliz / Celebrando",icon:"😊"},{id:"grato",label:"Grato",icon:"🙏"},
+  {id:"perdido",label:"Perdido / Sem Direção",icon:"🧭"},{id:"cansado",label:"Cansado",icon:"😴"},
+  {id:"duvida",label:"Com Dúvida na Fé",icon:"🤔"},{id:"luto",label:"Em Luto",icon:"💔"},
+  {id:"espera",label:"Em Espera",icon:"⏳"},{id:"so",label:"Sentindo-me Só",icon:"🌙"},
 ];
-
 let modo=null,estado=null,textoCompleto="",planoUser="gratis",tabAtual="login";
 let userAtual=null,streakData={streak_atual:0,streak_maximo:0};
+let versiculoAtual={texto:"",ref:""};
 
-// ── INIT ──────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded",async()=>{
   const ag=new Date();
   const dia=Math.floor((ag-new Date(ag.getFullYear(),0,0))/86400000);
   document.getElementById("heroData").textContent=ag.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})+" · Dia "+dia+" do ano";
-
   const grid=document.getElementById("estadosGrid");
   ESTADOS.forEach(e=>{
-    const c=document.createElement("div");
-    c.className="estado-chip";c.id="ec-"+e.id;
+    const c=document.createElement("div");c.className="estado-chip";c.id="ec-"+e.id;
     c.innerHTML=`<span class="estado-icon">${e.icon}</span><span class="estado-label">${e.label}</span>`;
     c.onclick=()=>selEstado(e);grid.appendChild(c);
   });
-
   const{data:{session}}=await sb.auth.getSession();
   if(session)await iniciarApp(session.user);
   sb.auth.onAuthStateChange(async(_,session)=>{
@@ -439,6 +445,7 @@ async function iniciarApp(user){
   const{data}=await sb.from("profiles").select("plano").eq("id",user.id).single();
   planoUser=data?.plano||"gratis";
   await carregarStreak();
+  await carregarVersiculo();
 }
 
 function mostrarAuth(){
@@ -447,66 +454,84 @@ function mostrarAuth(){
   userAtual=null;
 }
 
-// ── STREAK ────────────────────────────────────────────
+async function carregarVersiculo(){
+  try{
+    const r=await fetch("/versiculo-do-dia");
+    const d=await r.json();
+    versiculoAtual={texto:d.texto,ref:d.ref};
+    document.getElementById("versiculoTexto").textContent=`"${d.texto}"`;
+    document.getElementById("versiculoRef").textContent=`— ${d.ref}`;
+    // Atualiza share card
+    document.getElementById("shareCardTexto").textContent=`"${d.texto}"`;
+    document.getElementById("shareCardRef").textContent=`— ${d.ref}`;
+  }catch{
+    document.getElementById("versiculoTexto").textContent='"O Senhor é o meu pastor e nada me faltará."';
+    document.getElementById("versiculoRef").textContent="— Salmos 23:1";
+  }
+}
+
+function copiarVersiculo(){
+  const txt=`"${versiculoAtual.texto}" — ${versiculoAtual.ref}\n\nManhã com Deus`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=event.target;const orig=btn.textContent;
+    btn.textContent="✓ Copiado!";setTimeout(()=>btn.textContent=orig,2000);
+  });
+}
+
+function compartilharVersiculo(){
+  const txt=`✦ Versículo do Dia\n\n"${versiculoAtual.texto}"\n— ${versiculoAtual.ref}\n\nManhã com Deus · manhacomdeus.com.br`;
+  if(navigator.share)navigator.share({title:"Versículo do Dia — Manhã com Deus",text:txt});
+  else{navigator.clipboard.writeText(txt).then(()=>alert("Copiado para compartilhar!"));}
+}
+
+async function salvarImagemVersiculo(){
+  const btn=event.target;btn.textContent="⏳ Gerando...";
+  try{
+    const card=document.getElementById("shareCard");
+    card.style.position="fixed";card.style.top="0";card.style.left="0";card.style.zIndex="9999";
+    const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:null});
+    card.style.position="";card.style.top="";card.style.left="";card.style.zIndex="";
+    const link=document.createElement("a");
+    link.download=`versiculo-do-dia-${new Date().toISOString().split("T")[0]}.png`;
+    link.href=canvas.toDataURL("image/png");link.click();
+    btn.textContent="✓ Salvo!";setTimeout(()=>btn.textContent="🖼️ Salvar como imagem",2000);
+  }catch{
+    btn.textContent="🖼️ Salvar como imagem";
+    compartilharVersiculo();
+  }
+}
+
 async function carregarStreak(){
   if(!userAtual)return;
   const{data}=await sb.from("streaks").select("*").eq("user_id",userAtual.id).single();
-  if(data){
-    streakData=data;
-    atualizarUIStreak();
-  }
-  // total lidos
+  if(data){streakData=data;atualizarUIStreak();}
   const{count}=await sb.from("devocionais").select("*",{count:"exact",head:true}).eq("user_id",userAtual.id);
   document.getElementById("totalLidos").textContent=count||0;
 }
 
 function atualizarUIStreak(){
-  const s=streakData.streak_atual||0;
-  const m=streakData.streak_maximo||0;
+  const s=streakData.streak_atual||0,m=streakData.streak_maximo||0;
   document.getElementById("streakAtual").textContent=s;
   document.getElementById("streakMax").textContent=m;
   document.getElementById("headerStreakNum").textContent=s;
-  if(s>0){
-    document.getElementById("streakBanner").style.display="flex";
-    document.getElementById("headerStreak").style.display="flex";
-  }
+  if(s>0){document.getElementById("streakBanner").style.display="flex";document.getElementById("headerStreak").style.display="flex";}
 }
 
 async function atualizarStreak(){
-  if(!userAtual)return;
+  if(!userAtual)return{novo:false,streak:0};
   const hoje=new Date().toISOString().split("T")[0];
-  const{data:existing}=await sb.from("streaks").select("*").eq("user_id",userAtual.id).single();
-
-  let novoStreak=1;
-  let novoMax=1;
-
-  if(existing){
-    const ultima=existing.ultima_leitura;
+  const{data:ex}=await sb.from("streaks").select("*").eq("user_id",userAtual.id).single();
+  let novoStreak=1,novoMax=1;
+  if(ex){
     const ontem=new Date();ontem.setDate(ontem.getDate()-1);
     const ontemStr=ontem.toISOString().split("T")[0];
-
-    if(ultima===hoje){
-      // já leu hoje, não muda
-      return{novo:false,streak:existing.streak_atual};
-    }else if(ultima===ontemStr){
-      // sequência mantida
-      novoStreak=existing.streak_atual+1;
-    }else{
-      // quebrou
-      novoStreak=1;
-    }
-    novoMax=Math.max(novoStreak,existing.streak_maximo||0);
-
-    await sb.from("streaks").update({
-      streak_atual:novoStreak,streak_maximo:novoMax,
-      ultima_leitura:hoje,updated_at:new Date().toISOString()
-    }).eq("user_id",userAtual.id);
+    if(ex.ultima_leitura===hoje)return{novo:false,streak:ex.streak_atual};
+    if(ex.ultima_leitura===ontemStr)novoStreak=ex.streak_atual+1;
+    novoMax=Math.max(novoStreak,ex.streak_maximo||0);
+    await sb.from("streaks").update({streak_atual:novoStreak,streak_maximo:novoMax,ultima_leitura:hoje,updated_at:new Date().toISOString()}).eq("user_id",userAtual.id);
   }else{
-    await sb.from("streaks").insert({
-      user_id:userAtual.id,streak_atual:1,streak_maximo:1,ultima_leitura:hoje
-    });
+    await sb.from("streaks").insert({user_id:userAtual.id,streak_atual:1,streak_maximo:1,ultima_leitura:hoje});
   }
-
   streakData={streak_atual:novoStreak,streak_maximo:novoMax};
   atualizarUIStreak();
   return{novo:true,streak:novoStreak};
@@ -514,44 +539,26 @@ async function atualizarStreak(){
 
 async function salvarDevocional(titulo,conteudo){
   if(!userAtual)return;
-  await sb.from("devocionais").insert({
-    user_id:userAtual.id,
-    modo:modo,
-    estado:estado?.label||null,
-    titulo:titulo,
-    conteudo:conteudo,
-    data:new Date().toISOString().split("T")[0]
-  });
+  await sb.from("devocionais").insert({user_id:userAtual.id,modo,estado:estado?.label||null,titulo,conteudo,data:new Date().toISOString().split("T")[0]});
   const{count}=await sb.from("devocionais").select("*",{count:"exact",head:true}).eq("user_id",userAtual.id);
   document.getElementById("totalLidos").textContent=count||0;
 }
 
-// ── HISTÓRICO ─────────────────────────────────────────
 async function carregarHistorico(){
   const lista=document.getElementById("historicoLista");
   lista.innerHTML=`<div class="loading-wrap"><div class="spinner"></div></div>`;
   const{data}=await sb.from("devocionais").select("*").eq("user_id",userAtual.id).order("created_at",{ascending:false}).limit(30);
   if(!data||data.length===0){
-    lista.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon">📖</div><p>Você ainda não leu nenhum devocional.<br>Comece agora e construa sua jornada!</p></div>`;
-    return;
+    lista.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon">📖</div><p>Você ainda não leu nenhum devocional.<br>Comece agora e construa sua jornada!</p></div>`;return;
   }
   lista.innerHTML=data.map(d=>{
     const dt=new Date(d.created_at).toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"});
-    const preview=d.conteudo?d.conteudo.replace(/[━✦📖💭🙏💡📝🎵\n]/g," ").slice(0,100)+"...":"";
-    const badgeClass=d.modo===2?"m2":"m1";
-    const badgeLabel=d.modo===2?`💫 ${d.estado||"Personalizado"}`:"📖 Do Dia";
-    return `<div class="hist-card">
-      <div class="hist-card-top">
-        <span class="hist-data">${dt}</span>
-        <span class="hist-badge ${badgeClass}">${badgeLabel}</span>
-      </div>
-      <div class="hist-titulo">${d.titulo||"Devocional"}</div>
-      <div class="hist-preview">${preview}</div>
-    </div>`;
+    const preview=d.conteudo?d.conteudo.replace(/[━✦📖💭🙏💡📝🎵\n]/g," ").replace(/\s+/g," ").slice(0,100)+"...":"";
+    const bc=d.modo===2?"m2":"m1",bl=d.modo===2?`💫 ${d.estado||"Personalizado"}`:"📖 Do Dia";
+    return `<div class="hist-card"><div class="hist-card-top"><span class="hist-data">${dt}</span><span class="hist-badge ${bc}">${bl}</span></div><div class="hist-titulo">${d.titulo||"Devocional"}</div><div class="hist-preview">${preview}</div></div>`;
   }).join("");
 }
 
-// ── NAVEGAÇÃO ─────────────────────────────────────────
 function navTab(aba,el){
   document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
   el.classList.add("active");
@@ -560,7 +567,6 @@ function navTab(aba,el){
   if(aba==="historico")carregarHistorico();
 }
 
-// ── AUTH ──────────────────────────────────────────────
 function trocarTab(t){
   tabAtual=t;
   document.getElementById("tabLogin").classList.toggle("active",t==="login");
@@ -582,26 +588,18 @@ async function submitAuth(){
   if(result.error){
     const erros={"Invalid login credentials":"Email ou senha incorretos","User already registered":"Email já cadastrado","Password should be at least 6 characters":"Senha deve ter ao menos 6 caracteres"};
     showMsg(erros[result.error.message]||result.error.message,"erro");
-  }else if(tabAtual==="cadastro"&&!result.data.session){
-    showMsg("✓ Conta criada! Verifique seu email.","ok");
-  }
+  }else if(tabAtual==="cadastro"&&!result.data.session){showMsg("✓ Conta criada! Verifique seu email.","ok");}
 }
 
-function showMsg(txt,tipo){
-  const el=document.getElementById("authMsg");
-  el.textContent=txt;el.className="auth-msg "+tipo;el.style.display="block";
-}
-
+function showMsg(txt,tipo){const el=document.getElementById("authMsg");el.textContent=txt;el.className="auth-msg "+tipo;el.style.display="block";}
 async function logout(){await sb.auth.signOut();}
 
-// ── MODOS ─────────────────────────────────────────────
 function selecionarModo(m){
   modo=m;
   document.getElementById("cardM1").classList.toggle("sel",m===1);
   document.getElementById("cardM2").classList.toggle("sel",m===2);
   document.getElementById("estadosBox").style.display=m===2?"block":"none";
-  const btn=document.getElementById("btnGerar");
-  btn.style.display="block";
+  const btn=document.getElementById("btnGerar");btn.style.display="block";
   if(m===1){btn.textContent="✦ Abrir o Devocional de Hoje";btn.disabled=false;}
   else{btn.textContent="Selecione como está se sentindo";btn.disabled=true;}
 }
@@ -610,18 +608,13 @@ function selEstado(e){
   estado=e;
   document.querySelectorAll(".estado-chip").forEach(c=>c.classList.remove("sel"));
   document.getElementById("ec-"+e.id).classList.add("sel");
-  const btn=document.getElementById("btnGerar");
-  btn.textContent="✦ Gerar Meu Devocional";btn.disabled=false;
+  const btn=document.getElementById("btnGerar");btn.textContent="✦ Gerar Meu Devocional";btn.disabled=false;
 }
 
-function gerarOuPaywall(){
-  if(modo===2&&planoUser==="gratis"){tela("paywall");return;}
-  gerarDevocional();
-}
+function gerarOuPaywall(){if(modo===2&&planoUser==="gratis"){tela("paywall");return;}gerarDevocional();}
 function assinar(){alert("Em breve: integração com Stripe!\n\nEntre em contato para assinar o Plano Mensal.");}
 function voltarInicial(){tela("inicial");}
 
-// ── GERAR ─────────────────────────────────────────────
 async function gerarDevocional(){
   tela("loading");textoCompleto="";
   const body={modo};
@@ -633,17 +626,11 @@ async function gerarDevocional(){
     document.getElementById("devoStreaming").style.display="flex";
     document.getElementById("acoesWrap").style.display="none";
     document.getElementById("streakCelebracao").style.display="none";
-    if(modo===2&&estado){
-      document.getElementById("estadoBanner").style.display="flex";
-      document.getElementById("estadoBannerIcon").textContent=estado.icon;
-      document.getElementById("estadoBannerLabel").textContent=estado.label;
-    }else{
-      document.getElementById("estadoBanner").style.display="none";
-    }
+    if(modo===2&&estado){document.getElementById("estadoBanner").style.display="flex";document.getElementById("estadoBannerIcon").textContent=estado.icon;document.getElementById("estadoBannerLabel").textContent=estado.label;}
+    else document.getElementById("estadoBanner").style.display="none";
     const ag=new Date();
     const dia=Math.floor((ag-new Date(ag.getFullYear(),0,0))/86400000);
     document.getElementById("devoData").textContent=ag.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})+" · Dia "+dia;
-
     const reader=resp.body.getReader();const dec=new TextDecoder();let buf="";
     while(true){
       const{done,value}=await reader.read();if(done)break;
@@ -655,41 +642,31 @@ async function gerarDevocional(){
         try{const p=JSON.parse(d);if(p.text){textoCompleto+=p.text;renderDevo(textoCompleto);}}catch{}
       }
     }
-
     document.getElementById("devoStreaming").style.display="none";
     document.getElementById("acoesWrap").style.display="flex";
-
-    // Salvar e atualizar streak
-    const tituloEl=document.getElementById("devoTitulo");
-    await salvarDevocional(tituloEl.textContent,textoCompleto);
+    const titulo=document.getElementById("devoTitulo").textContent;
+    await salvarDevocional(titulo,textoCompleto);
     const{novo,streak}=await atualizarStreak();
     if(novo){
-      const cel=document.getElementById("streakCelebracao");
-      const msgs={1:"Que bom ter você aqui! Continue amanhã! 🌅",2:"2 dias seguidos! O hábito está nascendo! ✨",3:"3 dias! Você está construindo algo lindo! 🌱",7:"UMA SEMANA COMPLETA! Incrível! 🎉",14:"14 dias! Você é uma inspiração! 💪",30:"30 DIAS! Um mês de crescimento! 🏆"};
+      const msgs={1:"Que bom ter você aqui! Continue amanhã! 🌅",2:"2 dias! O hábito está nascendo! ✨",3:"3 dias! Você está construindo algo lindo! 🌱",7:"UMA SEMANA! Incrível! 🎉",14:"14 dias! Você é uma inspiração! 💪",30:"30 DIAS! Um mês de crescimento! 🏆"};
       document.getElementById("streakCelebTitulo").textContent=`🔥 ${streak} ${streak===1?"dia":"dias"} seguidos!`;
       document.getElementById("streakCelebMsg").textContent=msgs[streak]||`${streak} dias de caminhada com Deus! Continue! 🙏`;
-      cel.style.display="block";
+      document.getElementById("streakCelebracao").style.display="block";
     }
-  }catch{
-    tela("erro");document.getElementById("erroTxt").textContent="Não foi possível gerar o devocional. Tente novamente.";
-  }
+  }catch{tela("erro");document.getElementById("erroTxt").textContent="Não foi possível gerar o devocional. Tente novamente.";}
 }
 
-// ── RENDER ────────────────────────────────────────────
 function renderDevo(txt){
   const linhas=txt.split("\n");
-  let titulo="",versiculoTexto="",versiculoRef="",destaqueTexto="";
-  let oracaoTexto="",acaoTexto="",louvorTexto="";
+  let titulo="",versiculoTexto="",versiculoRef="",destaqueTexto="",oracaoTexto="",acaoTexto="",louvorTexto="";
   let reflexaoParas=[],secaoAtual="";
-
   for(const l of linhas){
     const t=l.trim();
     if(!t||t.startsWith("━━"))continue;
     if(t.startsWith("📅")||t.startsWith("✦ Gerado"))continue;
     if(t.startsWith("✦")&&!t.includes("Gerado")){
       const v=t.replace(/^✦\s*"?/,"").replace(/"$/,"");
-      if(!titulo)titulo=v;
-      else if(v.length<120)destaqueTexto=v;
+      if(!titulo)titulo=v;else if(v.length<120)destaqueTexto=v;
       continue;
     }
     if(t.startsWith("📖")){secaoAtual="versiculo";continue;}
@@ -699,15 +676,12 @@ function renderDevo(txt){
     if(t.startsWith("📝")){secaoAtual="anotacoes";continue;}
     if(t.startsWith("🎵")){secaoAtual="louvor";continue;}
     if(t.startsWith("___"))continue;
-    if(secaoAtual==="versiculo"){
-      if(t.startsWith('"'))versiculoTexto=t;
-      else if(t.startsWith("—"))versiculoRef=t.replace("—","").trim();
-    }else if(secaoAtual==="reflexao"&&t)reflexaoParas.push(t);
+    if(secaoAtual==="versiculo"){if(t.startsWith('"'))versiculoTexto=t;else if(t.startsWith("—"))versiculoRef=t.replace("—","").trim();}
+    else if(secaoAtual==="reflexao"&&t)reflexaoParas.push(t);
     else if(secaoAtual==="oracao"&&t)oracaoTexto+=(oracaoTexto?" ":"")+t;
     else if(secaoAtual==="acao"&&t)acaoTexto+=(acaoTexto?" ":"")+t;
     else if(secaoAtual==="louvor"&&t)louvorTexto+=(louvorTexto?" ":"")+t;
   }
-
   document.getElementById("devoTitulo").textContent=titulo||"Devocional de Hoje";
   let html="";
   if(versiculoTexto)html+=`<div class="devo-versiculo"><p>${versiculoTexto}</p>${versiculoRef?`<span>— ${versiculoRef}</span>`:""}</div>`;
