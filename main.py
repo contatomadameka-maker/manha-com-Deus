@@ -174,3 +174,26 @@ ___________
 
     return StreamingResponse(stream_generator(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+from fastapi.responses import FileResponse
+
+@app.get("/manifest.json")
+async def manifest():
+    return FileResponse(str(FRONTEND_PATH / "manifest.json"), media_type="application/manifest+json")
+
+@app.get("/sw.js")
+async def service_worker():
+    return FileResponse(str(FRONTEND_PATH / "sw.js"), media_type="application/javascript")
+
+@app.get("/icon-192.png")
+async def icon192():
+    p = FRONTEND_PATH / "icon-192.png"
+    if p.exists(): return FileResponse(str(p), media_type="image/png")
+    return FileResponse(str(FRONTEND_PATH / "icon.svg"), media_type="image/svg+xml")
+
+@app.get("/icon-512.png")  
+async def icon512():
+    p = FRONTEND_PATH / "icon-512.png"
+    if p.exists(): return FileResponse(str(p), media_type="image/png")
+    return FileResponse(str(FRONTEND_PATH / "icon.svg"), media_type="image/svg+xml")
