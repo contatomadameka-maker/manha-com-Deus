@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manhã com Deus</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --ouro: #C9A84C; --ouro-dark: #A8873A; --fundo: #1A1208; --fundo-card: #221A0A; --creme: #FAF6EE; --creme-escuro: #E8E0D0; --texto: #F5EDD8; --muted: #A09070; --borda: rgba(201,168,76,0.2); }
+body { font-family: 'Lato', sans-serif; background: var(--fundo); color: var(--texto); min-height: 100vh; overflow-x: hidden; }
+.estrelas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.estrela { position: absolute; border-radius: 50%; background: var(--ouro); animation: brilhar var(--dur) var(--delay) infinite ease-in-out; }
+@keyframes brilhar { 0%,100%{opacity:0} 50%{opacity:0.5} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulsar { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+@keyframes spinner { to{transform:rotate(360deg)} }
+.container { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 0 20px 80px; }
+.header { text-align: center; padding: 52px 0 36px; animation: fadeIn 1s ease forwards; }
+.icone-topo { font-size: 34px; margin-bottom: 14px; display: block; animation: pulsar 4s ease-in-out infinite; }
+.titulo-app { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: var(--creme); margin-bottom: 6px; }
+.subtitulo-app { color: var(--ouro); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 24px; }
+.linha-ouro { height: 1px; background: linear-gradient(90deg, transparent, var(--ouro), transparent); opacity: 0.4; margin: 20px 0; }
+.data-hoje { color: var(--muted); font-size: 14px; }
+.intro-texto { text-align: center; color: var(--creme-escuro); font-size: 16px; font-weight: 300; margin-bottom: 28px; animation: slideUp 0.8s 0.3s ease both; }
+.modos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; animation: slideUp 0.8s 0.4s ease both; }
+.modo-card { background: var(--fundo-card); border: 1px solid var(--borda); border-radius: 12px; padding: 24px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+.modo-card:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-2px); }
+.modo-card.selecionado { background: rgba(201,168,76,0.1); border-color: var(--ouro); transform: translateY(-2px); }
+.modo-icone { font-size: 30px; margin-bottom: 12px; display: block; }
+.modo-titulo { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--creme); margin-bottom: 8px; }
+.modo-desc { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.badge { position: absolute; top: 10px; right: 10px; background: var(--ouro); color: var(--fundo); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 20px; }
+.badge-gratis { display: inline-block; background: rgba(201,168,76,0.1); border: 1px solid var(--borda); color: var(--ouro); font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-top: 14px; }
+.estados-titulo { text-align: center; color: var(--creme-escuro); font-size: 15px; font-weight: 300; margin-bottom: 20px; }
+.estados-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; margin-bottom: 28px; animation: fadeIn 0.5s ease forwards; }
+.estado-chip { background: var(--fundo-card); border: 1px solid var(--borda); border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; gap: 10px; }
+.estado-chip:hover { border-color: rgba(201,168,76,0.4); }
+.estado-chip.selecionado { transform: scale(1.03); border-color: var(--cor-estado, var(--ouro)); background: rgba(201,168,76,0.07); }
+.estado-icon { font-size: 20px; }
+.estado-label { color: var(--muted); font-size: 13px; line-height: 1.3; transition: color 0.2s; }
+.estado-chip.selecionado .estado-label { color: var(--creme); }
+.btn-wrap { display: flex; justify-content: center; animation: fadeIn 0.4s ease forwards; }
+.btn-ouro { background: linear-gradient(135deg, var(--ouro), var(--ouro-dark)); border: 1px solid var(--ouro); color: var(--fundo); padding: 15px 36px; border-radius: 8px; font-size: 14px; font-weight: 700; font-family: 'Lato', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; min-width: 280px; justify-content: center; }
+.btn-ouro:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-ouro:disabled { background: transparent; color: var(--ouro); cursor: default; }
+.btn-secundario { background: transparent; border: 1px solid var(--borda); color: var(--muted); padding: 15px 28px; border-radius: 8px; font-size: 13px; font-family: 'Lato', sans-serif; cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; }
+.btn-secundario:hover { border-color: rgba(201,168,76,0.4); color: var(--creme); }
+.loading-wrap { text-align: center; padding: 60px 20px; animation: fadeIn 0.5s ease forwards; }
+.spinner { width: 48px; height: 48px; border: 2px solid var(--borda); border-top-color: var(--ouro); border-radius: 50%; animation: spinner 1s linear infinite; margin: 0 auto 24px; }
+.loading-texto { color: var(--muted); font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; }
+.devocional-wrap { background: var(--fundo-card); border: 1px solid var(--borda); border-radius: 16px; padding: 36px 32px; margin-top: 8px; animation: slideUp 0.6s ease forwards; }
+.dev-separador { height: 1px; background: linear-gradient(90deg,transparent,var(--ouro),transparent); opacity: 0.3; margin: 20px 0; }
+.dev-data { color: var(--muted); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+.dev-titulo { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; color: var(--ouro); margin: 6px 0 20px; line-height: 1.3; }
+.dev-secao { color: var(--ouro); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin: 24px 0 8px; }
+.dev-versiculo { color: var(--creme); font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; line-height: 1.7; }
+.dev-ref { color: var(--muted); font-size: 14px; text-align: right; margin: 4px 0 16px; }
+.dev-paragrafo { color: var(--texto); font-size: 16px; line-height: 1.9; margin-bottom: 16px; font-weight: 300; }
+.dev-destaque { border-left: 3px solid var(--ouro); padding: 14px 22px; margin: 24px 0; background: rgba(201,168,76,0.06); border-radius: 0 8px 8px 0; }
+.dev-destaque p { color: var(--ouro); font-family: 'Cormorant Garamond', serif; font-size: 21px; font-style: italic; line-height: 1.5; }
+.dev-linha { border: none; border-bottom: 1px solid var(--borda); margin: 8px 0; opacity: 0.5; }
+.acoes-wrap { display: flex; gap: 12px; margin-top: 24px; justify-content: center; flex-wrap: wrap; animation: fadeIn 0.6s 0.3s ease both; }
+.erro-wrap { background: rgba(180,50,50,0.1); border: 1px solid rgba(180,50,50,0.4); border-radius: 10px; padding: 20px; text-align: center; margin: 20px 0; }
+.erro-texto { color: #FF8080; font-size: 14px; }
+.footer { text-align: center; margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--borda); }
+.footer p { color: var(--muted); font-size: 12px; letter-spacing: 0.1em; }
+.footer small { color: rgba(160,144,112,0.4); font-size: 11px; display: block; margin-top: 4px; }
+.streaming-dot { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--muted); font-size: 13px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ouro); animation: pulsar 1s ease-in-out infinite; }
+@media (max-width: 500px) { .modos-grid { grid-template-columns: 1fr; } .titulo-app { font-size: 32px; } .devocional-wrap { padding: 24px 18px; } }
+</style>
+</head>
+<body>
+<div class="estrelas" id="estrelas"></div>
+<div class="container">
+  <div class="header">
+    <span class="icone-topo">✦</span>
+    <h1 class="titulo-app">Manhã com Deus</h1>
+    <p class="subtitulo-app">Devocional com Inteligência Artificial</p>
+    <div class="linha-ouro"></div>
+    <p class="data-hoje" id="dataHoje"></p>
+  </div>
+  <div id="telaInicial">
+    <p class="intro-texto">Como você gostaria de começar hoje?</p>
+    <div class="modos-grid">
+      <div class="modo-card" id="cardModo1" onclick="selecionarModo(1)">
+        <span class="modo-icone">📖</span>
+        <h3 class="modo-titulo">Devocional do Dia</h3>
+        <p class="modo-desc">Reflexão preparada para hoje. Igual para todos — como um livro devocional.</p>
+        <span class="badge-gratis">GRATUITO</span>
+      </div>
+      <div class="modo-card" id="cardModo2" onclick="selecionarModo(2)">
+        <div class="badge">MENSAL</div>
+        <span class="modo-icone">💫</span>
+        <h3 class="modo-titulo">Como estou hoje?</h3>
+        <p class="modo-desc">Devocional personalizado para seu estado emocional agora. Único no mundo.</p>
+      </div>
+    </div>
+    <div id="estadosWrap" style="display:none;">
+      <p class="estados-titulo">Como você está se sentindo agora?</p>
+      <div class="estados-grid" id="estadosGrid"></div>
+    </div>
+    <div class="btn-wrap" id="btnWrap" style="display:none;">
+      <button class="btn-ouro" id="btnGerar" onclick="gerarDevocional()">✦ Abrir o Devocional de Hoje</button>
+    </div>
+  </div>
+  <div id="telaLoading" style="display:none;">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <p class="loading-texto">Preparando sua Palavra para hoje...</p>
+    </div>
+  </div>
+  <div id="telaErro" style="display:none;">
+    <div class="erro-wrap"><p class="erro-texto" id="erroTexto"></p></div>
+    <div class="btn-wrap" style="margin-top:20px;"><button class="btn-ouro" onclick="reiniciar()">Tentar Novamente</button></div>
+  </div>
+  <div id="telaDevocional" style="display:none;">
+    <div class="devocional-wrap">
+      <div class="devocional-conteudo" id="devocionalConteudo"></div>
+      <div id="streamingDot" class="streaming-dot" style="display:none;"><div class="dot"></div><span>Gerando...</span></div>
+    </div>
+    <div class="acoes-wrap" id="acoesWrap" style="display:none;">
+      <button class="btn-ouro" onclick="reiniciar()">✦ Novo Devocional</button>
+      <button class="btn-secundario" onclick="compartilhar()">Compartilhar 🕊️</button>
+    </div>
+  </div>
+  <div class="footer">
+    <p>✦ MANHÃ COM DEUS · MVP v1.0 · Alimentado por Claude IA</p>
+    <small>Plano Mensal R$9,90 · Modo 2 · Áudio · Quiz · Meditação Noturna</small>
+  </div>
+</div>
+<script>
+const ESTADOS = [
+  { id:"ansioso", label:"Ansioso", icon:"😰", cor:"#7B8FCC" },
+  { id:"triste", label:"Triste / Deprimido", icon:"😔", cor:"#7B9FCC" },
+  { id:"raiva", label:"Com Raiva", icon:"😤", cor:"#CC7B7B" },
+  { id:"medo", label:"Com Medo", icon:"😨", cor:"#9B7BCC" },
+  { id:"feliz", label:"Feliz / Celebrando", icon:"😊", cor:"#7BCC8F" },
+  { id:"grato", label:"Grato", icon:"🙏", cor:"#C9A84C" },
+  { id:"perdido", label:"Perdido / Sem Direção", icon:"🧭", cor:"#CC9B7B" },
+  { id:"cansado", label:"Cansado", icon:"😴", cor:"#8F9BAA" },
+  { id:"duvida", label:"Com Dúvida na Fé", icon:"🤔", cor:"#AA8FCC" },
+  { id:"luto", label:"Em Luto", icon:"💔", cor:"#8F7B8A" },
+  { id:"espera", label:"Em Espera", icon:"⏳", cor:"#A09070" },
+  { id:"so", label:"Sentindo-me Só", icon:"🌙", cor:"#7B9FAA" },
+];
+let modoAtual = null, estadoAtual = null, textoDevocional = "";
+document.addEventListener("DOMContentLoaded", () => { gerarEstrelas(); definirData(); renderizarEstados(); });
+function gerarEstrelas() {
+  const wrap = document.getElementById("estrelas");
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement("div"); s.className = "estrela";
+    const size = Math.random() * 2 + 0.5;
+    s.style.cssText = `top:${Math.random()*100}%;left:${Math.random()*100}%;width:${size}px;height:${size}px;--dur:${(Math.random()*3+2).toFixed(1)}s;--delay:${(Math.random()*4).toFixed(1)}s;`;
+    wrap.appendChild(s);
+  }
+}
+function definirData() {
+  const agora = new Date();
+  const diaAno = Math.floor((agora - new Date(agora.getFullYear(), 0, 0)) / 86400000);
+  document.getElementById("dataHoje").textContent = `${agora.toLocaleDateString("pt-BR", {weekday:"long",year:"numeric",month:"long",day:"numeric"})} · Dia ${diaAno} do ano`;
+}
+function renderizarEstados() {
+  const grid = document.getElementById("estadosGrid");
+  ESTADOS.forEach(e => {
+    const chip = document.createElement("div"); chip.className = "estado-chip"; chip.id = `estado-${e.id}`;
+    chip.style.setProperty("--cor-estado", e.cor);
+    chip.innerHTML = `<span class="estado-icon">${e.icon}</span><span class="estado-label">${e.label}</span>`;
+    chip.onclick = () => selecionarEstado(e); grid.appendChild(chip);
+  });
+}
+function selecionarModo(modo) {
+  modoAtual = modo;
+  document.getElementById("cardModo1").classList.toggle("selecionado", modo === 1);
+  document.getElementById("cardModo2").classList.toggle("selecionado", modo === 2);
+  const btn = document.getElementById("btnGerar");
+  if (modo === 1) { document.getElementById("estadosWrap").style.display = "none"; btn.textContent = "✦ Abrir o Devocional de Hoje"; btn.disabled = false; }
+  else { document.getElementById("estadosWrap").style.display = "block"; btn.textContent = estadoAtual ? "✦ Gerar Meu Devocional" : "Selecione como está se sentindo"; btn.disabled = !estadoAtual; }
+  document.getElementById("btnWrap").style.display = "flex";
+}
+function selecionarEstado(estado) {
+  estadoAtual = estado;
+  document.querySelectorAll(".estado-chip").forEach(c => c.classList.remove("selecionado"));
+  document.getElementById(`estado-${estado.id}`).classList.add("selecionado");
+  const btn = document.getElementById("btnGerar"); btn.textContent = "✦ Gerar Meu Devocional"; btn.disabled = false;
+}
+async function gerarDevocional() {
+  mostrarTela("loading"); textoDevocional = "";
+  const body = { modo: modoAtual };
+  if (modoAtual === 2 && estadoAtual) { body.estado_label = estadoAtual.label; body.estado_icon = estadoAtual.icon; }
+  try {
+    const resp = await fetch("/devocional", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    if (!resp.ok) throw new Error("Erro");
+    mostrarTela("devocional");
+    document.getElementById("streamingDot").style.display = "flex";
+    document.getElementById("acoesWrap").style.display = "none";
+    const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
+    while (true) {
+      const { done, value } = await reader.read(); if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n"); buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const data = line.slice(6).trim(); if (data === "[DONE]") continue;
+        try { const p = JSON.parse(data); if (p.text) { textoDevocional += p.text; renderDevocional(textoDevocional); } } catch {}
+      }
+    }
+    document.getElementById("streamingDot").style.display = "none";
+    document.getElementById("acoesWrap").style.display = "flex";
+  } catch (err) {
+    mostrarTela("erro"); document.getElementById("erroTexto").textContent = "Não foi possível gerar o devocional. Tente novamente.";
+  }
+}
+function renderDevocional(texto) {
+  const el = document.getElementById("devocionalConteudo");
+  const linhas = texto.split("\n"); let html = ""; let dentroReflexao = false;
+  for (let i = 0; i < linhas.length; i++) {
+    const t = linhas[i].trim();
+    if (!t) { html += `<div style="height:10px"></div>`; continue; }
+    if (t.startsWith("━━")) { html += `<div class="dev-separador"></div>`; continue; }
+    if (t.startsWith("📅") || t.startsWith("✦ Gerado")) { html += `<p class="dev-data">${t}</p>`; continue; }
+    if (t.startsWith("✦") && !t.includes("Gerado")) {
+      const titulo = t.replace(/^✦\s*"?/, "").replace(/"$/, "");
+      if ((t.includes('"') || titulo.length < 80) && i > 5) html += `<div class="dev-destaque"><p>"${titulo.replace(/^"|"$/g,'')}"</p></div>`;
+      else html += `<h2 class="dev-titulo">${titulo}</h2>`;
+      continue;
+    }
+    if (t.startsWith("📖")) { dentroReflexao = false; html += `<p class="dev-secao">📖 Versículo</p>`; continue; }
+    if (t.startsWith("💭")) { dentroReflexao = true; html += `<p class="dev-secao">💭 Reflexão</p>`; continue; }
+    if (t.startsWith("🙏")) { dentroReflexao = false; html += `<p class="dev-secao">🙏 Oração</p>`; continue; }
+    if (t.startsWith("💡")) { dentroReflexao = false; html += `<p class="dev-secao">💡 Ação Prática</p>`; continue; }
+    if (t.startsWith("📝")) { dentroReflexao = false; html += `<p class="dev-secao">📝 Anotações</p>`; continue; }
+    if (t.startsWith("🎵")) { dentroReflexao = false; html += `<p class="dev-secao">🎵 Louvor do Dia</p>`; continue; }
+    if (t.startsWith('"') && t.endsWith('"') && !dentroReflexao) { html += `<p class="dev-versiculo">${t}</p>`; continue; }
+    if (t.startsWith("—")) { html += `<p class="dev-ref">${t}</p>`; continue; }
+    if (t.startsWith("___")) { html += `<hr class="dev-linha">`; continue; }
+    html += `<p class="dev-paragrafo">${t}</p>`;
+  }
+  el.innerHTML = html;
+}
+function mostrarTela(nome) {
+  ["telaInicial","telaLoading","telaErro","telaDevocional"].forEach(id => document.getElementById(id).style.display = "none");
+  const mapa = { inicial:"telaInicial", loading:"telaLoading", erro:"telaErro", devocional:"telaDevocional" };
+  document.getElementById(mapa[nome]).style.display = "block";
+}
+function reiniciar() {
+  modoAtual = null; estadoAtual = null; textoDevocional = "";
+  document.querySelectorAll(".modo-card,.estado-chip").forEach(c => c.classList.remove("selecionado"));
+  document.getElementById("estadosWrap").style.display = "none";
+  document.getElementById("btnWrap").style.display = "none";
+  mostrarTela("inicial"); window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function compartilhar() {
+  const texto = `✦ Manhã com Deus\n\n${textoDevocional.slice(0,500)}...\n\nAcesse: manhacomdeus.com.br`;
+  if (navigator.share) navigator.share({ title: "Manhã com Deus", text: texto });
+  else navigator.clipboard.writeText(texto).then(() => alert("Copiado!"));
+}
+</script>
+</body>
+</html>
