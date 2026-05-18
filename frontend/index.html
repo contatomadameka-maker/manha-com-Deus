@@ -499,6 +499,7 @@ async function iniciarApp(user){
   planoUser=data?.plano||"gratis";
   await carregarStreak();
   await carregarVersiculo();
+  setTimeout(mostrarModalInstalacao, 1500);
 }
 
 function mostrarAuth(){
@@ -764,3 +765,113 @@ function compartilhar(){
 </script>
 </body>
 </html>
+<script>
+// Injeta modal de instalação
+(function(){
+const css=`
+.install-modal-overlay{position:fixed;inset:0;background:rgba(26,18,8,0.92);z-index:1000;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.3s ease}
+.install-modal{background:var(--white);border-radius:24px 24px 0 0;padding:28px 20px 40px;width:100%;max-width:500px;animation:slideUp 0.4s ease}
+.install-modal-handle{width:40px;height:4px;background:var(--borda);border-radius:2px;margin:0 auto 20px}
+.install-modal h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--deep);margin-bottom:6px;text-align:center}
+.install-modal-sub{color:var(--muted);font-size:0.85rem;text-align:center;margin-bottom:24px;line-height:1.5}
+.install-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
+.install-step{display:flex;align-items:flex-start;gap:14px;padding:14px;background:var(--cream);border-radius:12px;border:1px solid var(--borda)}
+.install-step-num{background:var(--gold);color:var(--deep);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.install-step-info strong{display:block;font-size:0.88rem;color:var(--deep);margin-bottom:3px;font-weight:600}
+.install-step-info p{font-size:0.78rem;color:var(--muted);line-height:1.5}
+.install-step-icon{font-size:1.4rem;flex-shrink:0}
+.install-os-tabs{display:flex;gap:8px;margin-bottom:20px}
+.install-os-tab{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--borda);background:var(--cream);font-size:0.82rem;font-weight:600;cursor:pointer;text-align:center;transition:all 0.2s;font-family:'DM Sans',sans-serif;color:var(--muted)}
+.install-os-tab.active{border-color:var(--gold);background:var(--gold-pale);color:var(--deep)}
+.btn-install-ok{width:100%;background:linear-gradient(135deg,var(--gold),#A8873A);border:none;color:var(--deep);padding:16px;border-radius:12px;font-size:1rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:10px;min-height:52px}
+.btn-install-skip{width:100%;background:transparent;border:none;color:var(--muted);font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:8px}
+`;
+const el=document.createElement('style');el.textContent=css;document.head.appendChild(el);
+})();
+
+function mostrarModalInstalacao(){
+  if(localStorage.getItem('installShown'))return;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid=/Android/.test(navigator.userAgent);
+  if(!isIOS&&!isAndroid)return; // só mobile
+  if(window.matchMedia('(display-mode: standalone)').matches)return; // já instalado
+
+  const stepsIOS=[
+    {icon:'🌐',num:1,titulo:'Abra no Safari',desc:'Este app deve ser aberto no Safari (não no Chrome) para poder instalar.'},
+    {icon:'⬆️',num:2,titulo:'Toque em Compartilhar',desc:'Toque no ícone de compartilhar na barra inferior do Safari (quadrado com seta).'},
+    {icon:'📲',num:3,titulo:'Adicionar à Tela de Início',desc:'Role a lista para baixo e toque em "Adicionar à Tela de Início".'},
+    {icon:'✅',num:4,titulo:'Confirme',desc:'Toque em "Adicionar" no canto superior direito. Pronto!'},
+  ];
+  const stepsAndroid=[
+    {icon:'🌐',num:1,titulo:'Abra no Chrome',desc:'Este app deve ser aberto no Google Chrome para instalar.'},
+    {icon:'⋮',num:2,titulo:'Menu do navegador',desc:'Toque nos 3 pontinhos no canto superior direito do Chrome.'},
+    {icon:'📲',num:3,titulo:'Adicionar à tela inicial',desc:'Toque em "Adicionar à tela inicial" ou "Instalar app".'},
+    {icon:'✅',num:4,titulo:'Confirme',desc:'Toque em "Adicionar" ou "Instalar". Pronto!'},
+  ];
+
+  let osAtual=isIOS?'ios':'android';
+  const steps=osAtual==='ios'?stepsIOS:stepsAndroid;
+
+  const html=`
+  <div class="install-modal-overlay" id="installModalOverlay">
+    <div class="install-modal">
+      <div class="install-modal-handle"></div>
+      <h2>📲 Instale o App!</h2>
+      <p class="install-modal-sub">Adicione à sua tela inicial e acesse como um app de verdade — sem abrir o navegador.</p>
+      <div class="install-os-tabs">
+        <div class="install-os-tab ${isIOS?'active':''}" onclick="trocarOsTab('ios',this)" id="tabIOS">🍎 iPhone</div>
+        <div class="install-os-tab ${isAndroid?'active':''}" onclick="trocarOsTab('android',this)" id="tabAndroid">🤖 Android</div>
+      </div>
+      <div class="install-steps" id="installSteps">
+        ${steps.map(s=>`
+        <div class="install-step">
+          <div class="install-step-icon">${s.icon}</div>
+          <div class="install-step-num">${s.num}</div>
+          <div class="install-step-info">
+            <strong>${s.titulo}</strong>
+            <p>${s.desc}</p>
+          </div>
+        </div>`).join('')}
+      </div>
+      <button class="btn-install-ok" onclick="fecharModalInstalacao()">✓ Entendido!</button>
+      <button class="btn-install-skip" onclick="fecharModalInstalacao()">Fazer isso depois</button>
+    </div>
+  </div>`;
+
+  document.body.insertAdjacentHTML('beforeend',html);
+  localStorage.setItem('installShown','1');
+}
+
+const stepsIOS=[
+  {icon:'🌐',num:1,titulo:'Abra no Safari',desc:'Este app deve ser aberto no Safari (não no Chrome) para poder instalar.'},
+  {icon:'⬆️',num:2,titulo:'Toque em Compartilhar',desc:'Toque no ícone de compartilhar na barra inferior (quadrado com seta).'},
+  {icon:'📲',num:3,titulo:'Adicionar à Tela de Início',desc:'Role a lista e toque em "Adicionar à Tela de Início".'},
+  {icon:'✅',num:4,titulo:'Confirme',desc:'Toque em "Adicionar". Pronto — o app aparece na sua tela inicial!'},
+];
+const stepsAndroid=[
+  {icon:'🌐',num:1,titulo:'Abra no Chrome',desc:'Este app deve ser aberto no Google Chrome para instalar.'},
+  {icon:'⋮',num:2,titulo:'Menu do navegador',desc:'Toque nos 3 pontinhos no canto superior direito.'},
+  {icon:'📲',num:3,titulo:'Adicionar à tela inicial',desc:'Toque em "Adicionar à tela inicial" ou "Instalar app".'},
+  {icon:'✅',num:4,titulo:'Confirme',desc:'Toque em "Adicionar". Pronto!'},
+];
+
+function trocarOsTab(os,el){
+  document.querySelectorAll('.install-os-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const steps=os==='ios'?stepsIOS:stepsAndroid;
+  document.getElementById('installSteps').innerHTML=steps.map(s=>`
+    <div class="install-step">
+      <div class="install-step-icon">${s.icon}</div>
+      <div class="install-step-num">${s.num}</div>
+      <div class="install-step-info">
+        <strong>${s.titulo}</strong>
+        <p>${s.desc}</p>
+      </div>
+    </div>`).join('');
+}
+
+function fecharModalInstalacao(){
+  const el=document.getElementById('installModalOverlay');
+  if(el)el.remove();
+}
+</script>
