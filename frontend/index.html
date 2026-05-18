@@ -1422,11 +1422,20 @@ const PLANOS_INFO = {
 };
 
 async function carregarPlanos() {
+  // Renderiza o grid imediatamente mesmo sem usuário
+  renderGridPlanos([]);
+  
   if (!userAtual) return;
 
   // Busca planos ativos
-  const {data: ativos} = await sb.from('planos_usuario')
-    .select('*').eq('user_id', userAtual.id).eq('concluido', false);
+  let ativos = [];
+  try {
+    const {data} = await sb.from('planos_usuario')
+      .select('*').eq('user_id', userAtual.id).eq('concluido', false);
+    ativos = data || [];
+  } catch(e) { console.error('Erro planos:', e); }
+
+  renderGridPlanos(ativos);
 
   const listaAtivos = document.getElementById('planosAtivosLista');
   const wrapAtivos = document.getElementById('planosAtivos');
@@ -1463,7 +1472,12 @@ async function carregarPlanos() {
   }
 
   // Grid de todos os planos
+  renderGridPlanos(ativos);
+}
+
+function renderGridPlanos(ativos) {
   const grid = document.getElementById('planosGrid');
+  if (!grid) return;
   grid.innerHTML = Object.entries(PLANOS_INFO).map(([id, p]) => {
     const ativo = ativos?.find(a => a.plano_id === id);
     return `
