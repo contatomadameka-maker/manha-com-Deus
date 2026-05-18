@@ -927,7 +927,14 @@ window.navTab = function(aba, el) {
   document.getElementById("abaHistorico").style.display = aba === "historico" ? "block" : "none";
   document.getElementById("abaPlanos").style.display = aba === "planos" ? "block" : "none";
   if (aba === "historico") carregarHistorico();
-  if (aba === "planos") carregarPlanos();
+  if (aba === "planos") {
+    // Renderiza imediatamente
+    const grid = document.getElementById('planosGrid');
+    if (grid && grid.innerHTML.trim() === '') {
+      renderGridPlanos([]);
+    }
+    carregarPlanos();
+  }
 };
 </script>
 </body>
@@ -1422,10 +1429,10 @@ const PLANOS_INFO = {
 };
 
 async function carregarPlanos() {
-  // Renderiza o grid imediatamente mesmo sem usuário
-  renderGridPlanos([]);
-  
-  if (!userAtual) return;
+  if (!userAtual) {
+    renderGridPlanos([]);
+    return;
+  }
 
   // Busca planos ativos
   let ativos = [];
