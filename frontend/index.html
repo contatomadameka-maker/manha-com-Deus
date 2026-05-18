@@ -688,7 +688,20 @@ async function submitAuth(){
 }
 
 function showMsg(txt,tipo){const el=document.getElementById("authMsg");el.textContent=txt;el.className="auth-msg "+tipo;el.style.display="block";}
-async function logout(){await sb.auth.signOut();}
+async function logout(){
+  try{
+    await sb.auth.signOut();
+  }catch(e){
+    console.error("Erro logout:",e);
+  }finally{
+    // Força limpeza local e mostra tela de login
+    userAtual=null;
+    document.getElementById("appScreen").style.display="none";
+    document.getElementById("authScreen").style.display="flex";
+    document.getElementById("authEmail").value="";
+    document.getElementById("authSenha").value="";
+  }
+}
 
 function selecionarModo(m){
   modo=m;
