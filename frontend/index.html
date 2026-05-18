@@ -741,13 +741,7 @@ async function carregarHistorico(){
   }).join("");
 }
 
-function navTab(aba,el){
-  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
-  el.classList.add("active");
-  document.getElementById("abaDevocional").style.display=aba==="devocional"?"block":"none";
-  document.getElementById("abaHistorico").style.display=aba==="historico"?"block":"none";
-  if(aba==="historico")carregarHistorico();
-}
+// navTab movido para versão unificada abaixo
 
 function trocarTab(t){
   tabAtual=t;
@@ -923,6 +917,18 @@ function compartilhar(){
   if(navigator.share)navigator.share({title:"Manhã com Deus",text:t});
   else navigator.clipboard.writeText(t).then(()=>alert("Copiado!"));
 }
+</script>
+<script>
+// navTab unificado
+window.navTab = function(aba, el) {
+  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("abaDevocional").style.display = aba === "devocional" ? "block" : "none";
+  document.getElementById("abaHistorico").style.display = aba === "historico" ? "block" : "none";
+  document.getElementById("abaPlanos").style.display = aba === "planos" ? "block" : "none";
+  if (aba === "historico") carregarHistorico();
+  if (aba === "planos") carregarPlanos();
+};
 </script>
 </body>
 </html>
@@ -1605,17 +1611,6 @@ async function avancarDiaPlano(planoId, diaAtual, totalDias) {
   }
 }
 
-// Atualiza navTab para incluir planos
-const navTabOriginal = window.navTab || function(){};
-window.navTab = function(aba, el) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('abaDevocional').style.display = aba === 'devocional' ? 'block' : 'none';
-  document.getElementById('abaHistorico').style.display = aba === 'historico' ? 'block' : 'none';
-  document.getElementById('abaPlanos').style.display = aba === 'planos' ? 'block' : 'none';
-  if (aba === 'historico') carregarHistorico();
-  if (aba === 'planos') carregarPlanos();
-};
 </script>
 <script>
 function relerDevocional(id) {
