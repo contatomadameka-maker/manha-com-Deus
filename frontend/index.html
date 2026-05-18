@@ -282,7 +282,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     <div class="header-right">
       <div class="header-streak" id="headerStreak" style="display:none">🔥 <span id="headerStreakNum">0</span> dias</div>
       <span class="header-user" id="headerEmail"></span>
-      <button class="btn-logout" onclick="logout()">Sair</button>
+      <button class="btn-logout" onclick="abrirDiario(document.getElementById('devoTitulo')?.textContent||'',estado?.label||'')" style="margin-right:4px">📔</button><button class="btn-logout" onclick="abrirConfiguracoes()" style="margin-right:4px">⚙️</button><button class="btn-logout" onclick="logout()">Sair</button>
     </div>
   </header>
 
@@ -906,4 +906,316 @@ function fecharModalInstalacao(){
   const el=document.getElementById('installModalOverlay');
   if(el)el.remove();
 }
+</script>
+<script>
+// ── DIÁRIO ESPIRITUAL ─────────────────────────────────
+async function abrirDiario(tituloDevo, estadoDevo) {
+  const overlay = document.createElement('div');
+  overlay.id = 'diarioOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.95);z-index:9999;display:flex;align-items:flex-end;justify-content:center;overflow-y:auto';
+
+  overlay.innerHTML = `
+    <div style="background:#FAF6EE;border-radius:24px 24px 0 0;padding:24px 20px 48px;width:100%;max-width:500px;animation:slideUp 0.4s ease">
+      <div style="width:40px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:0 auto 18px"></div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#1A1208;margin-bottom:4px;text-align:center">📔 Diário Espiritual</h2>
+      <p style="color:#8A7560;font-size:0.8rem;text-align:center;margin-bottom:20px">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</p>
+
+      <div style="background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:12px;padding:16px;margin-bottom:16px">
+        <p style="font-size:0.65rem;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">💡 Prompts para reflexão</p>
+        <div id="diarioPrompts" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#FAF6EE;border-radius:8px">
+            <div style="width:20px;height:20px;border:2px solid rgba(201,168,76,0.3);border-top-color:#C9A84C;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0"></div>
+            <span style="font-size:0.8rem;color:#8A7560">Gerando perguntas personalizadas...</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <p style="font-size:0.65rem;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">✍️ Minha reflexão de hoje</p>
+        <textarea id="diarioTexto" placeholder="Escreva aqui suas reflexões, o que Deus falou ao seu coração, gratidões..." 
+          style="width:100%;min-height:140px;background:#fff;border:1.5px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#3D2E1A;resize:vertical;outline:none;line-height:1.6"></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button onclick="salvarDiario()" style="flex:1;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:15px;border-radius:12px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;min-height:50px">
+          💾 Salvar reflexão
+        </button>
+        <button onclick="document.getElementById('diarioOverlay').remove()" style="background:#fff;border:1.5px solid rgba(201,168,76,0.2);color:#8A7560;padding:15px 20px;border-radius:12px;font-size:0.85rem;font-family:'DM Sans',sans-serif;cursor:pointer">
+          Fechar
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  await carregarPrompsDiario(tituloDevo, estadoDevo);
+}
+
+async function carregarPrompsDiario(titulo, estado) {
+  try {
+    const resp = await fetch('/prompt-diario', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({titulo, estado})
+    });
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '', texto = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream: true});
+      const lines = buf.split('\n'); buf = lines.pop();
+      for (const l of lines) {
+        if (!l.startsWith('data: ')) continue;
+        const d = l.slice(6).trim();
+        if (d === '[DONE]') continue;
+        try { const p = JSON.parse(d); if (p.text) texto += p.text; } catch {}
+      }
+    }
+    const perguntas = texto.trim().split('\n').filter(p => p.trim());
+    const el = document.getElementById('diarioPrompts');
+    if (el) {
+      el.innerHTML = perguntas.map(p => `
+        <div onclick="usarPrompt(this)" style="padding:10px 12px;background:#FAF6EE;border:1px solid rgba(201,168,76,0.15);border-radius:8px;cursor:pointer;transition:all 0.2s">
+          <span style="font-size:0.82rem;color:#3D2E1A;line-height:1.5">${p.replace(/^[-•*]\s*/,'')}</span>
+        </div>`).join('');
+    }
+  } catch {
+    const el = document.getElementById('diarioPrompts');
+    if (el) el.innerHTML = `
+      <div onclick="usarPrompt(this)" style="padding:10px 12px;background:#FAF6EE;border-radius:8px;cursor:pointer">
+        <span style="font-size:0.82rem;color:#3D2E1A">O que Deus falou ao seu coração hoje?</span>
+      </div>
+      <div onclick="usarPrompt(this)" style="padding:10px 12px;background:#FAF6EE;border-radius:8px;cursor:pointer;margin-top:6px">
+        <span style="font-size:0.82rem;color:#3D2E1A">O que você quer agradecer a Deus hoje?</span>
+      </div>
+      <div onclick="usarPrompt(this)" style="padding:10px 12px;background:#FAF6EE;border-radius:8px;cursor:pointer;margin-top:6px">
+        <span style="font-size:0.82rem;color:#3D2E1A">Como você pode aplicar a Palavra lida hoje?</span>
+      </div>`;
+  }
+}
+
+function usarPrompt(el) {
+  const texto = el.querySelector('span').textContent;
+  const textarea = document.getElementById('diarioTexto');
+  if (textarea) {
+    textarea.value = textarea.value ? textarea.value + '\n\n' + texto + '\n' : texto + '\n';
+    textarea.focus();
+  }
+}
+
+async function salvarDiario() {
+  const texto = document.getElementById('diarioTexto')?.value?.trim();
+  if (!texto) { alert('Escreva algo antes de salvar!'); return; }
+  if (!userAtual) return;
+
+  const hoje = new Date().toISOString().split('T')[0];
+  const {error} = await sb.from('diario').upsert({
+    user_id: userAtual.id,
+    data: hoje,
+    texto,
+    titulo_devocional: document.getElementById('devoTitulo')?.textContent || '',
+    updated_at: new Date().toISOString()
+  }, {onConflict: 'user_id,data'});
+
+  if (!error) {
+    document.getElementById('diarioOverlay')?.remove();
+    mostrarToast('📔 Reflexão salva com sucesso!');
+  } else {
+    alert('Erro ao salvar. Tente novamente.');
+  }
+}
+
+// ── NOTIFICAÇÕES ──────────────────────────────────────
+function abrirConfiguracoes() {
+  const overlay = document.createElement('div');
+  overlay.id = 'configOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.95);z-index:9999;display:flex;align-items:flex-end;justify-content:center;overflow-y:auto';
+
+  overlay.innerHTML = `
+    <div style="background:#FAF6EE;border-radius:24px 24px 0 0;padding:24px 20px 48px;width:100%;max-width:500px;animation:slideUp 0.4s ease">
+      <div style="width:40px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:0 auto 18px"></div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#1A1208;margin-bottom:4px;text-align:center">⚙️ Configurações</h2>
+      <p style="color:#8A7560;font-size:0.8rem;text-align:center;margin-bottom:24px">Personalize sua experiência</p>
+
+      <!-- NOTIFICAÇÃO DIÁRIA -->
+      <div style="background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:14px;padding:18px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div>
+            <p style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">🔔 Lembrete Diário</p>
+            <p style="font-size:0.75rem;color:#8A7560">Receba um aviso no horário que escolher</p>
+          </div>
+          <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer">
+            <input type="checkbox" id="notifAtiva" style="opacity:0;width:0;height:0" onchange="toggleNotif(this)">
+            <span id="notifToggle" style="position:absolute;inset:0;background:#ddd;border-radius:24px;transition:0.3s"></span>
+            <span id="notifDot" style="position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></span>
+          </label>
+        </div>
+
+        <div id="notifOpcoes" style="display:none;flex-direction:column;gap:12px">
+          <div>
+            <label style="font-size:0.72rem;font-weight:600;color:#8A7560;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Horário do lembrete</label>
+            <input type="time" id="notifHorario" value="07:00"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px 14px;font-size:1rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none">
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:600;color:#8A7560;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Sua mensagem personalizada</label>
+            <input type="text" id="notifMensagem" value="Bom dia! Sua Palavra de hoje está esperando. ☀️" maxlength="80"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px 14px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none"
+              placeholder="Ex: Bom dia! Hora de encontrar Deus ☀️">
+            <p style="font-size:0.68rem;color:#8A7560;margin-top:4px">Esta mensagem aparece na notificação</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICAÇÕES MARKETING -->
+      <div style="background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:14px;padding:16px;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <p style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">📢 Novidades e dicas</p>
+            <p style="font-size:0.75rem;color:#8A7560">Conteúdos especiais e recursos novos</p>
+          </div>
+          <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer">
+            <input type="checkbox" id="notifMarketing" checked style="opacity:0;width:0;height:0">
+            <span id="notifMktToggle" style="position:absolute;inset:0;background:#C9A84C;border-radius:24px;transition:0.3s"></span>
+            <span style="position:absolute;height:18px;width:18px;right:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></span>
+          </label>
+        </div>
+      </div>
+
+      <button onclick="salvarConfiguracoes()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:15px;border-radius:12px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;min-height:50px;margin-bottom:10px">
+        ✓ Salvar configurações
+      </button>
+      <button onclick="document.getElementById('configOverlay').remove()" style="width:100%;background:transparent;border:none;color:#8A7560;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:8px">
+        Fechar
+      </button>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  carregarConfiguracoes();
+}
+
+async function carregarConfiguracoes() {
+  if (!userAtual) return;
+  const {data} = await sb.from('profiles').select('notif_ativa,notif_horario,notif_mensagem,notif_marketing').eq('id', userAtual.id).single();
+  if (data) {
+    const cb = document.getElementById('notifAtiva');
+    if (cb) {
+      cb.checked = data.notif_ativa || false;
+      atualizarToggleUI(cb.checked);
+      if (cb.checked) document.getElementById('notifOpcoes').style.display = 'flex';
+    }
+    if (data.notif_horario) document.getElementById('notifHorario').value = data.notif_horario;
+    if (data.notif_mensagem) document.getElementById('notifMensagem').value = data.notif_mensagem;
+    const mkt = document.getElementById('notifMarketing');
+    if (mkt) mkt.checked = data.notif_marketing !== false;
+  }
+}
+
+function toggleNotif(cb) {
+  atualizarToggleUI(cb.checked);
+  const opcoes = document.getElementById('notifOpcoes');
+  if (opcoes) opcoes.style.display = cb.checked ? 'flex' : 'none';
+  if (cb.checked) solicitarPermissaoNotificacao();
+}
+
+function atualizarToggleUI(ativo) {
+  const toggle = document.getElementById('notifToggle');
+  const dot = document.getElementById('notifDot');
+  if (toggle) toggle.style.background = ativo ? '#C9A84C' : '#ddd';
+  if (dot) { dot.style.left = ativo ? 'calc(100% - 21px)' : '3px'; }
+}
+
+async function solicitarPermissaoNotificacao() {
+  if (!('Notification' in window)) {
+    mostrarToast('Seu navegador não suporta notificações');
+    return false;
+  }
+  if (Notification.permission === 'granted') return true;
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') {
+    mostrarToast('⚠️ Permissão de notificação negada');
+    document.getElementById('notifAtiva').checked = false;
+    atualizarToggleUI(false);
+    document.getElementById('notifOpcoes').style.display = 'none';
+    return false;
+  }
+  return true;
+}
+
+async function salvarConfiguracoes() {
+  if (!userAtual) return;
+  const ativa = document.getElementById('notifAtiva')?.checked || false;
+  const horario = document.getElementById('notifHorario')?.value || '07:00';
+  const mensagem = document.getElementById('notifMensagem')?.value || 'Bom dia! Sua Palavra de hoje está esperando. ☀️';
+  const marketing = document.getElementById('notifMarketing')?.checked !== false;
+
+  if (ativa) {
+    const ok = await solicitarPermissaoNotificacao();
+    if (!ok) return;
+  }
+
+  await fetch('/salvar-notificacao', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      user_id: userAtual.id,
+      horario, mensagem,
+      ativa,
+      marketing
+    })
+  });
+
+  // Salva localmente para o service worker agendar
+  if (ativa) {
+    localStorage.setItem('notif_horario', horario);
+    localStorage.setItem('notif_mensagem', mensagem);
+    localStorage.setItem('notif_ativa', '1');
+    agendarNotificacaoLocal(horario, mensagem);
+  } else {
+    localStorage.removeItem('notif_ativa');
+  }
+
+  document.getElementById('configOverlay')?.remove();
+  mostrarToast('✓ Configurações salvas!');
+}
+
+function agendarNotificacaoLocal(horario, mensagem) {
+  if (!('serviceWorker' in navigator) || Notification.permission !== 'granted') return;
+  const [h, m] = horario.split(':').map(Number);
+  const agora = new Date();
+  const proximo = new Date();
+  proximo.setHours(h, m, 0, 0);
+  if (proximo <= agora) proximo.setDate(proximo.getDate() + 1);
+  const delay = proximo.getTime() - agora.getTime();
+  setTimeout(() => {
+    new Notification('✦ Manhã com Deus', {
+      body: mensagem,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+    });
+    // Reagenda para o próximo dia
+    setInterval(() => {
+      new Notification('✦ Manhã com Deus', {body: mensagem, icon: '/icon-192.png'});
+    }, 24 * 60 * 60 * 1000);
+  }, delay);
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function mostrarToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1208;color:#FAF6EE;padding:12px 24px;border-radius:50px;font-size:0.85rem;font-family:"DM Sans",sans-serif;z-index:99999;border:1px solid rgba(201,168,76,0.3);animation:slideUp 0.3s ease;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.3)';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// Reativa notificação ao carregar se estava ativa
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('notif_ativa') && Notification.permission === 'granted') {
+    const h = localStorage.getItem('notif_horario') || '07:00';
+    const m = localStorage.getItem('notif_mensagem') || 'Bom dia! Sua Palavra de hoje está esperando. ☀️';
+    agendarNotificacaoLocal(h, m);
+  }
+});
 </script>
