@@ -197,3 +197,12 @@ async def icon512():
     p = FRONTEND_PATH / "icon-512.png"
     if p.exists(): return FileResponse(str(p), media_type="image/png")
     return FileResponse(str(FRONTEND_PATH / "icon.svg"), media_type="image/svg+xml")
+
+
+@app.get("/install-imgs/{filename}")
+async def install_imgs(filename: str):
+    from fastapi.responses import FileResponse
+    p = FRONTEND_PATH / "install-imgs" / filename
+    if p.exists():
+        return FileResponse(str(p))
+    return {"error": "not found"}
