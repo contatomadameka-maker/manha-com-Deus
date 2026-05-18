@@ -360,28 +360,109 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       </div>
 
       <div id="telaPaywall" style="display:none">
-        <div class="paywall-wrap">
-          <div class="paywall-header">
-            <h2>💫 Como estou hoje?</h2>
-            <p>Devocional personalizado para exatamente como você está se sentindo agora.</p>
-          </div>
-          <div class="paywall-body">
-            <div class="paywall-preco">R$9,90<span>/mês</span></div>
-            <p style="color:var(--muted);font-size:0.82rem;margin-top:4px">Plano Mensal — o mais completo</p>
-            <ul class="paywall-lista">
-              <li>Modo 2 — Devocional por estado emocional</li>
-              <li>Devocional completo e rico com áudio</li>
-              <li>Oração guiada + meditação noturna</li>
-              <li>Quiz bíblico semanal com ranking</li>
-              <li>Planos temáticos 7/30/90 dias</li>
-              <li>Desafios em grupo e streak diário</li>
-              <li>Relatório espiritual mensal</li>
-            </ul>
-            <button class="btn-principal" onclick="assinar()" style="margin-bottom:10px">✦ Assinar por R$9,90/mês</button>
-            <button class="btn-sec" style="width:100%" onclick="voltarInicial()">Voltar</button>
-            <p class="paywall-nota">Cancele quando quiser · Pagamento seguro</p>
+        <!-- HERO DA PÁGINA DE VENDAS -->
+        <div style="background:linear-gradient(135deg,#1A1208,#2C1F0E,#1A3020);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.15),transparent 70%)"></div>
+          <div style="position:relative">
+            <div style="font-size:0.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:12px">✦ Plano Mensal</div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;color:#FAF6EE;margin-bottom:8px;line-height:1.3">Sua fé merece<br>o melhor cuidado</h2>
+            <p style="color:rgba(255,255,255,0.6);font-size:0.88rem;line-height:1.6;margin-bottom:20px">Tudo que você precisa para crescer espiritualmente, reunido em um só lugar.</p>
+            <div style="display:inline-flex;align-items:baseline;gap:4px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:12px 24px">
+              <span style="font-family:'Playfair Display',serif;font-size:2.4rem;color:#C9A84C;font-weight:700">R$9,90</span>
+              <span style="color:rgba(255,255,255,0.5);font-size:0.9rem">/mês</span>
+            </div>
+            <p style="color:rgba(255,255,255,0.35);font-size:0.72rem;margin-top:8px">Menos de R$0,33 por dia · Cancele quando quiser</p>
           </div>
         </div>
+
+        <!-- O QUE ESTÁ INCLUÍDO -->
+        <div style="background:#fff;border:1px solid var(--borda);border-radius:16px;padding:20px;margin-bottom:14px">
+          <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:16px">✦ O que você recebe</p>
+          
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#FAF6EE;border-radius:10px">
+              <span style="font-size:1.4rem;flex-shrink:0">💫</span>
+              <div>
+                <div style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">Devocional por Estado Emocional</div>
+                <div style="font-size:0.75rem;color:#8A7560;line-height:1.4">IA gera um devocional único para como você está se sentindo agora — ansioso, grato, com medo, triste... Nenhum app no mundo faz isso.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#FAF6EE;border-radius:10px">
+              <span style="font-size:1.4rem;flex-shrink:0">🗓️</span>
+              <div>
+                <div style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">Planos Temáticos 7 e 30 dias</div>
+                <div style="font-size:0.75rem;color:#8A7560;line-height:1.4">Jornadas completas sobre Ansiedade, Gratidão, Propósito, Casamento, Cura Interior e mais.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#FAF6EE;border-radius:10px">
+              <span style="font-size:1.4rem;flex-shrink:0">🧠</span>
+              <div>
+                <div style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">Quiz Bíblico Semanal</div>
+                <div style="font-size:0.75rem;color:#8A7560;line-height:1.4">5 perguntas toda segunda-feira com ranking e 3 níveis de dificuldade. Aprenda enquanto se diverte.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#FAF6EE;border-radius:10px">
+              <span style="font-size:1.4rem;flex-shrink:0">📔</span>
+              <div>
+                <div style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">Diário Espiritual com IA</div>
+                <div style="font-size:0.75rem;color:#8A7560;line-height:1.4">Registre suas reflexões com prompts personalizados gerados por IA. Acompanhe seu crescimento espiritual.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#FAF6EE;border-radius:10px">
+              <span style="font-size:1.4rem;flex-shrink:0">🔥</span>
+              <div>
+                <div style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">Streak + Relatório Mensal</div>
+                <div style="font-size:0.75rem;color:#8A7560;line-height:1.4">Acompanhe sua sequência de leitura e receba um resumo do seu crescimento espiritual todo mês.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#FAF6EE;border-radius:10px">
+              <span style="font-size:1.4rem;flex-shrink:0">🌙</span>
+              <div>
+                <div style="font-size:0.88rem;font-weight:600;color:#1A1208;margin-bottom:2px">Meditação Noturna</div>
+                <div style="font-size:0.75rem;color:#8A7560;line-height:1.4">Encerre o dia com Deus — oração + versículo de paz para dormir tranquilo.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPARATIVO -->
+        <div style="background:#fff;border:1px solid var(--borda);border-radius:16px;padding:20px;margin-bottom:16px">
+          <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:14px">Gratuito vs Mensal</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:#FAF6EE;border-radius:10px;padding:12px">
+              <p style="font-size:0.7rem;font-weight:700;color:#8A7560;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Gratuito</p>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:0.75rem;color:#8A7560">
+                <span>✓ Devocional do dia</span>
+                <span>✓ Versículo diário</span>
+                <span>✓ Notificação</span>
+                <span style="opacity:0.4">✗ Modo emocional</span>
+                <span style="opacity:0.4">✗ Planos temáticos</span>
+                <span style="opacity:0.4">✗ Quiz bíblico</span>
+                <span style="opacity:0.4">✗ Diário espiritual</span>
+              </div>
+            </div>
+            <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.04));border:1.5px solid rgba(201,168,76,0.3);border-radius:10px;padding:12px;position:relative">
+              <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#C9A84C;color:#1A1208;font-size:0.55rem;font-weight:700;padding:2px 10px;border-radius:20px;white-space:nowrap;letter-spacing:1px">MAIS COMPLETO</div>
+              <p style="font-size:0.7rem;font-weight:700;color:#C9A84C;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Mensal</p>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:0.75rem;color:#3D2E1A">
+                <span>✓ Tudo do gratuito</span>
+                <span>✓ Modo emocional</span>
+                <span>✓ Planos temáticos</span>
+                <span>✓ Quiz bíblico</span>
+                <span>✓ Diário espiritual</span>
+                <span>✓ Meditação noturna</span>
+                <span>✓ Relatório mensal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <button class="btn-principal" onclick="assinar()" style="margin-bottom:10px;font-size:1rem;padding:18px">
+          ✦ Assinar por R$9,90/mês
+        </button>
+        <p style="text-align:center;color:#8A7560;font-size:0.75rem;margin-bottom:8px">🔒 Pagamento seguro · Cancele quando quiser</p>
+        <button class="btn-sec" style="width:100%" onclick="voltarInicial()">Agora não</button>
       </div>
 
       <div id="telaLoading" style="display:none">
