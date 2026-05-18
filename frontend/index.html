@@ -694,12 +694,15 @@ async function logout(){
   }catch(e){
     console.error("Erro logout:",e);
   }finally{
-    // Força limpeza local e mostra tela de login
     userAtual=null;
     document.getElementById("appScreen").style.display="none";
     document.getElementById("authScreen").style.display="flex";
     document.getElementById("authEmail").value="";
     document.getElementById("authSenha").value="";
+    // Garante botão habilitado
+    const btn=document.getElementById("btnAuth");
+    if(btn){btn.disabled=false;btn.textContent="Entrar";}
+    tabAtual="login";
   }
 }
 
