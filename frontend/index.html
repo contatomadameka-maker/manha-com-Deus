@@ -1136,7 +1136,7 @@ function atualizarToggleUI(ativo) {
 
 async function solicitarPermissaoNotificacao() {
   if (!('Notification' in window)) {
-    mostrarToast('Seu navegador não suporta notificações');
+    mostrarToast('📲 Abra pelo ícone instalado na tela inicial para ativar notificações');
     return false;
   }
   if (Notification.permission === 'granted') return true;
