@@ -949,21 +949,6 @@ const _PLANOS = {
   novo_comeco: {nome:"Novo Começo",dias:7,emoji:"✨",desc:"7 dias recomeçando com Deus",cor:"#C9A84C"}
 };
 
-function renderGridPlanos(ativos) {
-  const grid = document.getElementById("planosGrid");
-  if (!grid) return;
-  grid.innerHTML = Object.entries(_PLANOS).map(function(entry) {
-    var id = entry[0], p = entry[1];
-    var ativo = ativos && ativos.find(function(a) { return a.plano_id === id; });
-    return '<div style="background:#fff;border:1.5px solid ' + p.cor + '30;border-radius:14px;padding:16px;cursor:pointer;position:relative;overflow:hidden" onclick="iniciarPlanoNovo('' + id + '',' + (ativo ? ativo.dia_atual : 0) + ')">' +
-      (ativo ? '<div style="position:absolute;top:8px;right:8px;background:' + p.cor + ';color:#fff;font-size:0.55rem;font-weight:700;padding:2px 7px;border-radius:20px">ATIVO</div>' : '') +
-      '<div style="font-size:1.8rem;margin-bottom:8px">' + p.emoji + '</div>' +
-      '<div style="font-family:Playfair Display,serif;font-size:0.88rem;color:#1A1208;margin-bottom:4px;line-height:1.3">' + p.nome + '</div>' +
-      '<div style="font-size:0.7rem;color:#8A7560;line-height:1.4;margin-bottom:10px">' + p.desc + '</div>' +
-      '<div style="background:' + p.cor + '15;color:' + p.cor + ';font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-block">' + p.dias + ' dias</div>' +
-      '</div>';
-  }).join("");
-}
 
 async function carregarPlanos() {
   renderGridPlanos([]);
