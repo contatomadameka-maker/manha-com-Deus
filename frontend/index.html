@@ -2435,15 +2435,23 @@ function iniciarRespiracao() {
 }
 
 async function salvarMeditacao() {
-  if (!userAtual || !_meditacaoTexto) return;
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+  if (!_meditacaoTexto || _meditacaoTexto.trim() === "") { 
+    mostrarToast("⚠️ Aguarde a meditação carregar"); return; 
+  }
   try {
-    await sb.from("meditacoes").upsert({
+    var hoje = new Date().toISOString().split("T")[0];
+    var {error} = await sb.from("meditacoes").upsert({
       user_id: userAtual.id,
-      data: new Date().toISOString().split("T")[0],
+      data: hoje,
       conteudo: _meditacaoTexto
     }, {onConflict: "user_id,data"});
+    if (error) throw error;
     mostrarToast("🌙 Meditação salva!");
-  } catch(e) { mostrarToast("❌ Erro ao salvar"); }
+  } catch(e) { 
+    console.error("Erro meditacao:", e);
+    mostrarToast("❌ Erro: " + (e.message || "tente novamente")); 
+  }
 }
 
 function compartilharMeditacao() {
