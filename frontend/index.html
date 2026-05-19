@@ -228,6 +228,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .share-card-ref{font-size:0.75rem;color:#C9A84C;font-weight:600;margin-bottom:20px}
 .share-card-linha{width:40px;height:2px;background:#C9A84C;margin:0 auto 16px;opacity:0.5}
 .share-card-tag{font-size:0.58rem;color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase}
+
+.btn-fechar-fixo {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26,18,8,0.95);
+  border: 1.5px solid rgba(201,168,76,0.4);
+  color: #C9A84C;
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 </style>
 </head>
 <body>
@@ -2271,6 +2295,18 @@ async function abrirMeditacao() {
     '</div></div>';
 
   document.body.appendChild(overlay);
+
+  // Botão fechar fixo no rodapé
+  var btnFechar = document.createElement("button");
+  btnFechar.className = "btn-fechar-fixo";
+  btnFechar.id = "btnFecharOracao";
+  btnFechar.innerHTML = "← Voltar ao app";
+  btnFechar.onclick = function() {
+    var ov = document.getElementById("oracaoOverlay");
+    if (ov) ov.remove();
+    this.remove();
+  };
+  document.body.appendChild(btnFechar);
 
   var tema = document.getElementById("devoTitulo") ? document.getElementById("devoTitulo").textContent : "";
   if (tema === "Carregando...") tema = "";
