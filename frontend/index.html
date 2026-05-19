@@ -323,6 +323,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     </div>
   </div>
 
+  <!-- ORAÇÃO RÁPIDA -->
+  <div style="max-width:680px;margin:16px auto 0;padding:0 16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="abrirOracao('diaria')" style="background:linear-gradient(135deg,#2C1F0E,#1A3020);border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s">
+        <div style="font-size:1.3rem;margin-bottom:6px">☀️</div>
+        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Manhã</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Comece o dia com Deus</div>
+      </button>
+      <button onclick="abrirOracao('noturna')" style="background:linear-gradient(135deg,#1A1208,#0D0A1A);border:1px solid rgba(138,117,96,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s">
+        <div style="font-size:1.3rem;margin-bottom:6px">🌙</div>
+        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Noite</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Encerre o dia em paz</div>
+      </button>
+    </div>
+  </div>
+
   <div class="container">
     <div class="nav-tabs" style="margin-top:8px">
       <div class="nav-tab active" onclick="navTab('devocional',this)">✦ Devocional</div>
@@ -1945,5 +1961,135 @@ function voltarQuizInicio() {
   var btn = document.getElementById("btnIniciarQuiz");
   if (btn) { btn.disabled = true; btn.style.opacity = "0.5"; btn.textContent = "Selecione um nível para começar"; }
   carregarRanking();
+}
+</script>
+<script>
+var _oracaoTexto = "";
+var _oracaoTipo = "diaria";
+
+async function abrirOracao(tipo) {
+  if (!userAtual) return;
+  if (planoUser !== "mensal") {
+    tela("paywall");
+    document.querySelector(".nav-tab").classList.add("active");
+    document.getElementById("abaDevocional").style.display = "block";
+    document.getElementById("abaHistorico").style.display = "none";
+    document.getElementById("abaPlanos").style.display = "none";
+    document.getElementById("abaQuiz").style.display = "none";
+    return;
+  }
+
+  _oracaoTipo = tipo;
+  _oracaoTexto = "";
+
+  var overlay = document.createElement("div");
+  overlay.id = "oracaoOverlay";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(26,18,8,0.97);z-index:9999;display:flex;flex-direction:column;overflow-y:auto";
+
+  var bgColor = tipo === "noturna" ? "linear-gradient(135deg,#0D0A1A,#1A1208)" : "linear-gradient(135deg,#1A1208,#1A3020)";
+  var titulo = tipo === "noturna" ? "🌙 Oração da Noite" : "☀️ Oração da Manhã";
+
+  overlay.innerHTML =
+    '<div style="background:' + bgColor + ';padding:24px 20px 16px;position:sticky;top:0;z-index:1">' +
+    '<div style="max-width:500px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.2rem;color:#FAF6EE">' + titulo + '</h2>' +
+    '<button onclick="document.getElementById(\'oracaoOverlay\').remove()" style="background:rgba(255,255,255,0.1);border:none;color:#FAF6EE;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer">✕</button>' +
+    '</div></div>' +
+    '<div style="flex:1;max-width:500px;margin:0 auto;padding:20px;width:100%">' +
+    '<div id="oracaoConteudo" style="min-height:200px">' +
+    '<div class="loading-wrap"><div class="spinner"></div><p class="loading-txt">Preparando sua oração...</p></div>' +
+    '</div>' +
+    '<div id="oracaoAcoes" style="display:none;margin-top:20px;display:flex;flex-direction:column;gap:10px">' +
+    '<button onclick="salvarOracao()" style="background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;min-height:48px">💾 Salvar esta oração</button>' +
+    '<button onclick="compartilharOracao()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#FAF6EE;padding:14px;border-radius:12px;font-size:0.88rem;font-family:DM Sans,sans-serif;cursor:pointer;min-height:48px">🕊️ Compartilhar</button>' +
+    '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+
+  // Busca tema do devocional atual se houver
+  var tema = document.getElementById("devoTitulo") ? document.getElementById("devoTitulo").textContent : "";
+  var estado = window.estado ? window.estado.label : "";
+
+  // Gera a oração
+  try {
+    var resp = await fetch("/gerar-oracao", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({tipo: tipo, tema: tema !== "Carregando..." ? tema : "", estado: estado})
+    });
+
+    var conteudo = document.getElementById("oracaoConteudo");
+    conteudo.innerHTML = "";
+
+    var reader = resp.body.getReader();
+    var dec = new TextDecoder();
+    var buf = "";
+
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buf += dec.decode(chunk.value, {stream: true});
+      var lines = buf.split("\n"); buf = lines.pop();
+      for (var i = 0; i < lines.length; i++) {
+        if (!lines[i].startsWith("data: ")) continue;
+        var d = lines[i].slice(6).trim();
+        if (d === "[DONE]") continue;
+        try {
+          var p = JSON.parse(d);
+          if (p.text) { _oracaoTexto += p.text; renderOracao(_oracaoTexto); }
+        } catch(e) {}
+      }
+    }
+
+    document.getElementById("oracaoAcoes").style.display = "flex";
+
+  } catch(e) {
+    document.getElementById("oracaoConteudo").innerHTML =
+      '<div class="erro-wrap"><p class="erro-txt">Erro ao gerar oração. Tente novamente.</p></div>';
+  }
+}
+
+function renderOracao(texto) {
+  var el = document.getElementById("oracaoConteudo");
+  if (!el) return;
+  var linhas = texto.split("\n");
+  var html = "";
+  linhas.forEach(function(l) {
+    var t = l.trim();
+    if (!t) { html += '<div style="height:8px"></div>'; return; }
+    if (t.startsWith("☀️") || t.startsWith("🌙")) {
+      html += '<p style="font-size:0.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:16px">' + t + '</p>';
+    } else if (t.startsWith("✦")) {
+      var sec = t.replace("✦", "").trim();
+      html += '<p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin:20px 0 8px;display:flex;align-items:center;gap:6px"><span style="height:1px;flex:1;background:rgba(201,168,76,0.2)"></span>' + sec + '<span style="height:1px;flex:1;background:rgba(201,168,76,0.2)"></span></p>';
+    } else if (t === "Amém. 🙏") {
+      html += '<p style="font-family:Playfair Display,serif;font-size:1rem;color:#C9A84C;text-align:center;margin-top:24px;font-style:italic">' + t + '</p>';
+    } else {
+      html += '<p style="font-size:0.9rem;color:rgba(250,246,238,0.85);line-height:1.8;font-style:italic">' + t + '</p>';
+    }
+  });
+  el.innerHTML = html;
+}
+
+async function salvarOracao() {
+  if (!userAtual || !_oracaoTexto) return;
+  try {
+    await sb.from("oracoes_salvas").insert({
+      user_id: userAtual.id,
+      tipo: _oracaoTipo,
+      conteudo: _oracaoTexto,
+      data: new Date().toISOString().split("T")[0]
+    });
+    mostrarToast("🙏 Oração salva com sucesso!");
+  } catch(e) {
+    mostrarToast("❌ Erro ao salvar oração");
+  }
+}
+
+function compartilharOracao() {
+  var txt = "🙏 " + (_oracaoTipo === "noturna" ? "Oração da Noite" : "Oração da Manhã") + "\n\n" + _oracaoTexto.slice(0, 400) + "...\n\nManhã com Deus · manhacomdeus.com.br";
+  if (navigator.share) navigator.share({title: "Oração — Manhã com Deus", text: txt});
+  else navigator.clipboard.writeText(txt).then(function() { mostrarToast("Copiado!"); });
 }
 </script>
