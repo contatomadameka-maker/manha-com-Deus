@@ -417,3 +417,98 @@ Responda APENAS em JSON válido, sem markdown, sem explicações fora do JSON:
         return dados
     except Exception as e:
         return {"error": str(e)}
+
+
+# ── ORAÇÃO GUIADA ─────────────────────────────────────
+@app.post("/gerar-oracao")
+async def gerar_oracao(request: Request):
+    body = await request.json()
+    tipo = body.get("tipo", "diaria")
+    tema = body.get("tema", "")
+    estado = body.get("estado", "")
+
+    agora = datetime.now()
+    data_formatada = agora.strftime("%A, %d de %B de %Y").capitalize()
+
+    if tipo == "noturna":
+        prompt = f"""Gere uma oração noturna guiada para encerrar o dia com Deus.
+Data: {data_formatada}
+{f"Tema do dia: {tema}" if tema else ""}
+
+A oração deve:
+- Ser íntima, pessoal e acolhedora
+- Ter 5 partes bem definidas com títulos
+- Incluir gratidão pelo dia, perdão, paz para dormir
+- Terminar com declaração de fé e descanso em Deus
+- Tom suave e tranquilizador para a noite
+
+USE EXATAMENTE este formato:
+
+🌙 ORAÇÃO DA NOITE
+{data_formatada}
+
+✦ GRATIDÃO PELO DIA
+[2-3 linhas de gratidão específica pelo dia vivido]
+
+✦ PERDÃO E ENTREGA
+[2-3 linhas pedindo perdão e entregando as preocupações do dia]
+
+✦ INTERCESSÃO
+[2-3 linhas orando por família, amigos e próximo]
+
+✦ PAZ PARA DORMIR
+[2-3 linhas pedindo paz, descanso e proteção durante a noite]
+
+✦ DECLARAÇÃO FINAL
+[1-2 linhas de declaração de fé e descanso em Deus]
+
+Amém. 🙏"""
+    else:
+        contexto = f"sobre o tema: {tema}" if tema else "para começar o dia com Deus"
+        estado_ctx = f"O usuário está se sentindo {estado}." if estado else ""
+
+        prompt = f"""Gere uma oração matinal guiada {contexto}.
+Data: {data_formatada}
+{estado_ctx}
+
+A oração deve:
+- Ser íntima, pessoal e profunda
+- Ter 5 partes bem definidas com títulos
+- Conectar com a Palavra e o dia que começa
+- Ser específica — não genérica
+- Tom de conversa íntima com Deus
+
+USE EXATAMENTE este formato:
+
+☀️ ORAÇÃO DA MANHÃ
+{data_formatada}
+
+✦ ADORAÇÃO
+[2-3 linhas adorando e reconhecendo quem Deus é]
+
+✦ GRATIDÃO
+[2-3 linhas de gratidão específica]
+
+✦ CONFISSÃO
+[2-3 linhas de confissão e pedido de perdão]
+
+✦ PEDIDOS DO DIA
+[3-4 linhas com pedidos específicos para o dia]
+
+✦ DECLARAÇÃO E ENVIO
+[2-3 linhas de declaração de fé para o dia que começa]
+
+Amém. 🙏"""
+
+    def stream():
+        with client.messages.stream(
+            model="claude-sonnet-4-20250514",
+            max_tokens=800,
+            messages=[{"role": "user", "content": prompt}]
+        ) as s:
+            for text in s.text_stream:
+                yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
