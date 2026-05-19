@@ -594,3 +594,85 @@ async def orar_por_pedido(request: Request):
     if not pedido_id:
         return {"error": "pedido_id obrigatório"}
     return {"ok": True}
+
+
+# ── RELATÓRIO MENSAL ──────────────────────────────────
+@app.post("/relatorio-mensal")
+async def relatorio_mensal(request: Request):
+    body = await request.json()
+    dados = body.get("dados", {})
+
+    agora = datetime.now()
+    mes_anterior = agora.month - 1 if agora.month > 1 else 12
+    ano = agora.year if agora.month > 1 else agora.year - 1
+    meses = ["","Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+             "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+    nome_mes = meses[mes_anterior]
+
+    devocionais = dados.get("devocionais", 0)
+    streak_max = dados.get("streak_max", 0)
+    oracoes = dados.get("oracoes", 0)
+    meditacoes = dados.get("meditacoes", 0)
+    quiz_acertos = dados.get("quiz_acertos", 0)
+    quiz_total = dados.get("quiz_total", 0)
+    planos_ativos = dados.get("planos_ativos", 0)
+    dias_lidos = dados.get("dias_lidos", 0)
+
+    prompt = f"""Você é o assistente espiritual do app "Manhã com Deus". Gere um relatório espiritual mensal personalizado e encorajador para o usuário.
+
+MÊS: {nome_mes} de {ano}
+
+DADOS DO USUÁRIO:
+- Devocionais lidos: {devocionais}
+- Dias com leitura: {dias_lidos}
+- Maior sequência (streak): {streak_max} dias
+- Orações realizadas: {oracoes}
+- Meditações noturnas: {meditacoes}
+- Quiz bíblico: {quiz_acertos} acertos de {quiz_total} perguntas
+- Planos temáticos em andamento: {planos_ativos}
+
+REGRAS:
+- Tom pastoral, acolhedor e encorajador — nunca crítico
+- Celebre CADA conquista, mesmo pequena
+- Se os números forem baixos, seja ainda mais encorajador
+- Inclua um versículo específico para a jornada do usuário
+- Termine com uma palavra profética/encorajadora para o próximo mês
+- Seja específico com os números — não genérico
+
+USE EXATAMENTE este formato:
+
+📊 RELATÓRIO ESPIRITUAL
+{nome_mes} de {ano}
+
+✦ [TÍTULO DA JORNADA — ex: "Um Mês de Crescimento"]
+
+🌟 SUA JORNADA EM NÚMEROS:
+[Celebre cada dado de forma calorosa e específica — 4-5 linhas]
+
+📖 PALAVRA PARA ESTA JORNADA:
+"[Versículo específico para a jornada do usuário]"
+— [Referência]
+
+💭 REFLEXÃO DO MÊS:
+[2-3 parágrafos celebrando o crescimento, reconhecendo os desafios e encorajando]
+
+🌱 SEMENTE PARA {meses[agora.month] if agora.month <= 12 else "Janeiro"}:
+[Desafio/encorajamento específico para o próximo mês]
+
+✦ "[FRASE DE ENCORAJAMENTO FINAL]"
+
+Com amor e fé,
+Manhã com Deus 🙏"""
+
+    def stream():
+        with client.messages.stream(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        ) as s:
+            for text in s.text_stream:
+                yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
