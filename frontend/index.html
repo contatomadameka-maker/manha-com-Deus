@@ -2003,7 +2003,7 @@ async function abrirOracao(tipo) {
 
   var overlay = document.createElement("div");
   overlay.id = "oracaoOverlay";
-  overlay.style.cssText = "position:fixed;inset:0;background:rgba(26,18,8,0.97);z-index:9999;display:flex;flex-direction:column;overflow-y:auto";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(26,18,8,0.97);z-index:9999;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch";
 
   var bgColor = tipo === "noturna" ? "linear-gradient(135deg,#0D0A1A,#1A1208)" : "linear-gradient(135deg,#1A1208,#1A3020)";
   var titulo = tipo === "noturna" ? "🌙 Oração da Noite" : "☀️ Oração da Manhã";
