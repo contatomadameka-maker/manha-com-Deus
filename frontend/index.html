@@ -2669,4 +2669,130 @@ async function desativarPedido(pedidoId) {
 </script>
 
 </body>
-</html>
+</html><script>
+async function carregarStatsRelatorio() {
+  if (!userAtual) return;
+
+  var agora = new Date();
+  var mesAtual = agora.getMonth() + 1;
+  var anoAtual = agora.getFullYear();
+  var inicioMes = anoAtual + "-" + String(mesAtual).padStart(2,"0") + "-01";
+  var proximoMes = mesAtual === 12 ? 1 : mesAtual + 1;
+  var anoProximo = mesAtual === 12 ? anoAtual + 1 : anoAtual;
+  var fimMes = anoProximo + "-" + String(proximoMes).padStart(2,"0") + "-01";
+
+  try {
+    var resDevo = await sb.from("devocionais").select("*",{count:"exact"}).eq("user_id",userAtual.id).gte("data",inicioMes).lt("data",fimMes);
+    var totalDevo = resDevo.count || 0;
+
+    var resStreak = await sb.from("streaks").select("streak_maximo").eq("user_id",userAtual.id).single();
+    var streakMax = resStreak.data?.streak_maximo || 0;
+
+    var resOracoes = await sb.from("oracoes_salvas").select("*",{count:"exact"}).eq("user_id",userAtual.id).gte("created_at",inicioMes).lt("created_at",fimMes);
+    var totalOracoes = resOracoes.count || 0;
+
+    var resMed = await sb.from("meditacoes").select("*",{count:"exact"}).eq("user_id",userAtual.id).gte("data",inicioMes).lt("data",fimMes);
+    var totalMed = resMed.count || 0;
+
+    var resQuiz = await sb.from("quiz_respostas").select("acertos,total_perguntas").eq("user_id",userAtual.id).gte("created_at",inicioMes).lt("created_at",fimMes);
+    var quizAcertos = 0, quizTotal = 0;
+    (resQuiz.data||[]).forEach(function(q){ quizAcertos+=q.acertos||0; quizTotal+=q.total_perguntas||0; });
+
+    var resPlanos = await sb.from("planos_usuario").select("*",{count:"exact"}).eq("user_id",userAtual.id).eq("concluido",false);
+    var totalPlanos = resPlanos.count || 0;
+
+    var diasUnicos = new Set((resDevo.data||[]).map(function(d){return d.data;})).size;
+
+    document.getElementById("statDevocionais").textContent = totalDevo;
+    document.getElementById("statStreak").textContent = streakMax + "🔥";
+    document.getElementById("statOracoes").textContent = totalOracoes;
+    document.getElementById("statMeditacoes").textContent = totalMed;
+
+    window._statsRelatorio = {
+      devocionais: totalDevo, streak_max: streakMax,
+      oracoes: totalOracoes, meditacoes: totalMed,
+      quiz_acertos: quizAcertos, quiz_total: quizTotal,
+      planos_ativos: totalPlanos, dias_lidos: diasUnicos
+    };
+
+  } catch(e) { console.error("Erro stats relatorio:", e); }
+}
+
+async function gerarRelatorio() {
+  if (!userAtual) return;
+  if (planoUser !== "mensal") {
+    document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
+    document.querySelector(".nav-tab").classList.add("active");
+    document.getElementById("abaDevocional").style.display="block";
+    document.getElementById("abaRelatorio").style.display="none";
+    tela("paywall");
+    return;
+  }
+  var btn = document.getElementById("btnRelatorio");
+  btn.textContent = "⏳ Gerando...";
+  btn.disabled = true;
+  _relatorioTexto = "";
+  document.getElementById("relatorioConteudo").style.display = "block";
+  document.getElementById("relatorioConteudo").innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p class="loading-txt">Preparando sua carta espiritual...</p></div>';
+
+  try {
+    var resp = await fetch("/relatorio-mensal",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dados:window._statsRelatorio||{}})});
+    document.getElementById("relatorioConteudo").innerHTML = "";
+    var reader=resp.body.getReader(),dec=new TextDecoder(),buf="";
+    while(true){
+      var chunk=await reader.read();if(chunk.done)break;
+      buf+=dec.decode(chunk.value,{stream:true});
+      var lines=buf.split("\n");buf=lines.pop();
+      for(var i=0;i<lines.length;i++){
+        if(!lines[i].startsWith("data: "))continue;
+        var d=lines[i].slice(6).trim();if(d==="[DONE]")continue;
+        try{var p=JSON.parse(d);if(p.text){_relatorioTexto+=p.text;renderRelatorio(_relatorioTexto);}}catch(e){}
+      }
+    }
+    btn.textContent="✓ Relatório gerado!";btn.disabled=false;
+    var acoes=document.createElement("div");
+    acoes.style.cssText="margin-top:16px";
+    acoes.innerHTML='<button onclick="compartilharRelatorio()" class="btn-sec" style="width:100%">🕊️ Compartilhar relatório</button>';
+    document.getElementById("relatorioConteudo").appendChild(acoes);
+  }catch(e){
+    document.getElementById("relatorioConteudo").innerHTML='<div class="erro-wrap"><p class="erro-txt">Erro ao gerar relatório.</p></div>';
+    btn.textContent="✦ Gerar meu Relatório do Mês";btn.disabled=false;
+  }
+}
+
+function renderRelatorio(texto) {
+  var el = document.getElementById("relatorioConteudo");
+  if (!el) return;
+  var linhas = texto.split("\n"), html = "";
+  linhas.forEach(function(l) {
+    var t = l.trim();
+    if (!t) { html += "<div style='height:8px'></div>"; return; }
+    if (t.startsWith("📊")) {
+      html += "<div style='background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center'><p style='font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.7)'>" + t + "</p>";
+    } else if (t.match(/^(Janeiro|Fevereiro|Março|Abril|Maio|Junho|Julho|Agosto|Setembro|Outubro|Novembro|Dezembro)/)) {
+      html += "<p style='font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:4px'>" + t + "</p></div>";
+    } else if (t.startsWith("✦") && !t.includes('"')) {
+      html += "<h3 style='font-family:Playfair Display,serif;font-size:1.2rem;color:#1A1208;margin:16px 0 12px;text-align:center'>" + t.replace("✦","").trim() + "</h3>";
+    } else if (t.startsWith("✦") && t.includes('"')) {
+      html += "<div style='background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:12px;padding:20px;margin:16px 0;text-align:center'><p style='font-family:Playfair Display,serif;font-size:1rem;color:#C9A84C;font-style:italic'>\"" + t.replace(/^✦\s*"?/,"").replace(/"$/,"") + "\"</p></div>";
+    } else if (t.startsWith("🌟")||t.startsWith("📖")||t.startsWith("💭")||t.startsWith("🌱")) {
+      html += "<div style='background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:12px;padding:16px;margin-bottom:12px'><p style='font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:10px'>" + t + "</p>";
+    } else if (t.startsWith('"') && t.endsWith('"')) {
+      html += "<p style='font-family:Playfair Display,serif;font-size:0.95rem;color:#1A1208;font-style:italic;line-height:1.6;margin-bottom:8px'>" + t + "</p></div>";
+    } else if (t.startsWith("—")) {
+      html += "<p style='font-size:0.72rem;color:#8A7560;text-align:right;margin-bottom:8px'>" + t + "</p>";
+    } else if (t.startsWith("Com amor")) {
+      html += "<p style='text-align:center;color:#8A7560;font-size:0.82rem;font-style:italic;margin-top:8px'>" + t + "</p>";
+    } else {
+      html += "<p style='font-size:0.88rem;color:#3D2E1A;line-height:1.8;margin-bottom:8px'>" + t + "</p>";
+    }
+  });
+  el.innerHTML = html;
+}
+
+function compartilharRelatorio() {
+  var txt = "📊 Meu Relatório Espiritual\n\n" + _relatorioTexto.slice(0,500) + "...\n\nManhã com Deus · manhacomdeus.com.br";
+  if (navigator.share) navigator.share({title:"Meu Relatório Espiritual",text:txt});
+  else navigator.clipboard.writeText(txt).then(function(){mostrarToast("Copiado!");});
+}
+</script>
