@@ -2272,6 +2272,7 @@ async function abrirMeditacao() {
     '</div></div>' +
     '<div id="meditacaoAcoes" style="display:none;margin-top:24px;display:flex;flex-direction:column;gap:10px">' +
     '<button onclick="salvarMeditacao()" style="background:linear-gradient(135deg,#5C7A5E,#3D6B40);border:none;color:#fff;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;min-height:48px">💾 Salvar meditação</button>' +
+    '<button onclick="document.getElementById(\'meditacaoOverlay\').remove()" style="width:100%;background:rgba(92,122,94,0.12);border:1.5px solid rgba(92,122,94,0.35);color:#A8C5AA;padding:16px;border-radius:12px;font-size:0.9rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;min-height:52px;margin-bottom:4px">✕ Fechar</button>' +
     '<button onclick="compartilharMeditacao()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:14px;border-radius:12px;font-size:0.88rem;font-family:DM Sans,sans-serif;cursor:pointer;min-height:48px">🕊️ Compartilhar</button>' +
     '</div></div>';
 
@@ -2413,25 +2414,23 @@ async function salvarMeditacao() {
   }
   try {
     var hoje = new Date().toISOString().split("T")[0];
-    // Tenta upsert primeiro, se falhar tenta insert
-    var res = await sb.from("meditacoes").upsert({
+    // Salva na tabela devocionais para aparecer no histórico
+    var res = await sb.from("devocionais").insert({
       user_id: userAtual.id,
-      data: hoje,
-      conteudo: _meditacaoTexto
-    }, {onConflict: "user_id,data"});
-    if (res.error) {
-      // Tenta insert direto
-      var res2 = await sb.from("meditacoes").insert({
-        user_id: userAtual.id,
-        data: hoje,
-        conteudo: _meditacaoTexto
-      });
-      if (res2.error) throw res2.error;
-    }
+      modo: 1,
+      estado: "🌙 Meditação Noturna",
+      titulo: "Meditação Noturna",
+      conteudo: _meditacaoTexto,
+      data: hoje
+    });
+    if (res.error) throw res.error;
     mostrarToast("🌙 Meditação salva no histórico!");
+    // Atualiza contador
+    var el = document.getElementById("totalLidos");
+    if (el) el.textContent = parseInt(el.textContent||0) + 1;
   } catch(e) {
-    console.error("Erro meditacao:", JSON.stringify(e));
-    mostrarToast("❌ Erro: " + (e.message || JSON.stringify(e)));
+    console.error("Erro meditacao:", e);
+    mostrarToast("❌ Erro: " + (e.message || "tente novamente"));
   }
 }
 
