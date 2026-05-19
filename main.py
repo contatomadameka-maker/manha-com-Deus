@@ -428,7 +428,9 @@ async def gerar_oracao(request: Request):
     estado = body.get("estado", "")
 
     agora = datetime.now()
-    data_formatada = agora.strftime("%A, %d de %B de %Y").capitalize()
+    meses = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"]
+    dias_sem = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
+    data_formatada = dias_sem[agora.weekday()] + ", " + str(agora.day) + " de " + meses[agora.month-1] + " de " + str(agora.year)
 
     if tipo == "noturna":
         prompt = f"""Gere uma oração noturna guiada para encerrar o dia com Deus.
