@@ -757,3 +757,47 @@ Semana {semana} · {data_formatada}
         return {"texto": texto, "semana": semana, "data": data_formatada}
     except Exception as e:
         return {"error": str(e)}
+
+
+# ── ACONSELHAMENTO IA ─────────────────────────────────
+@app.post("/aconselhamento")
+async def aconselhamento(request: Request):
+    body = await request.json()
+    mensagem = body.get("mensagem", "")
+    historico = body.get("historico", [])
+
+    if not mensagem:
+        return {"error": "mensagem obrigatória"}
+
+    system = """Você é um conselheiro cristão compassivo e sábio no app "Manhã com Deus". 
+Seu papel é ouvir com empatia, responder com base bíblica e oferecer direção espiritual.
+
+REGRAS:
+- Sempre comece reconhecendo o sentimento da pessoa — nunca minimize
+- Use versículos relevantes mas de forma natural, não mecânica
+- Tom de pastor amigo, não de pregador formal
+- Seja específico para o que a pessoa disse — não genérico
+- Ofereça uma pergunta reflexiva ao final para aprofundar
+- Máximo 4-5 parágrafos — não seja longo demais
+- Nunca substitua ajuda profissional para casos graves — sugira quando necessário
+- Português brasileiro natural e acolhedor
+- Termine sempre com encorajamento baseado em promessa bíblica"""
+
+    mensagens = []
+    for h in historico[-6:]:  # últimas 6 mensagens para contexto
+        mensagens.append({"role": h["role"], "content": h["content"]})
+    mensagens.append({"role": "user", "content": mensagem})
+
+    def stream():
+        with client.messages.stream(
+            model="claude-sonnet-4-20250514",
+            max_tokens=600,
+            system=system,
+            messages=mensagens
+        ) as s:
+            for text in s.text_stream:
+                yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
