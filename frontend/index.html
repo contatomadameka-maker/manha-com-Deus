@@ -569,6 +569,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         <div class="acoes-wrap" id="acoesWrap" style="display:none">
           <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
           <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card para Stories</button>
       <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">
         🎧 Ouvir devocional
       </button>
@@ -1869,6 +1870,7 @@ function relerDevocional(id) {
   document.getElementById('acoesWrap').innerHTML = `
     <button class="btn-principal" onclick="reiniciar()">✦ Voltar ao início</button>
     <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card para Stories</button>
       <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">
         🎧 Ouvir devocional
       </button>`;
@@ -3223,5 +3225,97 @@ async function enviarAconselhamento() {
   _aconselRespondendo = false;
   msgs.scrollTop = msgs.scrollHeight;
   input.focus();
+}
+</script>
+<script>
+function gerarCardStory() {
+  // Pega frase de destaque ou versículo
+  var destaque = "";
+  var versiculo = "";
+  var ref = "";
+  var titulo = document.getElementById("devoTitulo")?.textContent || "";
+
+  // Tenta pegar do texto completo
+  if (textoCompleto) {
+    var linhas = textoCompleto.split("\n");
+    for (var i = 0; i < linhas.length; i++) {
+      var l = linhas[i].trim();
+      if (l.startsWith("✦") && !l.includes("Gerado") && l.includes('"') && destaque === "") {
+        destaque = l.replace(/^✦\s*"?/, "").replace(/"$/, "").trim();
+      }
+      if (l.startsWith('"') && versiculo === "") versiculo = l;
+      if (l.startsWith("—") && ref === "") ref = l.replace("—","").trim();
+    }
+  }
+
+  var fraseCard = destaque || versiculo || titulo;
+  var refCard = destaque ? titulo : ref;
+
+  // Cria overlay do card
+  var overlay = document.createElement("div");
+  overlay.id = "storyOverlay";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box";
+
+  overlay.innerHTML =
+    '<p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-bottom:16px;text-align:center">Segure para salvar a imagem</p>' +
+    '<div id="storyCard" style="width:100%;max-width:340px;aspect-ratio:9/16;background:linear-gradient(160deg,#1A1208 0%,#2C1F0E 40%,#1A3020 100%);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;box-sizing:border-box;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)">' +
+    // Decoração de fundo
+    '<div style="position:absolute;top:0;left:0;right:0;height:40%;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.15),transparent 70%)"></div>' +
+    '<div style="position:absolute;bottom:0;left:0;right:0;height:30%;background:radial-gradient(ellipse at 50% 100%,rgba(92,122,94,0.1),transparent 70%)"></div>' +
+    // Logo topo
+    '<div style="position:absolute;top:32px;left:0;right:0;text-align:center">' +
+    '<div style="font-size:0.6rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(201,168,76,0.5)">✦ MANHÃ COM DEUS ✦</div>' +
+    '</div>' +
+    // Conteúdo central
+    '<div style="position:relative;text-align:center;padding:0 10px">' +
+    '<div style="width:40px;height:1px;background:rgba(201,168,76,0.4);margin:0 auto 24px"></div>' +
+    '<p style="font-family:Playfair Display,serif;font-size:1.15rem;color:#FAF6EE;line-height:1.7;font-style:italic;margin-bottom:20px">"' + fraseCard.replace(/^"|"$/g,"") + '"</p>' +
+    (refCard ? '<p style="font-size:0.7rem;color:rgba(201,168,76,0.7);letter-spacing:1px">— ' + refCard + '</p>' : '') +
+    '<div style="width:40px;height:1px;background:rgba(201,168,76,0.4);margin:24px auto 0"></div>' +
+    '</div>' +
+    // Rodapé
+    '<div style="position:absolute;bottom:32px;left:0;right:0;text-align:center">' +
+    '<div style="font-size:0.58rem;color:rgba(255,255,255,0.25);letter-spacing:2px;text-transform:uppercase">manhacomdeus.com.br</div>' +
+    '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:12px;margin-top:20px;width:100%;max-width:340px">' +
+    '<button onclick="salvarCardStory()" style="flex:1;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:12px;font-size:0.85rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer">💾 Salvar imagem</button>' +
+    '<button onclick="document.getElementById(\'storyOverlay\').remove()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:14px 20px;border-radius:12px;font-size:0.85rem;font-family:DM Sans,sans-serif;cursor:pointer">Fechar</button>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+
+async function salvarCardStory() {
+  var card = document.getElementById("storyCard");
+  if (!card) return;
+
+  try {
+    // Verifica se html2canvas está disponível
+    if (typeof html2canvas === "undefined") {
+      mostrarToast("⚠️ Segure na imagem para salvar");
+      return;
+    }
+
+    mostrarToast("⏳ Gerando imagem...");
+
+    var canvas = await html2canvas(card, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: null,
+      logging: false
+    });
+
+    var link = document.createElement("a");
+    link.download = "manha-com-deus-story.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    mostrarToast("✓ Imagem salva! Compartilhe no Stories 📸");
+    document.getElementById("storyOverlay")?.remove();
+
+  } catch(e) {
+    mostrarToast("⚠️ Segure na imagem e salve manualmente");
+  }
 }
 </script>
