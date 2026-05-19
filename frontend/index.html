@@ -2725,11 +2725,11 @@ async function carregarStatsRelatorio() {
   var agora = new Date();
   var mesAtual = agora.getMonth() + 1;
   var anoAtual = agora.getFullYear();
-  // Mês anterior
-  var mes = mesAtual - 1 === 0 ? 12 : mesAtual - 1;
-  var ano = mesAtual - 1 === 0 ? anoAtual - 1 : anoAtual;
-  var inicioMes = ano + "-" + String(mes).padStart(2,"0") + "-01";
-  var fimMes = anoAtual + "-" + String(mesAtual).padStart(2,"0") + "-01";
+  // Mês atual
+  var inicioMes = anoAtual + "-" + String(mesAtual).padStart(2,"0") + "-01";
+  var proximoMes = mesAtual === 12 ? 1 : mesAtual + 1;
+  var anoProximo = mesAtual === 12 ? anoAtual + 1 : anoAtual;
+  var fimMes = anoProximo + "-" + String(proximoMes).padStart(2,"0") + "-01";
 
   try {
     // Devocionais do mês
