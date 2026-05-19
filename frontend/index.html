@@ -1769,7 +1769,16 @@ async function carregarRanking() {
 
 async function iniciarQuiz() {
   if (!userAtual) return;
-  if (planoUser !== "mensal") { tela("paywall"); return; }
+  if (planoUser !== "mensal") {
+    document.querySelectorAll(".nav-tab").forEach(function(t) { t.classList.remove("active"); });
+    document.querySelector(".nav-tab").classList.add("active");
+    document.getElementById("abaDevocional").style.display = "block";
+    document.getElementById("abaHistorico").style.display = "none";
+    document.getElementById("abaPlanos").style.display = "none";
+    document.getElementById("abaQuiz").style.display = "none";
+    tela("paywall");
+    return;
+  }
   if (!_nivelSelecionado) return;
 
   _quizSemana = getSemanaAtual();
