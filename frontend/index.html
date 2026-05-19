@@ -2324,17 +2324,7 @@ async function abrirMeditacao() {
   document.body.appendChild(overlay);
 
   // Botão fechar fixo no rodapé
-  var btnFechar = document.createElement("button");
-  btnFechar.className = "overlay-fechar-btn";
-  btnFechar.id = "btnFecharOracao";
-  btnFechar.innerHTML = "✕ Fechar";
-  btnFechar.onclick = function() {
-    var ov = document.getElementById("oracaoOverlay");
-    if (ov) ov.remove();
-    var bf = document.getElementById("btnFecharOracao");
-    if (bf) bf.remove();
-  };
-  document.body.appendChild(btnFechar);
+  // botao fechar no header
 
   var tema = document.getElementById("devoTitulo") ? document.getElementById("devoTitulo").textContent : "";
   if (tema === "Carregando...") tema = "";
