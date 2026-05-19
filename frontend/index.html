@@ -2183,12 +2183,33 @@ function relerOracao(o) {
   
   document.body.appendChild(overlay);
   
-  // Renderiza o conteúdo
-  var conteudo = overlay.querySelector("#relerOracaoConteudo");
-  _oracaoTexto = o.conteudo;
-  renderOracao(o.conteudo);
-  // Copia HTML renderizado
-  conteudo.innerHTML = document.getElementById("oracaoConteudo") ? 
-    document.getElementById("oracaoConteudo").innerHTML : o.conteudo;
+  // Renderiza o conteúdo reconstruindo formatação
+  var conteudoEl = document.getElementById("relerOracaoConteudo");
+  var texto = o.conteudo;
+  
+  // Reconstrói quebras de linha a partir dos marcadores
+  texto = texto
+    .replace(/(☀️ ORAÇÃO|🌙 ORAÇÃO)/g, "\n$1")
+    .replace(/✦ (ADORAÇÃO|GRATIDÃO|CONFISSÃO|PEDIDOS DO DIA|DECLARAÇÃO E ENVIO|DECLARAÇÃO FINAL|INTERCESSÃO|PAZ PARA DORMIR|PERDÃO E ENTREGA)/g, "\n\n✦ $1\n")
+    .replace(/Amém\. 🙏/g, "\n\nAmém. 🙏")
+    .trim();
+  
+  var linhas = texto.split("\n");
+  var html = "";
+  linhas.forEach(function(l) {
+    var t = l.trim();
+    if (!t) { html += "<div style='height:8px'></div>"; return; }
+    if (t.startsWith("☀️") || t.startsWith("🌙")) {
+      html += "<p style='font-size:0.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:16px'>" + t + "</p>";
+    } else if (t.startsWith("✦")) {
+      var sec = t.replace("✦", "").trim();
+      html += "<p style='font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin:20px 0 8px;display:flex;align-items:center;gap:6px'><span style='height:1px;flex:1;background:rgba(201,168,76,0.2)'></span>" + sec + "<span style='height:1px;flex:1;background:rgba(201,168,76,0.2)'></span></p>";
+    } else if (t.indexOf("Amém") !== -1) {
+      html += "<p style='font-family:Playfair Display,serif;font-size:1rem;color:#C9A84C;text-align:center;margin-top:24px;font-style:italic'>" + t + "</p>";
+    } else {
+      html += "<p style='font-size:0.9rem;color:rgba(250,246,238,0.85);line-height:1.8;font-style:italic;margin-bottom:8px'>" + t + "</p>";
+    }
+  });
+  conteudoEl.innerHTML = html;
 }
 </script>
