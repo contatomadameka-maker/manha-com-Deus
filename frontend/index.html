@@ -328,6 +328,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="nav-tab active" onclick="navTab('devocional',this)">✦ Devocional</div>
       <div class="nav-tab" onclick="navTab('historico',this)">📚 Histórico</div>
       <div class="nav-tab" onclick="navTab('planos',this)">🗓️ Planos</div>
+      <div class="nav-tab" onclick="navTab('quiz',this)">🧠 Quiz</div>
     </div>
 
     <div id="abaDevocional">
@@ -528,6 +529,54 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <!-- Todos os planos -->
       <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">Escolha um plano</p>
       <div id="planosGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
+    </div>
+
+
+    <!-- ABA QUIZ -->
+    <div id="abaQuiz" style="display:none">
+      <p class="section-label">Conhecimento bíblico</p>
+      <h2 class="intro-titulo">Quiz Bíblico</h2>
+      <p class="intro-sub">5 perguntas semanais para testar e crescer no conhecimento da Palavra</p>
+
+      <div id="quizInicio">
+        <!-- Nível -->
+        <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:20px;margin-bottom:14px">
+          <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:14px">Escolha o nível</p>
+          <div style="display:flex;flex-direction:column;gap:10px" id="nivelGrid">
+            <div onclick="selecionarNivel('iniciante',this)" style="background:#FAF6EE;border:2px solid rgba(92,122,94,0.2);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s" data-nivel="iniciante">
+              <span style="font-size:1.4rem">🟢</span>
+              <div><div style="font-size:0.88rem;font-weight:600;color:#1A1208">Iniciante</div><div style="font-size:0.75rem;color:#8A7560">Histórias e personagens conhecidos</div></div>
+            </div>
+            <div onclick="selecionarNivel('intermediario',this)" style="background:#FAF6EE;border:2px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s" data-nivel="intermediario">
+              <span style="font-size:1.4rem">🟡</span>
+              <div><div style="font-size:0.88rem;font-weight:600;color:#1A1208">Intermediário</div><div style="font-size:0.75rem;color:#8A7560">Ensinamentos e contexto bíblico</div></div>
+            </div>
+            <div onclick="selecionarNivel('avancado',this)" style="background:#FAF6EE;border:2px solid rgba(192,57,43,0.2);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s" data-nivel="avancado">
+              <span style="font-size:1.4rem">🔴</span>
+              <div><div style="font-size:0.88rem;font-weight:600;color:#1A1208">Avançado</div><div style="font-size:0.75rem;color:#8A7560">Teologia e detalhes específicos</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ranking -->
+        <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:16px">
+          <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:14px">🏆 Ranking desta semana</p>
+          <div id="quizRanking">
+            <div style="text-align:center;padding:16px;color:#8A7560;font-size:0.85rem">Carregando ranking...</div>
+          </div>
+        </div>
+
+        <button id="btnIniciarQuiz" onclick="iniciarQuiz()" disabled
+          style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:15px;border-radius:12px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;min-height:50px;opacity:0.5">
+          Selecione um nível para começar
+        </button>
+      </div>
+
+      <!-- QUIZ EM ANDAMENTO -->
+      <div id="quizJogo" style="display:none"></div>
+
+      <!-- RESULTADO FINAL -->
+      <div id="quizResultado" style="display:none"></div>
     </div>
 
     <div class="footer">
@@ -921,20 +970,19 @@ function compartilhar(){
 <script>
 // navTab unificado
 window.navTab = function(aba, el) {
-  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(function(t) { t.classList.remove("active"); });
   el.classList.add("active");
   document.getElementById("abaDevocional").style.display = aba === "devocional" ? "block" : "none";
   document.getElementById("abaHistorico").style.display = aba === "historico" ? "block" : "none";
   document.getElementById("abaPlanos").style.display = aba === "planos" ? "block" : "none";
+  document.getElementById("abaQuiz").style.display = aba === "quiz" ? "block" : "none";
   if (aba === "historico") carregarHistorico();
   if (aba === "planos") {
-    // Renderiza imediatamente
-    const grid = document.getElementById('planosGrid');
-    if (grid && grid.innerHTML.trim() === '') {
-      renderGridPlanos([]);
-    }
+    var grid = document.getElementById("planosGrid");
+    if (grid && grid.innerHTML.trim() === "") renderGridPlanos([]);
     carregarPlanos();
   }
+  if (aba === "quiz") carregarRanking();
 };
 </script>
 
@@ -1658,5 +1706,235 @@ function relerDevocional(id) {
   document.getElementById('acoesWrap').style.display = 'flex';
 
   window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+<script>
+var _nivelSelecionado = null;
+var _quizPerguntas = [];
+var _quizAtual = 0;
+var _quizAcertos = 0;
+var _quizSemana = "";
+
+function getSemanaAtual() {
+  var now = new Date();
+  var start = new Date(now.getFullYear(), 0, 1);
+  var week = Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
+  return now.getFullYear() + "-W" + String(week).padStart(2, "0");
+}
+
+function selecionarNivel(nivel, el) {
+  _nivelSelecionado = nivel;
+  document.querySelectorAll("#nivelGrid > div").forEach(function(d) {
+    d.style.borderColor = "rgba(201,168,76,0.2)";
+    d.style.background = "#FAF6EE";
+  });
+  el.style.borderColor = "#C9A84C";
+  el.style.background = "rgba(201,168,76,0.08)";
+  var btn = document.getElementById("btnIniciarQuiz");
+  btn.disabled = false;
+  btn.style.opacity = "1";
+  btn.textContent = "✦ Iniciar Quiz — " + (nivel === "iniciante" ? "Iniciante 🟢" : nivel === "intermediario" ? "Intermediário 🟡" : "Avançado 🔴");
+}
+
+async function carregarRanking() {
+  var semana = getSemanaAtual();
+  try {
+    var result = await sb.from("quiz_respostas")
+      .select("user_id, pontos, nivel")
+      .eq("semana", semana)
+      .eq("concluido", true)
+      .order("pontos", {ascending: false})
+      .limit(5);
+    
+    var el = document.getElementById("quizRanking");
+    if (!el) return;
+    
+    if (!result.data || result.data.length === 0) {
+      el.innerHTML = '<div style="text-align:center;padding:12px;color:#8A7560;font-size:0.82rem">Nenhuma pontuação ainda esta semana. Seja o primeiro! 🏆</div>';
+      return;
+    }
+
+    var emojis = ["🥇","🥈","🥉","4️⃣","5️⃣"];
+    el.innerHTML = result.data.map(function(r, i) {
+      var isMe = userAtual && r.user_id === userAtual.id;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(201,168,76,0.1);' + (isMe ? 'background:rgba(201,168,76,0.05);border-radius:8px;padding:8px;' : '') + '">' +
+        '<span style="font-size:1.1rem">' + emojis[i] + '</span>' +
+        '<div style="flex:1"><div style="font-size:0.82rem;font-weight:600;color:#1A1208">' + (isMe ? "Você 🌟" : "Participante " + (i+1)) + '</div>' +
+        '<div style="font-size:0.7rem;color:#8A7560">' + (r.nivel === "iniciante" ? "🟢" : r.nivel === "intermediario" ? "🟡" : "🔴") + ' ' + r.nivel + '</div></div>' +
+        '<div style="font-family:Playfair Display,serif;font-size:1.1rem;color:#C9A84C;font-weight:700">' + r.pontos + ' pts</div>' +
+        '</div>';
+    }).join("");
+  } catch(e) { console.error("Erro ranking:", e); }
+}
+
+async function iniciarQuiz() {
+  if (!userAtual) return;
+  if (planoUser !== "mensal") { tela("paywall"); return; }
+  if (!_nivelSelecionado) return;
+
+  _quizSemana = getSemanaAtual();
+
+  // Verifica se já fez o quiz esta semana neste nível
+  try {
+    var check = await sb.from("quiz_respostas")
+      .select("*").eq("user_id", userAtual.id)
+      .eq("semana", _quizSemana).eq("nivel", _nivelSelecionado).single();
+    
+    if (check.data && check.data.concluido) {
+      mostrarToast("Você já completou o quiz " + _nivelSelecionado + " esta semana! Volte na próxima segunda. 📅");
+      return;
+    }
+  } catch(e) {}
+
+  document.getElementById("quizInicio").style.display = "none";
+  document.getElementById("quizJogo").style.display = "block";
+  document.getElementById("quizJogo").innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p class="loading-txt">Gerando quiz personalizado...</p></div>';
+
+  try {
+    var resp = await fetch("/gerar-quiz", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({nivel: _nivelSelecionado, semana: _quizSemana})
+    });
+    var dados = await resp.json();
+    if (dados.error || !dados.perguntas) throw new Error(dados.error || "Erro");
+    _quizPerguntas = dados.perguntas;
+    _quizAtual = 0;
+    _quizAcertos = 0;
+    mostrarPergunta(0);
+  } catch(e) {
+    document.getElementById("quizJogo").innerHTML = '<div class="erro-wrap"><p class="erro-txt">Não foi possível gerar o quiz. Tente novamente.</p></div>' +
+      '<button class="btn-principal" onclick="voltarQuizInicio()" style="margin-top:14px">Voltar</button>';
+  }
+}
+
+function mostrarPergunta(idx) {
+  var p = _quizPerguntas[idx];
+  var total = _quizPerguntas.length;
+  var pct = Math.round((idx / total) * 100);
+  var letras = ["A","B","C","D"];
+
+  var html = '<div style="margin-bottom:16px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+    '<span style="font-size:0.72rem;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:1px">Pergunta ' + (idx+1) + ' de ' + total + '</span>' +
+    '<span style="font-size:0.72rem;color:#8A7560">' + _quizAcertos + ' acertos</span></div>' +
+    '<div style="background:#f0f0f0;border-radius:20px;height:6px;overflow:hidden">' +
+    '<div style="background:#C9A84C;height:100%;width:' + pct + '%;border-radius:20px;transition:width 0.4s"></div></div></div>' +
+
+    '<div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:20px;margin-bottom:14px">' +
+    '<p style="font-family:Playfair Display,serif;font-size:1rem;color:#1A1208;line-height:1.5;margin-bottom:0">' + p.pergunta + '</p></div>' +
+
+    '<div style="display:flex;flex-direction:column;gap:10px" id="alternativasWrap">' +
+    letras.map(function(l) {
+      return '<div onclick="responder(\'' + l + '\',\'' + p.correta + '\',\'' + idx + '\')" ' +
+        'style="background:#fff;border:1.5px solid var(--borda);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s" id="alt-' + l + '">' +
+        '<div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.1);border:1.5px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#C9A84C;flex-shrink:0">' + l + '</div>' +
+        '<span style="font-size:0.88rem;color:#3D2E1A;line-height:1.4">' + p.alternativas[l] + '</span></div>';
+    }).join("") + '</div>' +
+    '<div id="explicacaoWrap" style="display:none"></div>';
+
+  document.getElementById("quizJogo").innerHTML = html;
+}
+
+function responder(escolha, correta, idx) {
+  // Bloqueia cliques
+  document.querySelectorAll("#alternativasWrap > div").forEach(function(d) {
+    d.style.pointerEvents = "none";
+  });
+
+  var acertou = escolha === correta;
+  if (acertou) _quizAcertos++;
+
+  // Colore alternativas
+  document.querySelectorAll("#alternativasWrap > div").forEach(function(d) {
+    var letra = d.id.replace("alt-","");
+    if (letra === correta) {
+      d.style.background = "#EAFAF1";
+      d.style.borderColor = "#27AE60";
+    } else if (letra === escolha && !acertou) {
+      d.style.background = "#FFF0F0";
+      d.style.borderColor = "#E74C3C";
+    }
+  });
+
+  // Explicação
+  var p = _quizPerguntas[idx];
+  var expWrap = document.getElementById("explicacaoWrap");
+  expWrap.style.display = "block";
+  expWrap.innerHTML = '<div style="background:' + (acertou ? "#EAFAF1" : "#FFF8F0") + ';border:1px solid ' + (acertou ? "rgba(39,174,96,0.3)" : "rgba(230,126,34,0.3)") + ';border-radius:12px;padding:14px;margin-top:14px">' +
+    '<p style="font-size:0.82rem;font-weight:700;color:' + (acertou ? "#27AE60" : "#E67E22") + ';margin-bottom:6px">' + (acertou ? "✓ Correto!" : "✗ Incorreto") + '</p>' +
+    '<p style="font-size:0.8rem;color:#3D2E1A;line-height:1.5">' + p.explicacao + '</p></div>' +
+    '<button onclick="proximaPergunta(' + (parseInt(idx)+1) + ')" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;margin-top:12px;min-height:48px">' +
+    (parseInt(idx)+1 < _quizPerguntas.length ? "Próxima pergunta →" : "Ver resultado 🏆") + '</button>';
+}
+
+async function proximaPergunta(proximoIdx) {
+  if (proximoIdx < _quizPerguntas.length) {
+    _quizAtual = proximoIdx;
+    mostrarPergunta(proximoIdx);
+  } else {
+    await mostrarResultado();
+  }
+}
+
+async function mostrarResultado() {
+  var total = _quizPerguntas.length;
+  var pct = Math.round((_quizAcertos / total) * 100);
+  var pontos = _quizAcertos * 20;
+  var emoji = pct >= 80 ? "🏆" : pct >= 60 ? "⭐" : pct >= 40 ? "📖" : "💪";
+  var msg = pct >= 80 ? "Excelente! Você conhece muito bem a Palavra!" : 
+            pct >= 60 ? "Muito bom! Continue estudando!" :
+            pct >= 40 ? "Bom começo! A Palavra te aguarda!" : "Continue praticando! Cada dia você cresce!";
+
+  // Salva no banco
+  try {
+    await sb.from("quiz_respostas").upsert({
+      user_id: userAtual.id,
+      semana: _quizSemana,
+      nivel: _nivelSelecionado,
+      pontos: pontos,
+      total_perguntas: total,
+      acertos: _quizAcertos,
+      concluido: true
+    }, {onConflict: "user_id,semana,nivel"});
+  } catch(e) { console.error("Erro salvar quiz:", e); }
+
+  document.getElementById("quizJogo").style.display = "none";
+  document.getElementById("quizResultado").style.display = "block";
+  document.getElementById("quizResultado").innerHTML =
+    '<div style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:16px">' +
+    '<div style="font-size:3rem;margin-bottom:12px">' + emoji + '</div>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;color:#C9A84C;margin-bottom:8px">Quiz Concluído!</h2>' +
+    '<p style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-bottom:20px">' + msg + '</p>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">' +
+    '<div style="background:rgba(201,168,76,0.1);border-radius:12px;padding:14px">' +
+    '<div style="font-family:Playfair Display,serif;font-size:1.8rem;color:#C9A84C;font-weight:700">' + _quizAcertos + '/' + total + '</div>' +
+    '<div style="font-size:0.68rem;color:rgba(255,255,255,0.5);margin-top:2px">Acertos</div></div>' +
+    '<div style="background:rgba(201,168,76,0.1);border-radius:12px;padding:14px">' +
+    '<div style="font-family:Playfair Display,serif;font-size:1.8rem;color:#C9A84C;font-weight:700">' + pct + '%</div>' +
+    '<div style="font-size:0.68rem;color:rgba(255,255,255,0.5);margin-top:2px">Aproveit.</div></div>' +
+    '<div style="background:rgba(201,168,76,0.1);border-radius:12px;padding:14px">' +
+    '<div style="font-family:Playfair Display,serif;font-size:1.8rem;color:#C9A84C;font-weight:700">' + pontos + '</div>' +
+    '<div style="font-size:0.68rem;color:rgba(255,255,255,0.5);margin-top:2px">Pontos</div></div>' +
+    '</div></div>' +
+    '<button onclick="voltarQuizInicio()" class="btn-principal" style="margin-bottom:10px">✦ Fazer outro nível</button>' +
+    '<button onclick="reiniciar()" class="btn-sec" style="width:100%">Voltar ao início</button>';
+}
+
+function voltarQuizInicio() {
+  _nivelSelecionado = null;
+  _quizPerguntas = [];
+  _quizAtual = 0;
+  _quizAcertos = 0;
+  document.getElementById("quizInicio").style.display = "block";
+  document.getElementById("quizJogo").style.display = "none";
+  document.getElementById("quizResultado").style.display = "none";
+  document.querySelectorAll("#nivelGrid > div").forEach(function(d) {
+    d.style.borderColor = "rgba(201,168,76,0.2)";
+    d.style.background = "#FAF6EE";
+  });
+  var btn = document.getElementById("btnIniciarQuiz");
+  if (btn) { btn.disabled = true; btn.style.opacity = "0.5"; btn.textContent = "Selecione um nível para começar"; }
+  carregarRanking();
 }
 </script>
