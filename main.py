@@ -580,3 +580,17 @@ Boa noite. 🌙"""
 
     return StreamingResponse(stream(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ── PEDIDOS DE ORAÇÃO ─────────────────────────────────
+@app.get("/pedidos-oracao")
+async def listar_pedidos():
+    return {"ok": True}
+
+@app.post("/orar-por-pedido")
+async def orar_por_pedido(request: Request):
+    body = await request.json()
+    pedido_id = body.get("pedido_id")
+    if not pedido_id:
+        return {"error": "pedido_id obrigatório"}
+    return {"ok": True}
