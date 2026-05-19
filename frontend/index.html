@@ -2020,6 +2020,7 @@ async function abrirOracao(tipo) {
     '</div>' +
     '<div id="oracaoAcoes" style="display:none;margin-top:20px;display:flex;flex-direction:column;gap:10px">' +
     '<button onclick="salvarOracao()" style="background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;min-height:48px">💾 Salvar esta oração</button>' +
+    '<button onclick="document.getElementById(\'oracaoOverlay\').remove()" style="width:100%;background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.35);color:#C9A84C;padding:16px;border-radius:12px;font-size:0.9rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;min-height:52px;margin-bottom:4px">✕ Fechar</button>' +
     '<button onclick="compartilharOracao()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#FAF6EE;padding:14px;border-radius:12px;font-size:0.88rem;font-family:DM Sans,sans-serif;cursor:pointer;min-height:48px">🕊️ Compartilhar</button>' +
     '</div>' +
     '</div>';
@@ -2407,21 +2408,30 @@ function iniciarRespiracao() {
 
 async function salvarMeditacao() {
   if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
-  if (!_meditacaoTexto || _meditacaoTexto.trim() === "") { 
-    mostrarToast("⚠️ Aguarde a meditação carregar"); return; 
+  if (!_meditacaoTexto || _meditacaoTexto.trim() === "") {
+    mostrarToast("⚠️ Aguarde a meditação carregar"); return;
   }
   try {
     var hoje = new Date().toISOString().split("T")[0];
-    var {error} = await sb.from("meditacoes").upsert({
+    // Tenta upsert primeiro, se falhar tenta insert
+    var res = await sb.from("meditacoes").upsert({
       user_id: userAtual.id,
       data: hoje,
       conteudo: _meditacaoTexto
     }, {onConflict: "user_id,data"});
-    if (error) throw error;
-    mostrarToast("🌙 Meditação salva!");
-  } catch(e) { 
-    console.error("Erro meditacao:", e);
-    mostrarToast("❌ Erro: " + (e.message || "tente novamente")); 
+    if (res.error) {
+      // Tenta insert direto
+      var res2 = await sb.from("meditacoes").insert({
+        user_id: userAtual.id,
+        data: hoje,
+        conteudo: _meditacaoTexto
+      });
+      if (res2.error) throw res2.error;
+    }
+    mostrarToast("🌙 Meditação salva no histórico!");
+  } catch(e) {
+    console.error("Erro meditacao:", JSON.stringify(e));
+    mostrarToast("❌ Erro: " + (e.message || JSON.stringify(e)));
   }
 }
 
