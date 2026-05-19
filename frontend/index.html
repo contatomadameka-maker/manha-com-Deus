@@ -1067,8 +1067,31 @@ function renderDevo(txt){
   if(destaqueTexto)html+=`<div class="devo-destaque"><p>"${destaqueTexto.replace(/^"|"$/g,"")}"</p></div>`;
   if(oracaoTexto)html+=`<div class="devo-oracao"><div class="devo-oracao-titulo">🙏 Oração</div><div class="devo-oracao-texto">${oracaoTexto}</div></div>`;
   if(acaoTexto)html+=`<div class="devo-acao"><div class="devo-acao-titulo">💡 Ação Prática</div><div class="devo-acao-texto">${acaoTexto}</div></div>`;
-  html+=`<div class="devo-anotacoes"><div class="devo-anotacoes-titulo">📝 Anotações</div><hr class="devo-linha"><hr class="devo-linha"><hr class="devo-linha"></div>`;
-  if(louvorTexto)html+=`<div class="devo-louvor"><div class="devo-louvor-icon">🎵</div><div class="devo-louvor-info"><div class="devo-louvor-titulo">Louvor do Dia</div><div class="devo-louvor-musica">${louvorTexto}</div></div></div>`;
+  // Carrega anotação salva se houver
+  var anotacaoSalva = localStorage.getItem("anotacao_" + new Date().toISOString().split("T")[0]) || "";
+  html+=`<div class="devo-anotacoes">
+    <div class="devo-anotacoes-titulo">📝 Anotações</div>
+    <textarea id="anotacaoTexto" placeholder="Escreva aqui sua reflexão pessoal, o que Deus falou ao seu coração..." 
+      style="width:100%;min-height:100px;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#3D2E1A;resize:vertical;outline:none;line-height:1.6;margin-top:8px;box-sizing:border-box"
+      oninput="salvarAnotacaoLocal(this.value)">${anotacaoSalva}</textarea>
+    <button onclick="salvarAnotacaoSupabase()" style="margin-top:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:#C9A84C;padding:8px 16px;border-radius:8px;font-size:0.75rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+      💾 Salvar anotação
+    </button>
+  </div>`;
+  if(louvorTexto){
+    // Extrai link do YouTube se houver
+    var urlMatch = louvorTexto.match(/https?:\/\/[^\s]+/);
+    var louvorLink = urlMatch ? urlMatch[0] : "";
+    var louvorSemLink = louvorTexto.replace(/https?:\/\/[^\s]+/g,"").trim();
+    html+=`<div class="devo-louvor" ${louvorLink ? `onclick="window.open('${louvorLink}','_blank')" style="cursor:pointer"` : ""}>
+      <div class="devo-louvor-icon">🎵</div>
+      <div class="devo-louvor-info">
+        <div class="devo-louvor-titulo">Louvor do Dia ${louvorLink ? '<span style="font-size:0.65rem;color:#C9A84C;margin-left:6px">▶ Abrir</span>' : ''}</div>
+        <div class="devo-louvor-musica">${louvorSemLink}</div>
+        ${louvorLink ? `<div style="font-size:0.68rem;color:rgba(201,168,76,0.6);margin-top:2px">Toque para ouvir no YouTube</div>` : ""}
+      </div>
+    </div>`;
+  }
   document.getElementById("devoBody").innerHTML=html;
 }
 
@@ -3024,4 +3047,33 @@ window.reiniciar = function() {
   pararAudio();
   if (typeof _reiniciarOriginal === "function") _reiniciarOriginal();
 };
+</script>
+<script>
+function salvarAnotacaoLocal(texto) {
+  var hoje = new Date().toISOString().split("T")[0];
+  localStorage.setItem("anotacao_" + hoje, texto);
+}
+
+async function salvarAnotacaoSupabase() {
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+  var textarea = document.getElementById("anotacaoTexto");
+  if (!textarea || !textarea.value.trim()) { mostrarToast("⚠️ Escreva algo primeiro"); return; }
+
+  var hoje = new Date().toISOString().split("T")[0];
+  var titulo = document.getElementById("devoTitulo")?.textContent || "";
+
+  try {
+    var {error} = await sb.from("diario").upsert({
+      user_id: userAtual.id,
+      data: hoje,
+      texto: textarea.value.trim(),
+      titulo_devocional: titulo
+    }, {onConflict: "user_id,data"});
+
+    if (error) throw error;
+    mostrarToast("💾 Anotação salva no diário!");
+  } catch(e) {
+    mostrarToast("❌ Erro ao salvar: " + (e.message || "tente novamente"));
+  }
+}
 </script>
