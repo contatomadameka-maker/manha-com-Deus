@@ -557,6 +557,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         <div class="acoes-wrap" id="acoesWrap" style="display:none">
           <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
           <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">
+        🎧 Ouvir devocional
+      </button>
         </div>
       </div>
     </div>
@@ -1831,7 +1834,10 @@ function relerDevocional(id) {
   // Ações
   document.getElementById('acoesWrap').innerHTML = `
     <button class="btn-principal" onclick="reiniciar()">✦ Voltar ao início</button>
-    <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>`;
+    <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">
+        🎧 Ouvir devocional
+      </button>`;
   document.getElementById('acoesWrap').style.display = 'flex';
 
   window.scrollTo({top: 0, behavior: 'smooth'});
@@ -2921,4 +2927,88 @@ function compartilharPalavra() {
 
 // Carrega a palavra ao iniciar o app
 var _palavraOriginalIniciarApp = window.iniciarApp || function(){};
+</script>
+<script>
+var _audioAtivo = false;
+var _speechUtterance = null;
+
+function toggleAudio() {
+  if (!planoUser || planoUser !== "mensal") {
+    tela("paywall");
+    return;
+  }
+
+  if (!('speechSynthesis' in window)) {
+    mostrarToast("⚠️ Seu navegador não suporta áudio");
+    return;
+  }
+
+  if (_audioAtivo) {
+    pararAudio();
+  } else {
+    iniciarAudio();
+  }
+}
+
+function iniciarAudio() {
+  var texto = textoCompleto;
+  if (!texto) { mostrarToast("⚠️ Gere um devocional primeiro"); return; }
+
+  // Limpa texto para leitura — remove emojis e símbolos
+  var textoLimpo = texto
+    .replace(/[━✦📖💭🙏💡📝🎵📅⚡🌙☀️🔥⭐]/g, "")
+    .replace(/_{3,}/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  window.speechSynthesis.cancel();
+
+  _speechUtterance = new SpeechSynthesisUtterance(textoLimpo);
+  _speechUtterance.lang = "pt-BR";
+  _speechUtterance.rate = 0.9;
+  _speechUtterance.pitch = 1.0;
+  _speechUtterance.volume = 1.0;
+
+  // Tenta usar voz portuguesa se disponível
+  var vozes = window.speechSynthesis.getVoices();
+  var vozPT = vozes.find(function(v) {
+    return v.lang === "pt-BR" || v.lang === "pt_BR" || v.lang.startsWith("pt");
+  });
+  if (vozPT) _speechUtterance.voice = vozPT;
+
+  _speechUtterance.onstart = function() {
+    _audioAtivo = true;
+    var btn = document.getElementById("btnAudio");
+    if (btn) btn.innerHTML = "⏸️ Pausar áudio";
+    mostrarToast("🎧 Reproduzindo devocional...");
+  };
+
+  _speechUtterance.onend = function() {
+    _audioAtivo = false;
+    var btn = document.getElementById("btnAudio");
+    if (btn) btn.innerHTML = "🎧 Ouvir devocional";
+  };
+
+  _speechUtterance.onerror = function() {
+    _audioAtivo = false;
+    var btn = document.getElementById("btnAudio");
+    if (btn) btn.innerHTML = "🎧 Ouvir devocional";
+  };
+
+  window.speechSynthesis.speak(_speechUtterance);
+}
+
+function pararAudio() {
+  window.speechSynthesis.cancel();
+  _audioAtivo = false;
+  var btn = document.getElementById("btnAudio");
+  if (btn) btn.innerHTML = "🎧 Ouvir devocional";
+}
+
+// Para o áudio ao trocar de tela
+var _reiniciarOriginal = window.reiniciar || function(){};
+window.reiniciar = function() {
+  pararAudio();
+  if (typeof _reiniciarOriginal === "function") _reiniciarOriginal();
+};
 </script>
