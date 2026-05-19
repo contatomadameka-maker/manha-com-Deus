@@ -364,6 +364,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="nav-tab" onclick="navTab('historico',this)">📚 Histórico</div>
       <div class="nav-tab" onclick="navTab('planos',this)">🗓️ Planos</div>
       <div class="nav-tab" onclick="navTab('quiz',this)">🧠 Quiz</div>
+      <div class="nav-tab" onclick="navTab('comunidade',this)">🤝 Oração</div>
     </div>
 
     <div id="abaDevocional">
@@ -612,6 +613,35 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
       <!-- RESULTADO FINAL -->
       <div id="quizResultado" style="display:none"></div>
+    </div>
+
+
+    <!-- ABA COMUNIDADE -->
+    <div id="abaComunidade" style="display:none">
+      <p class="section-label">Comunidade de fé</p>
+      <h2 class="intro-titulo">Mural de Oração</h2>
+      <p class="intro-sub">Compartilhe seus pedidos e ore pelos irmãos</p>
+
+      <!-- Novo pedido -->
+      <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:16px">
+        <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px">✦ Novo pedido de oração</p>
+        <textarea id="novoPedidoTexto" placeholder="Compartilhe seu pedido com a comunidade..." maxlength="300"
+          style="width:100%;min-height:80px;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#3D2E1A;resize:none;outline:none;line-height:1.6"></textarea>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.78rem;color:#8A7560">
+            <input type="checkbox" id="pedidoAnonimo" style="width:16px;height:16px;accent-color:#C9A84C">
+            Pedido anônimo
+          </label>
+          <button onclick="enviarPedido()" style="background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:10px 20px;border-radius:10px;font-size:0.82rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+            🙏 Publicar pedido
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de pedidos -->
+      <div id="pedidosLista" style="display:flex;flex-direction:column;gap:12px">
+        <div class="loading-wrap"><div class="spinner"></div></div>
+      </div>
     </div>
 
     <div class="footer">
@@ -1011,6 +1041,7 @@ window.navTab = function(aba, el) {
   document.getElementById("abaHistorico").style.display = aba === "historico" ? "block" : "none";
   document.getElementById("abaPlanos").style.display = aba === "planos" ? "block" : "none";
   document.getElementById("abaQuiz").style.display = aba === "quiz" ? "block" : "none";
+  document.getElementById("abaComunidade").style.display = aba === "comunidade" ? "block" : "none";
   if (aba === "historico") carregarHistorico();
   if (aba === "planos") {
     var grid = document.getElementById("planosGrid");
@@ -1018,6 +1049,7 @@ window.navTab = function(aba, el) {
     carregarPlanos();
   }
   if (aba === "quiz") carregarRanking();
+  if (aba === "comunidade") carregarPedidos();
 };
 </script>
 
@@ -2438,5 +2470,160 @@ function compartilharMeditacao() {
   var txt = "🌙 Meditação Noturna\n\n" + _meditacaoTexto.slice(0, 400) + "...\n\nManhã com Deus · manhacomdeus.com.br";
   if (navigator.share) navigator.share({title: "Meditação Noturna", text: txt});
   else navigator.clipboard.writeText(txt).then(function() { mostrarToast("Copiado!"); });
+}
+</script>
+<script>
+var _pedidosCarregados = false;
+
+async function carregarPedidos() {
+  var lista = document.getElementById("pedidosLista");
+  if (!lista) return;
+  lista.innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+
+  try {
+    var result = await sb.from("pedidos_oracao")
+      .select("*")
+      .eq("ativo", true)
+      .order("created_at", {ascending: false})
+      .limit(20);
+
+    var pedidos = result.data || [];
+
+    // Busca quais o usuário já orou
+    var jaOrei = [];
+    if (userAtual) {
+      var oreiResult = await sb.from("oracoes_realizadas")
+        .select("pedido_id")
+        .eq("user_id", userAtual.id);
+      jaOrei = (oreiResult.data || []).map(function(o) { return o.pedido_id; });
+    }
+
+    if (pedidos.length === 0) {
+      lista.innerHTML =
+        '<div class="hist-empty">' +
+        '<div class="hist-empty-icon">🙏</div>' +
+        '<p>Nenhum pedido ainda.<br>Seja o primeiro a compartilhar!</p>' +
+        '</div>';
+      return;
+    }
+
+    lista.innerHTML = "";
+    pedidos.forEach(function(p) {
+      var jaorou = jaOrei.indexOf(p.id) !== -1;
+      var eumesmo = userAtual && p.user_id === userAtual.id;
+      var card = document.createElement("div");
+      card.style.cssText = "background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:14px;padding:16px;animation:fadeIn 0.3s ease";
+      card.id = "pedido-" + p.id;
+
+      var dt = new Date(p.created_at).toLocaleDateString("pt-BR", {day:"numeric",month:"short"});
+
+      card.innerHTML =
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8873A);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0">' +
+        (p.anonimo ? '🙏' : '✦') +
+        '</div>' +
+        '<div>' +
+        '<div style="font-size:0.78rem;font-weight:600;color:#1A1208">' + (p.anonimo ? 'Anônimo' : 'Irmão(ã) na fé') + '</div>' +
+        '<div style="font-size:0.65rem;color:#8A7560">' + dt + '</div>' +
+        '</div></div>' +
+        (eumesmo ? '<button onclick="desativarPedido(\'' + p.id + '\')" style="background:transparent;border:none;color:rgba(192,57,43,0.5);font-size:0.7rem;cursor:pointer;padding:4px">Remover</button>' : '') +
+        '</div>' +
+        '<p style="font-size:0.88rem;color:#3D2E1A;line-height:1.6;margin-bottom:14px">' + p.texto + '</p>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+        '<div style="display:flex;align-items:center;gap:6px">' +
+        '<span style="font-size:1rem">🙏</span>' +
+        '<span id="contador-' + p.id + '" style="font-family:Playfair Display,serif;font-size:1.1rem;color:#C9A84C;font-weight:700">' + p.contador_oracoes + '</span>' +
+        '<span style="font-size:0.72rem;color:#8A7560">pessoas oraram</span>' +
+        '</div>' +
+        (eumesmo ? '<span style="font-size:0.7rem;color:#8A7560;background:#FAF6EE;padding:4px 10px;border-radius:20px">Seu pedido</span>' :
+        '<button onclick="orarPorPedido(\'' + p.id + '\',this)" ' +
+        (jaorou ? 'disabled ' : '') +
+        'style="background:' + (jaorou ? 'rgba(92,122,94,0.1)' : 'linear-gradient(135deg,#C9A84C,#A8873A)') + ';border:none;color:' + (jaorou ? '#5C7A5E' : '#1A1208') + ';padding:9px 18px;border-radius:20px;font-size:0.78rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:' + (jaorou ? 'default' : 'pointer') + ';min-height:36px">' +
+        (jaorou ? '✓ Já orei' : '🙏 Orar por isso') +
+        '</button>') +
+        '</div>';
+
+      lista.appendChild(card);
+    });
+
+  } catch(e) {
+    console.error("Erro pedidos:", e);
+    lista.innerHTML = '<div class="erro-wrap"><p class="erro-txt">Erro ao carregar pedidos.</p></div>';
+  }
+}
+
+async function enviarPedido() {
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+  var texto = document.getElementById("novoPedidoTexto")?.value?.trim();
+  var anonimo = document.getElementById("pedidoAnonimo")?.checked || false;
+
+  if (!texto) { mostrarToast("⚠️ Escreva seu pedido primeiro"); return; }
+  if (texto.length < 10) { mostrarToast("⚠️ Pedido muito curto"); return; }
+
+  try {
+    var res = await sb.from("pedidos_oracao").insert({
+      user_id: userAtual.id,
+      texto: texto,
+      anonimo: anonimo,
+      contador_oracoes: 0,
+      ativo: true
+    });
+    if (res.error) throw res.error;
+
+    document.getElementById("novoPedidoTexto").value = "";
+    document.getElementById("pedidoAnonimo").checked = false;
+    mostrarToast("🙏 Pedido publicado! A comunidade vai orar por você!");
+    await carregarPedidos();
+  } catch(e) {
+    mostrarToast("❌ Erro ao publicar: " + (e.message || "tente novamente"));
+  }
+}
+
+async function orarPorPedido(pedidoId, btn) {
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+
+  btn.disabled = true;
+  btn.textContent = "⏳";
+
+  try {
+    // Registra que o usuário orou
+    var res = await sb.from("oracoes_realizadas").insert({
+      user_id: userAtual.id,
+      pedido_id: pedidoId
+    });
+    if (res.error) throw res.error;
+
+    // Incrementa contador
+    await sb.rpc("incrementar_oracao", {pedido_uuid: pedidoId});
+
+    // Atualiza UI
+    btn.textContent = "✓ Já orei";
+    btn.style.background = "rgba(92,122,94,0.1)";
+    btn.style.color = "#5C7A5E";
+
+    var contador = document.getElementById("contador-" + pedidoId);
+    if (contador) contador.textContent = parseInt(contador.textContent) + 1;
+
+    mostrarToast("🙏 Que Deus atenda este pedido!");
+
+  } catch(e) {
+    if (e.code === "23505") {
+      btn.textContent = "✓ Já orei";
+      mostrarToast("Você já orou por este pedido!");
+    } else {
+      btn.disabled = false;
+      btn.textContent = "🙏 Orar por isso";
+      mostrarToast("❌ Erro: " + (e.message || "tente novamente"));
+    }
+  }
+}
+
+async function desativarPedido(pedidoId) {
+  if (!userAtual) return;
+  if (!confirm("Remover este pedido?")) return;
+  await sb.from("pedidos_oracao").update({ativo: false}).eq("id", pedidoId).eq("user_id", userAtual.id);
+  mostrarToast("Pedido removido");
+  await carregarPedidos();
 }
 </script>
