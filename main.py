@@ -363,3 +363,57 @@ ___________
 @app.get("/planos")
 async def listar_planos():
     return PLANOS
+
+
+# ── QUIZ BÍBLICO ──────────────────────────────────────
+@app.post("/gerar-quiz")
+async def gerar_quiz(request: Request):
+    body = await request.json()
+    nivel = body.get("nivel", "iniciante")
+    semana = body.get("semana", "")
+
+    niveis = {
+        "iniciante": "perguntas básicas sobre histórias e personagens bíblicos conhecidos. Ex: Quem construiu a arca? Quantos discípulos tinha Jesus?",
+        "intermediario": "perguntas intermediárias sobre ensinamentos, livros e contexto bíblico. Ex: Qual livro tem mais capítulos? Quem escreveu Apocalipse?",
+        "avancado": "perguntas avançadas sobre teologia, profetas menores, genealogias e detalhes específicos da Bíblia."
+    }
+
+    prompt = f"""Gere um quiz bíblico com EXATAMENTE 5 perguntas de nível {nivel} para a semana {semana}.
+
+Nível: {niveis.get(nivel, niveis['iniciante'])}
+
+REGRAS IMPORTANTES:
+- Cada pergunta deve ter exatamente 4 alternativas (A, B, C, D)
+- Apenas UMA alternativa correta
+- As perguntas devem ser variadas — não repita temas
+- As alternativas erradas devem ser plausíveis (não óbvias)
+- Inclua uma explicação curta (1-2 linhas) para a resposta correta
+
+Responda APENAS em JSON válido, sem markdown, sem explicações fora do JSON:
+
+{{
+  "perguntas": [
+    {{
+      "id": 1,
+      "pergunta": "texto da pergunta",
+      "alternativas": {{"A": "texto", "B": "texto", "C": "texto", "D": "texto"}},
+      "correta": "A",
+      "explicacao": "explicação da resposta correta"
+    }}
+  ]
+}}"""
+
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = response.content[0].text.strip()
+        # Limpa markdown se houver
+        texto = texto.replace("```json", "").replace("```", "").strip()
+        import json as json_lib
+        dados = json_lib.loads(texto)
+        return dados
+    except Exception as e:
+        return {"error": str(e)}
