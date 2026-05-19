@@ -514,3 +514,69 @@ Amém. 🙏"""
 
     return StreamingResponse(stream(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ── MEDITAÇÃO NOTURNA ─────────────────────────────────
+@app.post("/meditacao-noturna")
+async def meditacao_noturna(request: Request):
+    body = await request.json()
+    tema = body.get("tema", "")
+
+    agora = datetime.now()
+    meses = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"]
+    dias_sem = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
+    data_formatada = dias_sem[agora.weekday()] + ", " + str(agora.day) + " de " + meses[agora.month-1] + " de " + str(agora.year)
+
+    prompt = f"""Gere uma meditação noturna cristã suave e tranquilizadora para encerrar o dia.
+Data: {data_formatada}
+{f"Tema do dia: {tema}" if tema else ""}
+
+REGRAS:
+- Tom completamente suave, acolhedor e tranquilo — para relaxar e dormir
+- Versículo de paz e descanso (Salmos, Provérbios ou palavras de Jesus)
+- Reflexão curta de 2-3 parágrafos — não longa
+- Exercício de respiração guiada (4 tempos)
+- Oração de encerramento suave
+- Terminar com declaração de paz para dormir
+
+USE EXATAMENTE este formato:
+
+🌙 MEDITAÇÃO NOTURNA
+{data_formatada}
+
+✦ [TÍTULO SUAVE — ex: "O Descanso que Vem de Deus"]
+
+📖 VERSÍCULO DA NOITE:
+"[versículo sobre paz, descanso ou proteção noturna]"
+— [Referência]
+
+💭 REFLEXÃO:
+[parágrafo 1 — suave, agradecendo pelo dia]
+
+[parágrafo 2 — entregando preocupações a Deus]
+
+[parágrafo 3 — encontrando paz no descanso]
+
+🌬️ RESPIRAÇÃO GUIADA:
+Inspire por 4 tempos... segure por 4... expire por 6...
+[2-3 frases suaves guiando a respiração e o relaxamento]
+
+🙏 ORAÇÃO DA NOITE:
+[oração curta e suave de 3-4 linhas para dormir em paz]
+
+✦ "[FRASE DE PAZ — para carregar ao adormecer]"
+
+Boa noite. 🌙"""
+
+    def stream():
+        with client.messages.stream(
+            model="claude-sonnet-4-20250514",
+            max_tokens=800,
+            messages=[{"role": "user", "content": prompt}]
+        ) as s:
+            for text in s.text_stream:
+                yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
