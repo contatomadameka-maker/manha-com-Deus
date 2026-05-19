@@ -331,13 +331,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   <div style="max-width:680px;margin:16px auto 0;padding:0 16px">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button onclick="verificarPlanoOracao('diaria')" style="background:linear-gradient(135deg,#2C1F0E,#1A3020);border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s;position:relative">
-        <div style="position:absolute;top:8px;right:8px;background:rgba(201,168,76,0.8);color:#1A1208;font-size:0.5rem;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:1px">MENSAL</div>
+        <div style="display:none">MENSAL</div>
         <div style="font-size:1.3rem;margin-bottom:6px">☀️</div>
         <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Manhã</div>
         <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Comece o dia com Deus</div>
       </button>
       <button onclick="verificarPlanoOracao('noturna')" style="background:linear-gradient(135deg,#1A1208,#0D0A1A);border:1px solid rgba(138,117,96,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s;position:relative">
-        <div style="position:absolute;top:8px;right:8px;background:rgba(201,168,76,0.8);color:#1A1208;font-size:0.5rem;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:1px">MENSAL</div>
+        <div style="display:none">MENSAL</div>
         <div style="font-size:1.3rem;margin-bottom:6px">🌙</div>
         <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Noite</div>
         <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Encerre o dia em paz</div>
@@ -1089,7 +1089,7 @@ window.navTab = function(aba, el) {
   if (aba === "quiz") carregarRanking();
   if (aba === "comunidade") carregarPedidos();
   document.getElementById("abaRelatorio").style.display = aba === "relatorio" ? "block" : "none";
-  if (aba === "relatorio") carregarStatsRelatorio();
+  if (aba === "relatorio") { if(typeof carregarStatsRelatorio === "function") carregarStatsRelatorio(); }
 };
 </script>
 
