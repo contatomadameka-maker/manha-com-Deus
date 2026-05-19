@@ -2997,8 +2997,15 @@ function lerParagrafo(idx) {
   var u = new SpeechSynthesisUtterance(_paragrafos[idx]);
   u.lang = "pt-BR"; u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
   var voz = getVozPT(); if (voz) u.voice = voz;
-  u.onend = function() { if (_audioAtivo) lerParagrafo(idx + 1); };
-  u.onerror = function() { if (_audioAtivo) lerParagrafo(idx + 1); };
+  u.onend = function() {
+    // Só avança se estiver ativo e não pausado
+    if (_audioAtivo && !_audioPausado) lerParagrafo(idx + 1);
+  };
+  u.onerror = function(e) {
+    // Ignora erros de cancelamento (quando pausa)
+    if (e.error === "canceled" || e.error === "interrupted") return;
+    if (_audioAtivo && !_audioPausado) lerParagrafo(idx + 1);
+  };
   window.speechSynthesis.speak(u);
 }
 
