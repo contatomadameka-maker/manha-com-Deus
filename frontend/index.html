@@ -2930,82 +2930,95 @@ var _palavraOriginalIniciarApp = window.iniciarApp || function(){};
 </script>
 <script>
 var _audioAtivo = false;
-var _speechUtterance = null;
+var _audioPausado = false;
+var _paragrafos = [];
+var _paragrafoAtual = 0;
 
 function toggleAudio() {
-  if (!planoUser || planoUser !== "mensal") {
-    tela("paywall");
-    return;
-  }
-
-  if (!('speechSynthesis' in window)) {
-    mostrarToast("⚠️ Seu navegador não suporta áudio");
-    return;
-  }
-
+  if (!planoUser || planoUser !== "mensal") { tela("paywall"); return; }
+  if (!('speechSynthesis' in window)) { mostrarToast("⚠️ Seu navegador não suporta áudio"); return; }
   if (_audioAtivo) {
-    pararAudio();
+    pausarAudio();
+  } else if (_audioPausado) {
+    retormarAudio();
   } else {
     iniciarAudio();
   }
 }
 
-function iniciarAudio() {
-  var texto = textoCompleto;
-  if (!texto) { mostrarToast("⚠️ Gere um devocional primeiro"); return; }
-
-  // Limpa texto para leitura — remove emojis e símbolos
-  var textoLimpo = texto
-    .replace(/[━✦📖💭🙏💡📝🎵📅⚡🌙☀️🔥⭐]/g, "")
+function prepararTexto() {
+  var texto = textoCompleto || "";
+  var limpo = texto
+    .replace(/[━✦📖💭🙏💡📝🎵📅⚡🌙☀️🔥⭐]/g, " ")
     .replace(/_{3,}/g, "")
-    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\s{3,}/g, " ")
     .trim();
+  // Divide por parágrafos não vazios
+  return limpo.split("\n").map(function(p){return p.trim();}).filter(function(p){return p.length > 10;});
+}
 
-  window.speechSynthesis.cancel();
-
-  _speechUtterance = new SpeechSynthesisUtterance(textoLimpo);
-  _speechUtterance.lang = "pt-BR";
-  _speechUtterance.rate = 0.9;
-  _speechUtterance.pitch = 1.0;
-  _speechUtterance.volume = 1.0;
-
-  // Tenta usar voz portuguesa se disponível
+function getVozPT() {
   var vozes = window.speechSynthesis.getVoices();
-  var vozPT = vozes.find(function(v) {
-    return v.lang === "pt-BR" || v.lang === "pt_BR" || v.lang.startsWith("pt");
-  });
-  if (vozPT) _speechUtterance.voice = vozPT;
+  return vozes.find(function(v){ return v.lang==="pt-BR"||v.lang==="pt_BR"||v.lang.startsWith("pt"); });
+}
 
-  _speechUtterance.onstart = function() {
-    _audioAtivo = true;
-    var btn = document.getElementById("btnAudio");
-    if (btn) btn.innerHTML = "⏸️ Pausar áudio";
-    mostrarToast("🎧 Reproduzindo devocional...");
-  };
-
-  _speechUtterance.onend = function() {
+function lerParagrafo(idx) {
+  if (idx >= _paragrafos.length) {
     _audioAtivo = false;
-    var btn = document.getElementById("btnAudio");
-    if (btn) btn.innerHTML = "🎧 Ouvir devocional";
-  };
+    _audioPausado = false;
+    _paragrafoAtual = 0;
+    atualizarBtnAudio("🎧 Ouvir devocional");
+    return;
+  }
+  _paragrafoAtual = idx;
+  var u = new SpeechSynthesisUtterance(_paragrafos[idx]);
+  u.lang = "pt-BR"; u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+  var voz = getVozPT(); if (voz) u.voice = voz;
+  u.onend = function() { if (_audioAtivo) lerParagrafo(idx + 1); };
+  u.onerror = function() { if (_audioAtivo) lerParagrafo(idx + 1); };
+  window.speechSynthesis.speak(u);
+}
 
-  _speechUtterance.onerror = function() {
-    _audioAtivo = false;
-    var btn = document.getElementById("btnAudio");
-    if (btn) btn.innerHTML = "🎧 Ouvir devocional";
-  };
+function iniciarAudio() {
+  if (!textoCompleto) { mostrarToast("⚠️ Gere um devocional primeiro"); return; }
+  _paragrafos = prepararTexto();
+  _paragrafoAtual = 0;
+  _audioAtivo = true;
+  _audioPausado = false;
+  window.speechSynthesis.cancel();
+  atualizarBtnAudio("⏸️ Pausar");
+  mostrarToast("🎧 Reproduzindo devocional...");
+  lerParagrafo(0);
+}
 
-  window.speechSynthesis.speak(_speechUtterance);
+function pausarAudio() {
+  window.speechSynthesis.cancel();
+  _audioAtivo = false;
+  _audioPausado = true;
+  atualizarBtnAudio("▶️ Continuar do parágrafo " + (_paragrafoAtual + 1));
+}
+
+function retormarAudio() {
+  _audioAtivo = true;
+  _audioPausado = false;
+  atualizarBtnAudio("⏸️ Pausar");
+  mostrarToast("🎧 Continuando do parágrafo " + (_paragrafoAtual + 1) + "...");
+  lerParagrafo(_paragrafoAtual);
 }
 
 function pararAudio() {
   window.speechSynthesis.cancel();
   _audioAtivo = false;
-  var btn = document.getElementById("btnAudio");
-  if (btn) btn.innerHTML = "🎧 Ouvir devocional";
+  _audioPausado = false;
+  _paragrafoAtual = 0;
+  atualizarBtnAudio("🎧 Ouvir devocional");
 }
 
-// Para o áudio ao trocar de tela
+function atualizarBtnAudio(texto) {
+  var btn = document.getElementById("btnAudio");
+  if (btn) btn.innerHTML = texto;
+}
+
 var _reiniciarOriginal = window.reiniciar || function(){};
 window.reiniciar = function() {
   pararAudio();
