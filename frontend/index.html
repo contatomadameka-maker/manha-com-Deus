@@ -1078,6 +1078,8 @@ window.navTab = function(aba, el) {
   document.getElementById("abaPlanos").style.display = aba === "planos" ? "block" : "none";
   document.getElementById("abaQuiz").style.display = aba === "quiz" ? "block" : "none";
   document.getElementById("abaComunidade").style.display = aba === "comunidade" ? "block" : "none";
+  var elRel = document.getElementById("abaRelatorio");
+  if (elRel) elRel.style.display = aba === "relatorio" ? "block" : "none";
   if (aba === "historico") carregarHistorico();
   if (aba === "planos") {
     var grid = document.getElementById("planosGrid");
