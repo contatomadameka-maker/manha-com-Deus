@@ -676,3 +676,84 @@ Manhã com Deus 🙏"""
 
     return StreamingResponse(stream(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ── PALAVRA PROFÉTICA SEMANAL ─────────────────────────
+@app.get("/palavra-profetica")
+async def palavra_profetica():
+    agora = datetime.now()
+    meses = ["janeiro","fevereiro","março","abril","maio","junho",
+             "julho","agosto","setembro","outubro","novembro","dezembro"]
+    dias_sem = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira",
+                "Sexta-feira","Sábado","Domingo"]
+    data_formatada = dias_sem[agora.weekday()] + ", " + str(agora.day) + " de " + meses[agora.month-1] + " de " + str(agora.year)
+    
+    # Semana do ano para variar a palavra
+    semana = agora.isocalendar()[1]
+    mes = agora.month
+    
+    # Determina temporada espiritual
+    if mes in [12, 1]:
+        temporada = "Advento e Natal — tempo de esperança e nascimento"
+    elif mes in [2, 3]:
+        temporada = "Quaresma — tempo de reflexão, jejum e renovação"
+    elif mes == 4:
+        temporada = "Páscoa — tempo de ressurreição e vitória"
+    elif mes == 5:
+        temporada = "Pentecostes — tempo do Espírito Santo e poder"
+    elif mes in [6, 7]:
+        temporada = "Tempo Comum — crescimento e discipulado"
+    elif mes in [8, 9]:
+        temporada = "Tempo de Colheita — gratidão e provisão"
+    elif mes in [10, 11]:
+        temporada = "Tempo de Renovação — preparação e busca"
+    else:
+        temporada = "Tempo Comum — fé e perseverança"
+
+    prompt = f"""Você é um profeta e pastor no app "Manhã com Deus". Gere uma palavra profética semanal para esta semana.
+
+Data: {data_formatada}
+Semana {semana} do ano
+Temporada espiritual: {temporada}
+
+A palavra deve:
+- Ser específica para este momento do ano — não genérica
+- Tom profético mas acessível — não místico ou obscuro
+- Conectar com a temporada espiritual da semana
+- Trazer direção, encorajamento e desafio
+- Incluir versículo âncora
+- Ser memorável — o usuário vai carregar essa palavra a semana toda
+- Tamanho médio — não muito longa
+
+USE EXATAMENTE este formato:
+
+⚡ PALAVRA DA SEMANA
+Semana {semana} · {data_formatada}
+
+✦ [TÍTULO DA PALAVRA — 3-5 palavras impactantes]
+
+📖 VERSÍCULO ÂNCORA:
+"[versículo específico para esta temporada]"
+— [Referência]
+
+🔥 A PALAVRA:
+[2-3 parágrafos proféticos e encorajadores, específicos para esta semana e temporada]
+
+🎯 DECLARAÇÃO DA SEMANA:
+"[Frase de declaração/afirmação que o usuário vai repetir essa semana — começa com EU SOU, EU TENHO ou EU POSSO]"
+
+🙏 ORA ASSIM:
+[Uma oração curta de 2-3 linhas alinhada com a palavra]
+
+✦ Que esta palavra frutifique em sua vida esta semana. 🙏"""
+
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=800,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = response.content[0].text.strip()
+        return {"texto": texto, "semana": semana, "data": data_formatada}
+    except Exception as e:
+        return {"error": str(e)}
