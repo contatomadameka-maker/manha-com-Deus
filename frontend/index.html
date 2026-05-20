@@ -1409,6 +1409,15 @@ window.navTab = function(aba, el) {
   var elCelula = document.getElementById("abaCelula");
   if (elCelula) elCelula.style.display = aba === "celula" ? "block" : "none";
   if (aba === "celula") carregarCelula();
+  var elMissoes = document.getElementById("abaMissoes");
+  if (elMissoes) elMissoes.style.display = aba === "missoes" ? "block" : "none";
+  if (aba === "missoes") carregarMissoes();
+  var elFamilia = document.getElementById("abaFamilia");
+  if (elFamilia) elFamilia.style.display = aba === "familia" ? "block" : "none";
+  if (aba === "familia") carregarFamilia();
+  var elCelula = document.getElementById("abaCelula");
+  if (elCelula) elCelula.style.display = aba === "celula" ? "block" : "none";
+  if (aba === "celula") carregarCelula();
   var elFamilia = document.getElementById("abaFamilia");
   if (elFamilia) elFamilia.style.display = aba === "familia" ? "block" : "none";
   if (aba === "familia") carregarFamilia();
