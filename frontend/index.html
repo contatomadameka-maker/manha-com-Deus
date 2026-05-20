@@ -404,14 +404,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   </div>
 
   <div class="container">
-    <div class="nav-tabs" style="margin-top:8px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none">
-      <div class="nav-tab active" onclick="navTab('devocional',this)">✦ Devocional</div>
-      <div class="nav-tab" onclick="navTab('historico',this)">📚 Histórico</div>
-      <div class="nav-tab" onclick="navTab('planos',this)">🗓️ Planos</div>
-      <div class="nav-tab" onclick="navTab('quiz',this)">🧠 Quiz</div>
-      <div class="nav-tab" onclick="navTab('comunidade',this)">🤝 Oração</div>
-      <div class="nav-tab" onclick="navTab('relatorio',this)">📊 Relatório</div>
-      <div class="nav-tab" onclick="navTab('missoes',this)">🌍 Missões</div>
+    <!-- Linha 1 de abas -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
+      <div class="nav-tab active" onclick="navTab('devocional',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">✦ Devocional</div>
+      <div class="nav-tab" onclick="navTab('historico',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">📚 Histórico</div>
+      <div class="nav-tab" onclick="navTab('planos',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">🗓️ Planos</div>
+      <div class="nav-tab" onclick="navTab('quiz',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">🧠 Quiz</div>
+    </div>
+    <!-- Linha 2 de abas -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px">
+      <div class="nav-tab" onclick="navTab('comunidade',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">🤝 Oração</div>
+      <div class="nav-tab" onclick="navTab('relatorio',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">📊 Relatório</div>
+      <div class="nav-tab" onclick="navTab('missoes',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">🌍 Missões</div>
     </div>
 
     <div id="abaDevocional">
