@@ -316,74 +316,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     </div>
   </div>
 
-  <div class="versiculo-section">
-    <div class="versiculo-card">
-      <div class="versiculo-card-tag">✦ Versículo do Dia</div>
-      <div class="versiculo-card-texto" id="versiculoTexto">Carregando...</div>
-      <div class="versiculo-card-ref" id="versiculoRef"></div>
-      <div class="versiculo-card-acoes">
-        <button class="btn-versiculo" onclick="copiarVersiculo()">📋 Copiar</button>
-        <button class="btn-versiculo" onclick="compartilharVersiculo()">📤 Compartilhar</button>
-        <button class="btn-versiculo" onclick="salvarImagemVersiculo()">🖼️ Imagem</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ORAÇÃO RÁPIDA -->
-  <div style="max-width:680px;margin:16px auto 0;padding:0 16px">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button onclick="verificarPlanoOracao('diaria')" style="background:linear-gradient(135deg,#2C1F0E,#1A3020);border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s;position:relative">
-        <div style="display:none">MENSAL</div>
-        <div style="font-size:1.3rem;margin-bottom:6px">☀️</div>
-        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Manhã</div>
-        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Comece o dia com Deus</div>
-      </button>
-      <button onclick="verificarPlanoOracao('noturna')" style="background:linear-gradient(135deg,#1A1208,#0D0A1A);border:1px solid rgba(138,117,96,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s;position:relative">
-        <div style="display:none">MENSAL</div>
-        <div style="font-size:1.3rem;margin-bottom:6px">🌙</div>
-        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Noite</div>
-        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Encerre o dia em paz</div>
-      </button>
-    </div>
-  </div>
-
-  <!-- ACONSELHAMENTO IA -->
-  <div style="max-width:680px;margin:12px auto 0;padding:0 16px">
-    <button onclick="abrirAconselhamento()" style="width:100%;background:linear-gradient(135deg,#1A2E1A,#0A1A2E);border:1px solid rgba(92,122,94,0.2);border-radius:14px;padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s">
-      <span style="font-size:1.6rem">🤲</span>
-      <div style="flex:1;text-align:left">
-        <div style="font-family:'Playfair Display',serif;font-size:0.95rem;color:#FAF6EE;margin-bottom:2px">Falar com Deus</div>
-        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4)">Desabafe · Receba conselho bíblico · IA compassiva</div>
-      </div>
-      <div style="font-size:0.7rem;color:rgba(92,122,94,0.8)">→</div>
-    </button>
-  </div>
-
-  <!-- MEDITAÇÃO NOTURNA -->
-  <div style="max-width:680px;margin:10px auto 0;padding:0 16px">
-    <button onclick="abrirMeditacao()" style="width:100%;background:linear-gradient(135deg,#0D0A1A,#1A1208,#0D1A2A);border:1px solid rgba(138,117,96,0.15);border-radius:14px;padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s;position:relative;overflow:hidden">
-      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(92,122,94,0.1),transparent 60%)"></div>
-      <span style="font-size:1.6rem;position:relative">🌙</span>
-      <div style="flex:1;text-align:left;position:relative">
-        <div style="font-family:'Playfair Display',serif;font-size:0.95rem;color:#FAF6EE;margin-bottom:2px">Meditação Noturna</div>
-        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4)">Encerre o dia em paz · Respiração guiada · Versículo de paz</div>
-      </div>
-      <div style="background:rgba(201,168,76,0.15);color:#C9A84C;font-size:0.55rem;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px;position:relative;flex-shrink:0">MENSAL</div>
-    </button>
-  </div>
-
-  <!-- BANNER SAZONAL -->
-  <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px;position:relative;z-index:10">
-    <div id="bannerSazonalInner" onclick="gerarDevoSazonal()" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;z-index:10;-webkit-tap-highlight-color:rgba(201,168,76,0.2)">
-      <span id="bannerSazonalEmoji" style="font-size:1.8rem;flex-shrink:0"></span>
-      <div style="flex:1">
-        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px"></div>
-        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">✦ Devocional especial para esta data cristã</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PALAVRA PROFÉTICA -->
+    <!-- PALAVRA PROFÉTICA -->
   <div style="max-width:680px;margin:12px auto 0;padding:0 16px" id="palavraProfeticaWrap">
     <div style="background:linear-gradient(135deg,#1A0A2E,#2C1F0E,#0A1A0A);border:1px solid rgba(138,92,200,0.2);border-radius:18px;padding:20px;position:relative;overflow:hidden;cursor:pointer" onclick="abrirPalavraProfetica()">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(138,92,200,0.12),transparent 60%)"></div>
@@ -399,6 +332,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
           <span style="font-size:0.72rem;color:rgba(138,92,200,0.7)">Toque para ler completo →</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANNER SAZONAL -->
+  <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px;position:relative;z-index:10">
+    <div id="bannerSazonalInner" onclick="gerarDevoSazonal()" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;z-index:10;-webkit-tap-highlight-color:rgba(201,168,76,0.2)">
+      <span id="bannerSazonalEmoji" style="font-size:1.8rem;flex-shrink:0"></span>
+      <div style="flex:1">
+        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px"></div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">✦ Devocional especial para esta data cristã</div>
       </div>
     </div>
   </div>
@@ -867,6 +811,62 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       </div>
     </div>
 
+<div class="versiculo-section">
+    <div class="versiculo-card">
+      <div class="versiculo-card-tag">✦ Versículo do Dia</div>
+      <div class="versiculo-card-texto" id="versiculoTexto">Carregando...</div>
+      <div class="versiculo-card-ref" id="versiculoRef"></div>
+      <div class="versiculo-card-acoes">
+        <button class="btn-versiculo" onclick="copiarVersiculo()">📋 Copiar</button>
+        <button class="btn-versiculo" onclick="compartilharVersiculo()">📤 Compartilhar</button>
+        <button class="btn-versiculo" onclick="salvarImagemVersiculo()">🖼️ Imagem</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORAÇÃO RÁPIDA -->
+  <div style="max-width:680px;margin:16px auto 0;padding:0 16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="verificarPlanoOracao('diaria')" style="background:linear-gradient(135deg,#2C1F0E,#1A3020);border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s;position:relative">
+        <div style="display:none">MENSAL</div>
+        <div style="font-size:1.3rem;margin-bottom:6px">☀️</div>
+        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Manhã</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Comece o dia com Deus</div>
+      </button>
+      <button onclick="verificarPlanoOracao('noturna')" style="background:linear-gradient(135deg,#1A1208,#0D0A1A);border:1px solid rgba(138,117,96,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.2s;position:relative">
+        <div style="display:none">MENSAL</div>
+        <div style="font-size:1.3rem;margin-bottom:6px">🌙</div>
+        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;color:#FAF6EE;margin-bottom:3px">Oração da Noite</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45)">Encerre o dia em paz</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ACONSELHAMENTO IA -->
+  <div style="max-width:680px;margin:12px auto 0;padding:0 16px">
+    <button onclick="abrirAconselhamento()" style="width:100%;background:linear-gradient(135deg,#1A2E1A,#0A1A2E);border:1px solid rgba(92,122,94,0.2);border-radius:14px;padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s">
+      <span style="font-size:1.6rem">🤲</span>
+      <div style="flex:1;text-align:left">
+        <div style="font-family:'Playfair Display',serif;font-size:0.95rem;color:#FAF6EE;margin-bottom:2px">Falar com Deus</div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4)">Desabafe · Receba conselho bíblico · IA compassiva</div>
+      </div>
+      <div style="font-size:0.7rem;color:rgba(92,122,94,0.8)">→</div>
+    </button>
+  </div>
+
+  <!-- MEDITAÇÃO NOTURNA -->
+  <div style="max-width:680px;margin:10px auto 0;padding:0 16px">
+    <button onclick="abrirMeditacao()" style="width:100%;background:linear-gradient(135deg,#0D0A1A,#1A1208,#0D1A2A);border:1px solid rgba(138,117,96,0.15);border-radius:14px;padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(92,122,94,0.1),transparent 60%)"></div>
+      <span style="font-size:1.6rem;position:relative">🌙</span>
+      <div style="flex:1;text-align:left;position:relative">
+        <div style="font-family:'Playfair Display',serif;font-size:0.95rem;color:#FAF6EE;margin-bottom:2px">Meditação Noturna</div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4)">Encerre o dia em paz · Respiração guiada · Versículo de paz</div>
+      </div>
+      <div style="background:rgba(201,168,76,0.15);color:#C9A84C;font-size:0.55rem;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px;position:relative;flex-shrink:0">MENSAL</div>
+    </button>
+  </div>
+
     <div class="footer">
       <p>✦ Manhã com Deus · Alimentado por Claude IA</p>
       <small>Plano Mensal R$9,90 · Áudio · Quiz · Meditação em breve</small>
@@ -1303,6 +1303,9 @@ window.navTab = function(aba, el) {
   var elMissoes = document.getElementById("abaMissoes");
   if (elMissoes) elMissoes.style.display = aba === "missoes" ? "block" : "none";
   if (aba === "missoes") carregarMissoes();
+  var elFamilia = document.getElementById("abaFamilia");
+  if (elFamilia) elFamilia.style.display = aba === "familia" ? "block" : "none";
+  if (aba === "familia") carregarFamilia();
   var elFamilia = document.getElementById("abaFamilia");
   if (elFamilia) elFamilia.style.display = aba === "familia" ? "block" : "none";
   if (aba === "familia") carregarFamilia();
