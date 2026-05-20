@@ -153,6 +153,43 @@ async def salvar_notificacao(request: Request):
 
     return {"ok": True}
 
+def get_temporada_sazonal(agora):
+    mes = agora.month
+    dia = agora.day
+    
+    # Natal e Advento
+    if mes == 12 and dia >= 25: return {"nome": "Natal de Jesus", "emoji": "⭐", "cor": "#C9A84C"}
+    if mes == 12 and dia >= 1: return {"nome": "Advento", "emoji": "🕯️", "cor": "#7B3FA0"}
+    if mes == 1 and dia == 1: return {"nome": "Ano Novo", "emoji": "🎊", "cor": "#C9A84C"}
+    if mes == 1 and dia <= 6: return {"nome": "Reis Magos", "emoji": "⭐", "cor": "#C9A84C"}
+    
+    # Páscoa (aproximação simples — domingo após 14 dias de março/abril)
+    if mes == 3 and dia >= 22 and dia <= 31: return {"nome": "Semana Santa", "emoji": "✝️", "cor": "#8B4513"}
+    if mes == 4 and dia <= 25: return {"nome": "Tempo Pascal", "emoji": "🌅", "cor": "#FFD700"}
+    
+    # Pentecostes (50 dias após Páscoa — maio/junho)
+    if mes == 5 and dia >= 15: return {"nome": "Pentecostes", "emoji": "🔥", "cor": "#FF4500"}
+    if mes == 6 and dia <= 15: return {"nome": "Pentecostes", "emoji": "🔥", "cor": "#FF4500"}
+    
+    # Finados/Todos os Santos
+    if mes == 11 and dia in [1, 2]: return {"nome": "Todos os Santos", "emoji": "🕊️", "cor": "#5C7A5E"}
+    
+    # Dia das Mães
+    if mes == 5 and agora.weekday() == 6 and 8 <= dia <= 14: return {"nome": "Dia das Mães", "emoji": "💐", "cor": "#FF69B4"}
+    
+    # Dia dos Pais
+    if mes == 8 and agora.weekday() == 6 and 8 <= dia <= 14: return {"nome": "Dia dos Pais", "emoji": "👨", "cor": "#4A7FA5"}
+    
+    return None
+
+@app.get("/temporada")
+async def temporada_atual():
+    agora = datetime.now()
+    t = get_temporada_sazonal(agora)
+    if t:
+        return t
+    return {"nome": None}
+
 @app.post("/devocional")
 async def gerar_devocional(request: Request):
     body = await request.json()
@@ -162,9 +199,12 @@ async def gerar_devocional(request: Request):
     agora = datetime.now()
     data_formatada = agora.strftime("%A, %d de %B de %Y").capitalize()
     dia_ano = agora.timetuple().tm_yday
+    temporada = get_temporada_sazonal(agora)
+
+    temporada_ctx = f"\n⚠️ IMPORTANTE: Hoje é {temporada['emoji']} {temporada['nome']}! O devocional DEVE ser especialmente temático para esta data cristã especial." if temporada else ""
 
     if modo == 1:
-        prompt = f"""Você é o gerador de devocionais do app "Manhã com Deus". Gere um devocional completo e profundo para hoje ({data_formatada}, Dia {dia_ano} do ano).
+        prompt = f"""Você é o gerador de devocionais do app "Manhã com Deus". Gere um devocional completo e profundo para hoje ({data_formatada}, Dia {dia_ano} do ano).{temporada_ctx}
 
 REGRAS: Título CONCEITUAL forte (3-6 palavras, revela o argumento não o assunto). Reflexão com 5 parágrafos profundos. Tom espiritual moderno e acolhedor. Oração íntima na primeira pessoa. Ação prática concreta. Frase de destaque marcante.
 
