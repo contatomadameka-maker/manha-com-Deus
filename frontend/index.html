@@ -3824,14 +3824,7 @@ var _grupoAtual = null;
 
 async function carregarFamilia() {
   if (!userAtual) return;
-  if (planoUser !== "mensal") {
-    tela("paywall");
-    document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
-    document.querySelector(".nav-tab").classList.add("active");
-    document.getElementById("abaDevocional").style.display = "block";
-    document.getElementById("abaFamilia").style.display = "none";
-    return;
-  }
+  // Família abre para todos — paywall só na hora de criar/entrar
 
   // Verifica se já tem grupo
   var grupoSalvo = localStorage.getItem("familia_grupo_" + userAtual.id);
@@ -3845,6 +3838,14 @@ async function carregarFamilia() {
 
 async function criarGrupoFamilia() {
   if (!userAtual) return;
+  if (planoUser !== "mensal") {
+    document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
+    document.querySelector(".nav-tab").classList.add("active");
+    document.getElementById("abaDevocional").style.display = "block";
+    document.getElementById("abaFamilia").style.display = "none";
+    tela("paywall");
+    return;
+  }
   var nome = document.getElementById("nomeGrupo")?.value?.trim();
   if (!nome) { mostrarToast("⚠️ Digite o nome do grupo"); return; }
 
@@ -3868,6 +3869,14 @@ async function criarGrupoFamilia() {
 
 async function entrarGrupoFamilia() {
   if (!userAtual) return;
+  if (planoUser !== "mensal") {
+    document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
+    document.querySelector(".nav-tab").classList.add("active");
+    document.getElementById("abaDevocional").style.display = "block";
+    document.getElementById("abaFamilia").style.display = "none";
+    tela("paywall");
+    return;
+  }
   var codigo = document.getElementById("codigoGrupo")?.value?.trim().toUpperCase();
   var apelido = document.getElementById("apelidoMembro")?.value?.trim() || "Membro";
 
