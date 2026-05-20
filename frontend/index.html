@@ -516,110 +516,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div id="historicoLista" class="historico-lista">
         <div class="loading-wrap"><div class="spinner"></div></div>
       </div>
-    
-
-
-
-
-
-
-    <!-- ABA CÉLULA -->
-    <div id="abaCelula" style="display:none">
-      <p class="section-label">Para líderes e membros</p>
-      <h2 class="intro-titulo">Módulo Célula</h2>
-      <p class="intro-sub">Prepare aulas, gerencie membros e acompanhe sua célula</p>
-
-      <div id="celulaInicio">
-        <!-- Sem célula -->
-        <div id="semCelula">
-          <!-- Preparador de aula rápido (sem grupo) -->
-          <div style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:16px;padding:20px;margin-bottom:16px">
-            <p style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:12px">⚡ Preparador de Aula Rápido</p>
-            <p style="font-size:0.82rem;color:rgba(255,255,255,0.6);margin-bottom:16px;line-height:1.5">Gere uma aula completa para sua célula em segundos com IA</p>
-            <input type="text" id="temaAulaRapida" placeholder="Tema da aula (ex: Fé que move montanhas)"
-              style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#FAF6EE;outline:none;box-sizing:border-box;margin-bottom:8px">
-            <input type="text" id="passagemAulaRapida" placeholder="Passagem bíblica (opcional)"
-              style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#FAF6EE;outline:none;box-sizing:border-box;margin-bottom:12px">
-            <button onclick="gerarAulaRapida()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
-              ✦ Gerar Aula Completa
-            </button>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px">
-              <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px">Criar célula</p>
-              <input type="text" id="nomeCelula" placeholder="Nome da célula" maxlength="30"
-                style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
-              <button onclick="criarCelula()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:11px;border-radius:8px;font-size:0.8rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
-                ⛪ Criar
-              </button>
-            </div>
-            <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px">
-              <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">Entrar</p>
-              <input type="text" id="codigoCelula" placeholder="Código" maxlength="6"
-                style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:4px;text-transform:uppercase;letter-spacing:3px;text-align:center">
-              <input type="text" id="nomeMembro" placeholder="Seu nome"
-                style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
-              <button onclick="entrarCelula()" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.3);color:#C9A84C;padding:11px;border-radius:8px;font-size:0.8rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
-                Entrar →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Com célula -->
-        <div id="comCelula" style="display:none">
-          <!-- Info da célula -->
-          <div style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">
-            <div style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:8px">⛪ Sua Célula</div>
-            <h3 id="celulaNome" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#FAF6EE;margin-bottom:12px"></h3>
-            <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:10px;margin-bottom:14px;display:inline-block">
-              <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-bottom:4px">Código</div>
-              <div id="celulaCodigo" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#C9A84C;letter-spacing:6px;font-weight:700"></div>
-            </div>
-            <div style="display:flex;gap:8px;justify-content:center">
-              <button onclick="compartilharCodigoCelula()" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:#C9A84C;padding:8px 16px;border-radius:20px;font-size:0.75rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">📤 Convidar</button>
-              <button onclick="verPresencas()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#FAF6EE;padding:8px 16px;border-radius:20px;font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer">👥 Membros</button>
-            </div>
-          </div>
-
-          <!-- Preparador de aula -->
-          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:14px">
-            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:14px">✦ Preparar Aula desta Semana</p>
-            <input type="text" id="temaAula" placeholder="Tema da aula (ex: O poder da oração)"
-              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
-            <input type="text" id="passagemAula" placeholder="Passagem bíblica (ex: João 15:1-11)"
-              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
-            <select id="nivelAula" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:12px">
-              <option value="adultos">Adultos</option>
-              <option value="jovens">Jovens</option>
-              <option value="casais">Casais</option>
-              <option value="iniciantes">Novos cristãos</option>
-            </select>
-            <button onclick="gerarAulaCelula()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
-              ✦ Gerar Aula Completa com IA
-            </button>
-          </div>
-
-          <!-- Presença -->
-          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:14px">
-            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">📋 Registrar Presença Hoje</p>
-            <button onclick="registrarPresenca()" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.3);color:#C9A84C;padding:13px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
-              ✓ Estou presente hoje
-            </button>
-            <div id="presencasHoje" style="margin-top:12px"></div>
-          </div>
-
-          <button onclick="sairDaCelula()" style="width:100%;background:transparent;border:none;color:rgba(192,57,43,0.5);font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:8px">
-            Sair da célula
-          </button>
-        </div>
-
-        <!-- Resultado da aula -->
-        <div id="aulaResultado" style="display:none;margin-top:16px"></div>
-      </div>
-    </div>
-    </div></div>
 
 
     <!-- ABA PLANOS -->
@@ -881,6 +777,112 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
           </button>
         </div>
       </div>
+
+
+    
+
+
+
+
+
+
+    <!-- ABA CÉLULA -->
+    <div id="abaCelula" style="display:none">
+      <p class="section-label">Para líderes e membros</p>
+      <h2 class="intro-titulo">Módulo Célula</h2>
+      <p class="intro-sub">Prepare aulas, gerencie membros e acompanhe sua célula</p>
+
+      <div id="celulaInicio">
+        <!-- Sem célula -->
+        <div id="semCelula">
+          <!-- Preparador de aula rápido (sem grupo) -->
+          <div style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:16px;padding:20px;margin-bottom:16px">
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:12px">⚡ Preparador de Aula Rápido</p>
+            <p style="font-size:0.82rem;color:rgba(255,255,255,0.6);margin-bottom:16px;line-height:1.5">Gere uma aula completa para sua célula em segundos com IA</p>
+            <input type="text" id="temaAulaRapida" placeholder="Tema da aula (ex: Fé que move montanhas)"
+              style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#FAF6EE;outline:none;box-sizing:border-box;margin-bottom:8px">
+            <input type="text" id="passagemAulaRapida" placeholder="Passagem bíblica (opcional)"
+              style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#FAF6EE;outline:none;box-sizing:border-box;margin-bottom:12px">
+            <button onclick="gerarAulaRapida()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              ✦ Gerar Aula Completa
+            </button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px">
+              <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px">Criar célula</p>
+              <input type="text" id="nomeCelula" placeholder="Nome da célula" maxlength="30"
+                style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
+              <button onclick="criarCelula()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:11px;border-radius:8px;font-size:0.8rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+                ⛪ Criar
+              </button>
+            </div>
+            <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px">
+              <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">Entrar</p>
+              <input type="text" id="codigoCelula" placeholder="Código" maxlength="6"
+                style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:4px;text-transform:uppercase;letter-spacing:3px;text-align:center">
+              <input type="text" id="nomeMembro" placeholder="Seu nome"
+                style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;font-size:0.82rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
+              <button onclick="entrarCelula()" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.3);color:#C9A84C;padding:11px;border-radius:8px;font-size:0.8rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+                Entrar →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Com célula -->
+        <div id="comCelula" style="display:none">
+          <!-- Info da célula -->
+          <div style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">
+            <div style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:8px">⛪ Sua Célula</div>
+            <h3 id="celulaNome" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#FAF6EE;margin-bottom:12px"></h3>
+            <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:10px;margin-bottom:14px;display:inline-block">
+              <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-bottom:4px">Código</div>
+              <div id="celulaCodigo" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#C9A84C;letter-spacing:6px;font-weight:700"></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center">
+              <button onclick="compartilharCodigoCelula()" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:#C9A84C;padding:8px 16px;border-radius:20px;font-size:0.75rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">📤 Convidar</button>
+              <button onclick="verPresencas()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#FAF6EE;padding:8px 16px;border-radius:20px;font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer">👥 Membros</button>
+            </div>
+          </div>
+
+          <!-- Preparador de aula -->
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:14px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:14px">✦ Preparar Aula desta Semana</p>
+            <input type="text" id="temaAula" placeholder="Tema da aula (ex: O poder da oração)"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
+            <input type="text" id="passagemAula" placeholder="Passagem bíblica (ex: João 15:1-11)"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px">
+            <select id="nivelAula" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:12px">
+              <option value="adultos">Adultos</option>
+              <option value="jovens">Jovens</option>
+              <option value="casais">Casais</option>
+              <option value="iniciantes">Novos cristãos</option>
+            </select>
+            <button onclick="gerarAulaCelula()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              ✦ Gerar Aula Completa com IA
+            </button>
+          </div>
+
+          <!-- Presença -->
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:14px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">📋 Registrar Presença Hoje</p>
+            <button onclick="registrarPresenca()" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.3);color:#C9A84C;padding:13px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              ✓ Estou presente hoje
+            </button>
+            <div id="presencasHoje" style="margin-top:12px"></div>
+          </div>
+
+          <button onclick="sairDaCelula()" style="width:100%;background:transparent;border:none;color:rgba(192,57,43,0.5);font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:8px">
+            Sair da célula
+          </button>
+        </div>
+
+        <!-- Resultado da aula -->
+        <div id="aulaResultado" style="display:none;margin-top:16px"></div>
+      </div>
+    </div>
+    </div></div>
     </div>
 
 <div class="versiculo-section">
