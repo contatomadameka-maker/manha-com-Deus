@@ -568,11 +568,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         </div>
         <div class="acoes-wrap" id="acoesWrap" style="display:none">
           <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
-          <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
-      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card para Stories</button>
-      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">
-        🎧 Ouvir devocional
-      </button>
+          <button class="btn-sec" onclick="compartilhar()">🕊️ Compartilhar</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card Stories</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">🎧 Ouvir</button>
+
         </div>
       </div>
     </div>
@@ -1869,11 +1868,10 @@ function relerDevocional(id) {
   // Ações
   document.getElementById('acoesWrap').innerHTML = `
     <button class="btn-principal" onclick="reiniciar()">✦ Voltar ao início</button>
-    <button class="btn-sec" onclick="compartilhar()">Compartilhar 🕊️</button>
-      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card para Stories</button>
-      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">
-        🎧 Ouvir devocional
-      </button>`;
+    <button class="btn-sec" onclick="compartilhar()">🕊️ Compartilhar</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card Stories</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">🎧 Ouvir</button>
+`;
   document.getElementById('acoesWrap').style.display = 'flex';
 
   window.scrollTo({top: 0, behavior: 'smooth'});
