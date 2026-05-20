@@ -847,3 +847,80 @@ REGRAS:
 @app.get("/testemunhos")
 async def listar_testemunhos():
     return {"ok": True}
+
+
+# ── MODO FAMÍLIA ──────────────────────────────────────
+import random
+import string
+
+def gerar_codigo():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+@app.post("/familia/criar")
+async def criar_familia(request: Request):
+    body = await request.json()
+    nome = body.get("nome", "Minha Família")
+    user_id = body.get("user_id")
+    if not user_id:
+        return {"error": "user_id obrigatório"}
+    
+    codigo = gerar_codigo()
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    
+    async with httpx.AsyncClient() as c:
+        # Cria o grupo
+        r = await c.post(f"{SUPABASE_URL}/rest/v1/grupos_familia",
+            headers=headers,
+            json={"nome": nome, "codigo": codigo, "criador_id": user_id}
+        )
+        grupo = r.json()
+        if isinstance(grupo, list): grupo = grupo[0]
+        grupo_id = grupo.get("id")
+        
+        # Adiciona criador como membro
+        await c.post(f"{SUPABASE_URL}/rest/v1/membros_familia",
+            headers=headers,
+            json={"grupo_id": grupo_id, "user_id": user_id, "apelido": "Líder"}
+        )
+    
+    return {"codigo": codigo, "grupo_id": grupo_id, "nome": nome}
+
+@app.post("/familia/entrar")
+async def entrar_familia(request: Request):
+    body = await request.json()
+    codigo = body.get("codigo", "").upper().strip()
+    user_id = body.get("user_id")
+    apelido = body.get("apelido", "Membro")
+    
+    if not user_id or not codigo:
+        return {"error": "Dados incompletos"}
+    
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    
+    async with httpx.AsyncClient() as c:
+        # Busca grupo pelo código
+        r = await c.get(f"{SUPABASE_URL}/rest/v1/grupos_familia?codigo=eq.{codigo}",
+            headers=headers
+        )
+        grupos = r.json()
+        if not grupos:
+            return {"error": "Código inválido"}
+        grupo = grupos[0]
+        
+        # Entra no grupo
+        await c.post(f"{SUPABASE_URL}/rest/v1/membros_familia",
+            headers=headers,
+            json={"grupo_id": grupo["id"], "user_id": user_id, "apelido": apelido}
+        )
+    
+    return {"ok": True, "grupo": grupo}
