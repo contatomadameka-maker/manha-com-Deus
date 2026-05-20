@@ -372,11 +372,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
   <!-- BANNER SAZONAL -->
   <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px">
-    <div id="bannerSazonalInner" style="border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px">
-      <span id="bannerSazonalEmoji" style="font-size:1.5rem"></span>
-      <div>
-        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:0.95rem;color:#FAF6EE;font-weight:600"></div>
-        <div style="font-size:0.68rem;color:rgba(255,255,255,0.5);margin-top:2px">Devocional especial para esta data</div>
+    <div id="bannerSazonalInner" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px">
+      <span id="bannerSazonalEmoji" style="font-size:1.8rem;flex-shrink:0"></span>
+      <div style="flex:1">
+        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px"></div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">✦ Devocional especial para esta data cristã</div>
       </div>
     </div>
   </div>
@@ -579,9 +579,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         </div>
         <div class="acoes-wrap" id="acoesWrap" style="display:none">
           <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
-          <button class="btn-sec" onclick="compartilhar()">🕊️ Compartilhar</button>
-      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card Stories</button>
-      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">🎧 Ouvir</button>
+          <button class="btn-sec" onclick="compartilhar()" style="white-space:nowrap">🕊️ Compartilhar</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C;white-space:nowrap">📸 Stories</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="white-space:nowrap">🎧 Ouvir</button>
 
         </div>
       </div>
@@ -1879,9 +1879,9 @@ function relerDevocional(id) {
   // Ações
   document.getElementById('acoesWrap').innerHTML = `
     <button class="btn-principal" onclick="reiniciar()">✦ Voltar ao início</button>
-    <button class="btn-sec" onclick="compartilhar()">🕊️ Compartilhar</button>
-      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card Stories</button>
-      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="display:flex;align-items:center;justify-content:center;gap:8px">🎧 Ouvir</button>
+    <button class="btn-sec" onclick="compartilhar()" style="white-space:nowrap">🕊️ Compartilhar</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C;white-space:nowrap">📸 Stories</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="white-space:nowrap">🎧 Ouvir</button>
 `;
   document.getElementById('acoesWrap').style.display = 'flex';
 
@@ -3339,11 +3339,14 @@ async function carregarTemporada() {
       var emoji = document.getElementById("bannerSazonalEmoji");
       var nome = document.getElementById("bannerSazonalNome");
       if (banner && inner && emoji && nome) {
-        inner.style.background = "linear-gradient(135deg," + (dados.cor||"#C9A84C") + "22," + (dados.cor||"#C9A84C") + "11)";
-        inner.style.border = "1px solid " + (dados.cor||"#C9A84C") + "44";
+        var cor = dados.cor || "#C9A84C";
+        inner.style.background = "linear-gradient(135deg," + cor + "33," + cor + "18)";
+        inner.style.border = "1.5px solid " + cor + "66";
+        inner.style.boxShadow = "0 4px 16px " + cor + "22";
         emoji.textContent = dados.emoji || "✦";
         nome.textContent = dados.nome;
-        nome.style.color = dados.cor || "#C9A84C";
+        nome.style.color = "#FAF6EE";
+        nome.style.textShadow = "0 0 20px " + cor + "88";
         banner.style.display = "block";
       }
     }
