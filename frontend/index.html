@@ -1412,10 +1412,11 @@ window.navTab = function(aba, el) {
   if (aba === "missoes" && typeof carregarMissoes === "function") carregarMissoes();
   if (aba === "familia" && typeof carregarFamilia === "function") carregarFamilia();
   if (aba === "celula" && typeof carregarCelula === "function") carregarCelula();
-  // Rola para mostrar o conteúdo da aba
+  // Rola para o topo da página
   setTimeout(function() {
-    var navEl = document.querySelector(".nav-tabs, [class*=nav-tab]");
-    if (navEl) navEl.scrollIntoView({behavior:"smooth", block:"start"});
+    var container = document.querySelector(".container");
+    if (container) container.scrollIntoView({behavior:"smooth", block:"start"});
+    else window.scrollTo({top:0, behavior:"smooth"});
   }, 100);
   if (aba === "relatorio") { if(typeof carregarStatsRelatorio === "function") carregarStatsRelatorio(); }
   // var elMissoes = document.getElementById("abaMissoes");
