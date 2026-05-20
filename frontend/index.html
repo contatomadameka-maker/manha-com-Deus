@@ -316,38 +316,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     </div>
   </div>
 
-    <!-- PALAVRA PROFÉTICA -->
-  <div style="max-width:680px;margin:12px auto 0;padding:0 16px" id="palavraProfeticaWrap">
-    <div style="background:linear-gradient(135deg,#1A0A2E,#2C1F0E,#0A1A0A);border:1px solid rgba(138,92,200,0.2);border-radius:18px;padding:20px;position:relative;overflow:hidden;cursor:pointer" onclick="abrirPalavraProfetica()">
-      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(138,92,200,0.12),transparent 60%)"></div>
-      <div style="position:relative">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:1.1rem">⚡</span>
-            <span style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(138,92,200,0.8)">Palavra da Semana</span>
-          </div>
-          <span style="font-size:0.65rem;color:rgba(255,255,255,0.3)" id="palavraSemana"></span>
-        </div>
-        <div id="palavraTitulo" style="font-family:'Playfair Display',serif;font-size:1.05rem;color:#FAF6EE;line-height:1.4;margin-bottom:8px">Carregando palavra da semana...</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
-          <span style="font-size:0.72rem;color:rgba(138,92,200,0.7)">Toque para ler completo →</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BANNER SAZONAL -->
-  <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px;position:relative;z-index:10">
-    <div id="bannerSazonalInner" onclick="gerarDevoSazonal()" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;z-index:10;-webkit-tap-highlight-color:rgba(201,168,76,0.2)">
-      <span id="bannerSazonalEmoji" style="font-size:1.8rem;flex-shrink:0"></span>
-      <div style="flex:1">
-        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px"></div>
-        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">✦ Devocional especial para esta data cristã</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
+    <div class="container">
     <!-- Linha 1 de abas -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
       <div class="nav-tab active" onclick="navTab('devocional',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">✦ Devocional</div>
@@ -866,6 +835,39 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div style="background:rgba(201,168,76,0.15);color:#C9A84C;font-size:0.55rem;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px;position:relative;flex-shrink:0">MENSAL</div>
     </button>
   </div>
+
+  <!-- PALAVRA PROFÉTICA -->
+  <div style="max-width:680px;margin:12px auto 0;padding:0 16px" id="palavraProfeticaWrap">
+    <div style="background:linear-gradient(135deg,#1A0A2E,#2C1F0E,#0A1A0A);border:1px solid rgba(138,92,200,0.2);border-radius:18px;padding:20px;position:relative;overflow:hidden;cursor:pointer" onclick="abrirPalavraProfetica()">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(138,92,200,0.12),transparent 60%)"></div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:1.1rem">⚡</span>
+            <span style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(138,92,200,0.8)">Palavra da Semana</span>
+          </div>
+          <span style="font-size:0.65rem;color:rgba(255,255,255,0.3)" id="palavraSemana"></span>
+        </div>
+        <div id="palavraTitulo" style="font-family:'Playfair Display',serif;font-size:1.05rem;color:#FAF6EE;line-height:1.4;margin-bottom:8px">Carregando palavra da semana...</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
+          <span style="font-size:0.72rem;color:rgba(138,92,200,0.7)">Toque para ler completo →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANNER SAZONAL -->
+  <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px;position:relative;z-index:10">
+    <div id="bannerSazonalInner" onclick="gerarDevoSazonal()" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;z-index:10;-webkit-tap-highlight-color:rgba(201,168,76,0.2)">
+      <span id="bannerSazonalEmoji" style="font-size:1.8rem;flex-shrink:0"></span>
+      <div style="flex:1">
+        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px"></div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">✦ Devocional especial para esta data cristã</div>
+      </div>
+    </div>
+  </div>
+
+
 
     <div class="footer">
       <p>✦ Manhã com Deus · Alimentado por Claude IA</p>
