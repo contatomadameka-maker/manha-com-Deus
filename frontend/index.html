@@ -370,6 +370,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     </button>
   </div>
 
+  <!-- BANNER SAZONAL -->
+  <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px">
+    <div id="bannerSazonalInner" style="border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+      <span id="bannerSazonalEmoji" style="font-size:1.5rem"></span>
+      <div>
+        <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:0.95rem;color:#FAF6EE;font-weight:600"></div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.5);margin-top:2px">Devocional especial para esta data</div>
+      </div>
+    </div>
+  </div>
+
   <!-- PALAVRA PROFÉTICA -->
   <div style="max-width:680px;margin:12px auto 0;padding:0 16px" id="palavraProfeticaWrap">
     <div style="background:linear-gradient(135deg,#1A0A2E,#2C1F0E,#0A1A0A);border:1px solid rgba(138,92,200,0.2);border-radius:18px;padding:20px;position:relative;overflow:hidden;cursor:pointer" onclick="abrirPalavraProfetica()">
@@ -3316,4 +3327,33 @@ async function salvarCardStory() {
     mostrarToast("⚠️ Segure na imagem e salve manualmente");
   }
 }
+</script>
+<script>
+async function carregarTemporada() {
+  try {
+    var resp = await fetch("/temporada");
+    var dados = await resp.json();
+    if (dados.nome) {
+      var banner = document.getElementById("bannerSazonal");
+      var inner = document.getElementById("bannerSazonalInner");
+      var emoji = document.getElementById("bannerSazonalEmoji");
+      var nome = document.getElementById("bannerSazonalNome");
+      if (banner && inner && emoji && nome) {
+        inner.style.background = "linear-gradient(135deg," + (dados.cor||"#C9A84C") + "22," + (dados.cor||"#C9A84C") + "11)";
+        inner.style.border = "1px solid " + (dados.cor||"#C9A84C") + "44";
+        emoji.textContent = dados.emoji || "✦";
+        nome.textContent = dados.nome;
+        nome.style.color = dados.cor || "#C9A84C";
+        banner.style.display = "block";
+      }
+    }
+  } catch(e) {}
+}
+
+// Chama ao iniciar
+var _iniciarAppOriginal2 = window.iniciarApp;
+window.iniciarApp = async function(user) {
+  await _iniciarAppOriginal2(user);
+  carregarTemporada();
+};
 </script>
