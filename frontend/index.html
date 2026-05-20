@@ -416,6 +416,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="nav-tab" onclick="navTab('comunidade',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">🤝 Oração</div>
       <div class="nav-tab" onclick="navTab('relatorio',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">📊 Relatório</div>
       <div class="nav-tab" onclick="navTab('missoes',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">🌍 Missões</div>
+      <div class="nav-tab" onclick="navTab('familia',this)" style="text-align:center;font-size:0.72rem;padding:10px 4px">👨‍👩‍👧 Família</div>
     </div>
 
     <div id="abaDevocional">
@@ -790,6 +791,80 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <!-- Grid de países -->
       <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">Ore pelo mundo</p>
       <div id="paisesGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
+    </div>
+
+
+    <!-- ABA FAMÍLIA -->
+    <div id="abaFamilia" style="display:none">
+      <p class="section-label">Devoção em grupo</p>
+      <h2 class="intro-titulo">Modo Família</h2>
+      <p class="intro-sub">Leia a Palavra juntos e cresçam na fé em família</p>
+
+      <div id="familiaInicio">
+        <!-- Sem grupo -->
+        <div id="semGrupo">
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:20px;margin-bottom:14px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:14px">✦ Criar grupo familiar</p>
+            <input type="text" id="nomeGrupo" placeholder="Nome do grupo (ex: Família Silva)" maxlength="30"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:10px">
+            <button onclick="criarGrupoFamilia()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:13px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              👨‍👩‍👧 Criar meu grupo
+            </button>
+          </div>
+
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:20px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:14px">Entrar em um grupo</p>
+            <input type="text" id="codigoGrupo" placeholder="Código do grupo (ex: ABC123)" maxlength="6"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:8px;text-transform:uppercase;letter-spacing:3px;text-align:center">
+            <input type="text" id="apelidoMembro" placeholder="Seu apelido no grupo"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#1A1208;outline:none;box-sizing:border-box;margin-bottom:10px">
+            <button onclick="entrarGrupoFamilia()" style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.3);color:#C9A84C;padding:13px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              Entrar no grupo →
+            </button>
+          </div>
+        </div>
+
+        <!-- Com grupo -->
+        <div id="comGrupo" style="display:none">
+          <div id="grupoInfo" style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">
+            <div style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:8px">👨‍👩‍👧 Seu Grupo</div>
+            <h3 id="grupoNome" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#FAF6EE;margin-bottom:8px"></h3>
+            <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:10px;margin-bottom:16px">
+              <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-bottom:4px">Código para convidar</div>
+              <div id="grupoCodigo" style="font-family:'Playfair Display',serif;font-size:1.6rem;color:#C9A84C;letter-spacing:6px;font-weight:700"></div>
+            </div>
+            <button onclick="compartilharCodigo()" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:#C9A84C;padding:10px 20px;border-radius:20px;font-size:0.8rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              📤 Convidar família
+            </button>
+          </div>
+
+          <!-- Membros hoje -->
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:14px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:14px">📖 Quem já leu hoje</p>
+            <div id="membrosHoje"></div>
+          </div>
+
+          <!-- Reflexões -->
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:14px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">💭 Compartilhe sua reflexão de hoje</p>
+            <textarea id="reflexaoFamilia" placeholder="O que Deus falou ao seu coração hoje?" rows="3"
+              style="width:100%;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#3D2E1A;resize:none;outline:none;box-sizing:border-box;margin-bottom:10px"></textarea>
+            <button onclick="registrarLeituraFamilia()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:13px;border-radius:10px;font-size:0.88rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              ✓ Registrar minha leitura de hoje
+            </button>
+          </div>
+
+          <!-- Reflexões dos membros -->
+          <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px">
+            <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:14px">🗣️ Reflexões da família hoje</p>
+            <div id="reflexoesFamilia"></div>
+          </div>
+
+          <button onclick="sairDoGrupo()" style="width:100%;background:transparent;border:none;color:rgba(192,57,43,0.5);font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:12px;margin-top:8px">
+            Sair do grupo
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="footer">
@@ -1228,6 +1303,9 @@ window.navTab = function(aba, el) {
   var elMissoes = document.getElementById("abaMissoes");
   if (elMissoes) elMissoes.style.display = aba === "missoes" ? "block" : "none";
   if (aba === "missoes") carregarMissoes();
+  var elFamilia = document.getElementById("abaFamilia");
+  if (elFamilia) elFamilia.style.display = aba === "familia" ? "block" : "none";
+  if (aba === "familia") carregarFamilia();
 };
 </script>
 
@@ -3734,5 +3812,187 @@ async function orarPorPais(pais) {
   } catch(e) {
     mostrarToast("❌ Erro: " + (e.message || "tente novamente"));
   }
+}
+</script>
+<script>
+var _grupoAtual = null;
+
+async function carregarFamilia() {
+  if (!userAtual) return;
+  if (planoUser !== "mensal") {
+    tela("paywall");
+    document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
+    document.querySelector(".nav-tab").classList.add("active");
+    document.getElementById("abaDevocional").style.display = "block";
+    document.getElementById("abaFamilia").style.display = "none";
+    return;
+  }
+
+  // Verifica se já tem grupo
+  var grupoSalvo = localStorage.getItem("familia_grupo_" + userAtual.id);
+  if (grupoSalvo) {
+    _grupoAtual = JSON.parse(grupoSalvo);
+    mostrarGrupo(_grupoAtual);
+    await carregarMembrosHoje();
+    await carregarReflexoes();
+  }
+}
+
+async function criarGrupoFamilia() {
+  if (!userAtual) return;
+  var nome = document.getElementById("nomeGrupo")?.value?.trim();
+  if (!nome) { mostrarToast("⚠️ Digite o nome do grupo"); return; }
+
+  try {
+    var resp = await fetch("/familia/criar", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({nome, user_id: userAtual.id})
+    });
+    var dados = await resp.json();
+    if (dados.error) throw new Error(dados.error);
+
+    _grupoAtual = dados;
+    localStorage.setItem("familia_grupo_" + userAtual.id, JSON.stringify(dados));
+    mostrarGrupo(dados);
+    mostrarToast("👨‍👩‍👧 Grupo criado! Compartilhe o código com a família!");
+  } catch(e) {
+    mostrarToast("❌ Erro: " + (e.message || "tente novamente"));
+  }
+}
+
+async function entrarGrupoFamilia() {
+  if (!userAtual) return;
+  var codigo = document.getElementById("codigoGrupo")?.value?.trim().toUpperCase();
+  var apelido = document.getElementById("apelidoMembro")?.value?.trim() || "Membro";
+
+  if (!codigo || codigo.length !== 6) { mostrarToast("⚠️ Digite o código de 6 letras"); return; }
+
+  try {
+    var resp = await fetch("/familia/entrar", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({codigo, user_id: userAtual.id, apelido})
+    });
+    var dados = await resp.json();
+    if (dados.error) throw new Error(dados.error);
+
+    _grupoAtual = dados.grupo;
+    localStorage.setItem("familia_grupo_" + userAtual.id, JSON.stringify(dados.grupo));
+    mostrarGrupo(dados.grupo);
+    mostrarToast("✓ Entrou no grupo " + dados.grupo.nome + "!");
+    await carregarMembrosHoje();
+  } catch(e) {
+    mostrarToast("❌ " + (e.message || "Código inválido"));
+  }
+}
+
+function mostrarGrupo(grupo) {
+  document.getElementById("semGrupo").style.display = "none";
+  document.getElementById("comGrupo").style.display = "block";
+  document.getElementById("grupoNome").textContent = grupo.nome;
+  document.getElementById("grupoCodigo").textContent = grupo.codigo;
+}
+
+async function carregarMembrosHoje() {
+  if (!_grupoAtual) return;
+  var hoje = new Date().toISOString().split("T")[0];
+
+  try {
+    var res = await sb.from("leituras_familia")
+      .select("*")
+      .eq("grupo_id", _grupoAtual.id || _grupoAtual.grupo_id)
+      .eq("data", hoje);
+
+    var membros = res.data || [];
+    var el = document.getElementById("membrosHoje");
+    if (!el) return;
+
+    if (membros.length === 0) {
+      el.innerHTML = '<p style="font-size:0.82rem;color:#8A7560;text-align:center;padding:12px">Nenhum membro leu ainda hoje. Seja o primeiro! 📖</p>';
+      return;
+    }
+
+    el.innerHTML = membros.map(function(m) {
+      var eumesmo = m.user_id === userAtual.id;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(201,168,76,0.08)">' +
+        '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8873A);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0">✓</div>' +
+        '<div><div style="font-size:0.82rem;font-weight:600;color:#1A1208">' + (eumesmo ? "Você" : "Membro da família") + '</div>' +
+        '<div style="font-size:0.65rem;color:#8A7560">Leu hoje ✓</div></div>' +
+        '<div style="margin-left:auto;font-size:0.75rem;color:#C9A84C">🔥</div></div>';
+    }).join("");
+  } catch(e) { console.error(e); }
+}
+
+async function carregarReflexoes() {
+  if (!_grupoAtual) return;
+  var hoje = new Date().toISOString().split("T")[0];
+
+  try {
+    var res = await sb.from("leituras_familia")
+      .select("*")
+      .eq("grupo_id", _grupoAtual.id || _grupoAtual.grupo_id)
+      .eq("data", hoje)
+      .not("reflexao", "is", null);
+
+    var el = document.getElementById("reflexoesFamilia");
+    if (!el) return;
+
+    var reflexoes = (res.data || []).filter(function(r){ return r.reflexao; });
+
+    if (reflexoes.length === 0) {
+      el.innerHTML = '<p style="font-size:0.82rem;color:#8A7560;text-align:center;padding:12px">Nenhuma reflexão compartilhada ainda hoje.</p>';
+      return;
+    }
+
+    el.innerHTML = reflexoes.map(function(r) {
+      var eumesmo = r.user_id === userAtual.id;
+      return '<div style="background:#FAF6EE;border-radius:10px;padding:12px;margin-bottom:8px">' +
+        '<div style="font-size:0.68rem;font-weight:600;color:#C9A84C;margin-bottom:6px">' + (eumesmo ? "Você" : "Familiar") + '</div>' +
+        '<p style="font-size:0.85rem;color:#3D2E1A;line-height:1.6">' + r.reflexao + '</p></div>';
+    }).join("");
+  } catch(e) { console.error(e); }
+}
+
+async function registrarLeituraFamilia() {
+  if (!userAtual || !_grupoAtual) return;
+  var reflexao = document.getElementById("reflexaoFamilia")?.value?.trim() || null;
+  var hoje = new Date().toISOString().split("T")[0];
+  var grupoId = _grupoAtual.id || _grupoAtual.grupo_id;
+
+  try {
+    var res = await sb.from("leituras_familia").upsert({
+      grupo_id: grupoId,
+      user_id: userAtual.id,
+      data: hoje,
+      reflexao: reflexao
+    }, {onConflict: "grupo_id,user_id,data"});
+
+    if (res.error) throw res.error;
+    mostrarToast("✓ Leitura registrada! A família vai ver!");
+    document.getElementById("reflexaoFamilia").value = "";
+    await carregarMembrosHoje();
+    await carregarReflexoes();
+  } catch(e) {
+    mostrarToast("❌ Erro: " + (e.message || "tente novamente"));
+  }
+}
+
+function compartilharCodigo() {
+  if (!_grupoAtual) return;
+  var codigo = _grupoAtual.codigo;
+  var nome = _grupoAtual.nome;
+  var txt = "👨‍👩‍👧 Vamos ler a Palavra juntos!\n\nEntre no grupo " + nome + " no app Manhã com Deus:\n\n🔑 Código: " + codigo + "\n\n📲 Baixe o app: manhacomdeus.com.br";
+  if (navigator.share) navigator.share({title: "Grupo Família", text: txt});
+  else navigator.clipboard.writeText(txt).then(function(){ mostrarToast("✓ Copiado! Cole no WhatsApp 📱"); });
+}
+
+function sairDoGrupo() {
+  if (!confirm("Sair do grupo familiar?")) return;
+  localStorage.removeItem("familia_grupo_" + userAtual.id);
+  _grupoAtual = null;
+  document.getElementById("semGrupo").style.display = "block";
+  document.getElementById("comGrupo").style.display = "none";
+  mostrarToast("Você saiu do grupo");
 }
 </script>
