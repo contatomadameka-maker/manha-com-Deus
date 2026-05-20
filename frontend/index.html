@@ -411,6 +411,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="nav-tab" onclick="navTab('quiz',this)">🧠 Quiz</div>
       <div class="nav-tab" onclick="navTab('comunidade',this)">🤝 Oração</div>
       <div class="nav-tab" onclick="navTab('relatorio',this)">📊 Relatório</div>
+      <div class="nav-tab" onclick="navTab('missoes',this)">🌍 Missões</div>
     </div>
 
     <div id="abaDevocional">
@@ -754,6 +755,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       </div>
 
       <div id="relatorioConteudo" style="display:none;margin-top:20px"></div>
+    </div>
+
+
+    <!-- ABA MISSÕES -->
+    <div id="abaMissoes" style="display:none">
+      <p class="section-label">Intercessão global</p>
+      <h2 class="intro-titulo">Missões Mundiais</h2>
+      <p class="intro-sub">Ore pelo mundo — cada oração faz diferença</p>
+
+      <!-- País em destaque -->
+      <div id="paisDestaque" style="background:linear-gradient(135deg,#1A1208,#2C1F0E);border-radius:18px;padding:24px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.1),transparent 70%)"></div>
+        <div style="position:relative">
+          <p style="font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:12px">🌍 País da Semana</p>
+          <div id="paisDestaqueEmoji" style="font-size:3rem;margin-bottom:8px">🌎</div>
+          <h3 id="paisDestaqueNome" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#FAF6EE;margin-bottom:8px">Carregando...</h3>
+          <p id="paisDestaqueInfo" style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:16px;line-height:1.5"></p>
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px">
+            <span style="font-size:1rem">🙏</span>
+            <span id="paisDestaqueContador" style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#C9A84C;font-weight:700">0</span>
+            <span style="font-size:0.78rem;color:rgba(255,255,255,0.4)">pessoas oraram esta semana</span>
+          </div>
+          <button id="btnOrarDestaque" onclick="orarPorPais(paisAtual)" style="background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:14px 32px;border-radius:50px;font-size:0.9rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;min-height:48px">
+            🙏 Orar por este país
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid de países -->
+      <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">Ore pelo mundo</p>
+      <div id="paisesGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
     </div>
 
     <div class="footer">
@@ -1189,6 +1221,9 @@ window.navTab = function(aba, el) {
   if (aba === "comunidade") carregarPedidos();
   document.getElementById("abaRelatorio").style.display = aba === "relatorio" ? "block" : "none";
   if (aba === "relatorio") { if(typeof carregarStatsRelatorio === "function") carregarStatsRelatorio(); }
+  var elMissoes = document.getElementById("abaMissoes");
+  if (elMissoes) elMissoes.style.display = aba === "missoes" ? "block" : "none";
+  if (aba === "missoes") carregarMissoes();
 };
 </script>
 
@@ -3567,6 +3602,133 @@ async function gerarDevoSazonal() {
     await atualizarStreak();
   } catch(e) {
     tela("erro");
+  }
+}
+</script>
+<script>
+var paisAtual = null;
+
+var PAISES = [
+  {nome:"Brasil", emoji:"🇧🇷", info:"200M+ hab · 30% evangélicos · crescimento gospel acelerado"},
+  {nome:"China", emoji:"🇨🇳", info:"1.4B hab · cristãos perseguidos · igreja underground forte"},
+  {nome:"Índia", emoji:"🇮🇳", info:"1.4B hab · missão desafiadora · casta e religião hinduísta"},
+  {nome:"Irã", emoji:"🇮🇷", info:"90M hab · cristãos perseguidos · maior crescimento do islã"},
+  {nome:"Afeganistão", emoji:"🇦🇫", info:"40M hab · país fechado ao evangelho · perseguição extrema"},
+  {nome:"Coreia do Norte", emoji:"🇰🇵", info:"26M hab · país mais fechado do mundo · fé clandestina"},
+  {nome:"Nigéria", emoji:"🇳🇬", info:"220M hab · conflito cristão-muçulmano · BH e Boko Haram"},
+  {nome:"Rússia", emoji:"🇷🇺", info:"145M hab · restrições crescentes · guerra e sofrimento"},
+  {nome:"Israel", emoji:"🇮🇱", info:"9M hab · terra santa · conflito e esperança messiânica"},
+  {nome:"Japão", emoji:"🇯🇵", info:"125M hab · menos de 1% cristão · solo espiritual duro"},
+  {nome:"Etiópia", emoji:"🇪🇹", info:"120M hab · conflito interno · avivamento e perseguição"},
+  {nome:"México", emoji:"🇲🇽", info:"130M hab · crescimento evangélico · violência e cartéis"},
+  {nome:"Síria", emoji:"🇸🇾", info:"22M hab · guerra civil · cristãos em fuga"},
+  {nome:"Paquistão", emoji:"🇵🇰", info:"220M hab · lei da blasfêmia · cristãos vulneráveis"},
+  {nome:"Ucrânia", emoji:"🇺🇦", info:"44M hab · guerra · fé em meio ao sofrimento"},
+  {nome:"Turquia", emoji:"🇹🇷", info:"85M hab · terra bíblica · menos de 0.2% cristão"},
+];
+
+function getPaisDaSemana() {
+  var semana = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  return PAISES[semana % PAISES.length];
+}
+
+async function carregarMissoes() {
+  var pais = getPaisDaSemana();
+  paisAtual = pais;
+
+  // Atualiza destaque
+  document.getElementById("paisDestaqueEmoji").textContent = pais.emoji;
+  document.getElementById("paisDestaqueNome").textContent = pais.nome;
+  document.getElementById("paisDestaqueInfo").textContent = pais.info;
+
+  // Busca contador da semana
+  var inicioSemana = new Date();
+  inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay());
+  var inicioStr = inicioSemana.toISOString().split("T")[0];
+
+  try {
+    var res = await sb.from("missoes_oracoes")
+      .select("*", {count: "exact"})
+      .eq("pais", pais.nome)
+      .gte("data", inicioStr);
+    document.getElementById("paisDestaqueContador").textContent = res.count || 0;
+
+    // Verifica se usuário já orou hoje
+    if (userAtual) {
+      var hoje = new Date().toISOString().split("T")[0];
+      var jaOrou = await sb.from("missoes_oracoes")
+        .select("*", {count: "exact"})
+        .eq("user_id", userAtual.id)
+        .eq("pais", pais.nome)
+        .eq("data", hoje);
+      if (jaOrou.count > 0) {
+        var btn = document.getElementById("btnOrarDestaque");
+        if (btn) {
+          btn.textContent = "✓ Você orou hoje!";
+          btn.disabled = true;
+          btn.style.background = "rgba(92,122,94,0.3)";
+          btn.style.color = "#A8C5AA";
+        }
+      }
+    }
+  } catch(e) { console.error(e); }
+
+  // Renderiza grid de países
+  var grid = document.getElementById("paisesGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  PAISES.forEach(function(p) {
+    var card = document.createElement("div");
+    var isDestaque = p.nome === pais.nome;
+    card.style.cssText = "background:#fff;border:1px solid " + (isDestaque ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.12)") + ";border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center";
+    card.innerHTML =
+      '<div style="font-size:1.8rem;margin-bottom:6px">' + p.emoji + '</div>' +
+      '<div style="font-size:0.82rem;font-weight:600;color:#1A1208;margin-bottom:4px">' + p.nome + '</div>' +
+      (isDestaque ? '<div style="font-size:0.6rem;background:rgba(201,168,76,0.1);color:#C9A84C;padding:2px 8px;border-radius:20px;font-weight:700">Esta semana</div>' : '<div style="font-size:0.68rem;color:#8A7560">Toque para orar</div>');
+    card.onclick = function() { orarPorPais(p); };
+    grid.appendChild(card);
+  });
+}
+
+async function orarPorPais(pais) {
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+  if (!pais) return;
+
+  var hoje = new Date().toISOString().split("T")[0];
+
+  try {
+    var res = await sb.from("missoes_oracoes").insert({
+      user_id: userAtual.id,
+      pais: pais.nome,
+      data: hoje
+    });
+
+    if (res.error && res.error.code === "23505") {
+      mostrarToast("✓ Você já orou por " + pais.nome + " hoje!");
+      return;
+    }
+    if (res.error) throw res.error;
+
+    mostrarToast("🙏 Que Deus abençoe " + pais.emoji + " " + pais.nome + "!");
+
+    // Atualiza contador
+    var contador = document.getElementById("paisDestaqueContador");
+    if (contador && pais.nome === paisAtual?.nome) {
+      contador.textContent = parseInt(contador.textContent) + 1;
+    }
+
+    // Desativa botão
+    var btn = document.getElementById("btnOrarDestaque");
+    if (btn && pais.nome === paisAtual?.nome) {
+      btn.textContent = "✓ Você orou hoje!";
+      btn.disabled = true;
+      btn.style.background = "rgba(92,122,94,0.3)";
+      btn.style.color = "#A8C5AA";
+    }
+
+  } catch(e) {
+    mostrarToast("❌ Erro: " + (e.message || "tente novamente"));
   }
 }
 </script>
