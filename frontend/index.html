@@ -689,6 +689,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div id="pedidosLista" style="display:flex;flex-direction:column;gap:12px">
         <div class="loading-wrap"><div class="spinner"></div></div>
       </div>
+
+      <!-- TESTEMUNHOS -->
+      <div style="margin-top:28px">
+        <p class="section-label">Glórias a Deus</p>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#1A1208;margin-bottom:4px">Testemunhos da Semana</h3>
+        <p style="font-size:0.78rem;color:#8A7560;margin-bottom:16px">Compartilhe o que Deus fez em sua vida</p>
+
+        <!-- Novo testemunho -->
+        <div style="background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:16px">
+          <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px">✦ Compartilhar testemunho</p>
+          <textarea id="novoTestemunhoTexto" placeholder="O que Deus fez em sua vida esta semana? Compartilhe para encorajar os irmãos..." maxlength="500"
+            style="width:100%;min-height:90px;background:#FAF6EE;border:1.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#3D2E1A;resize:none;outline:none;line-height:1.6;box-sizing:border-box"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.78rem;color:#8A7560">
+              <input type="checkbox" id="testemunhoAnonimo" style="width:16px;height:16px;accent-color:#C9A84C">
+              Anônimo
+            </label>
+            <button onclick="enviarTestemunho()" style="background:linear-gradient(135deg,#C9A84C,#A8873A);border:none;color:#1A1208;padding:10px 20px;border-radius:10px;font-size:0.82rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer">
+              🙌 Publicar
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista testemunhos -->
+        <div id="testemunhosLista" style="display:flex;flex-direction:column;gap:12px">
+          <div class="loading-wrap"><div class="spinner"></div></div>
+        </div>
+      </div>
     </div>
 
     <!-- RELATÓRIO MENSAL -->
@@ -3358,5 +3386,142 @@ var _iniciarAppOriginal2 = window.iniciarApp;
 window.iniciarApp = async function(user) {
   await _iniciarAppOriginal2(user);
   carregarTemporada();
+};
+</script>
+<script>
+async function carregarTestemunhos() {
+  var lista = document.getElementById("testemunhosLista");
+  if (!lista) return;
+  lista.innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+
+  try {
+    var result = await sb.from("testemunhos")
+      .select("*")
+      .eq("aprovado", true)
+      .order("curtidas", {ascending: false})
+      .order("created_at", {ascending: false})
+      .limit(15);
+
+    var testemunhos = result.data || [];
+
+    var curtidas = [];
+    if (userAtual) {
+      var c = await sb.from("curtidas_testemunho").select("testemunho_id").eq("user_id", userAtual.id);
+      curtidas = (c.data || []).map(function(x){return x.testemunho_id;});
+    }
+
+    if (testemunhos.length === 0) {
+      lista.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">🙌</div><p>Seja o primeiro a compartilhar um testemunho!</p></div>';
+      return;
+    }
+
+    lista.innerHTML = "";
+    testemunhos.forEach(function(t) {
+      var jaCurtiu = curtidas.indexOf(t.id) !== -1;
+      var eumesmo = userAtual && t.user_id === userAtual.id;
+      var dt = new Date(t.created_at).toLocaleDateString("pt-BR", {day:"numeric",month:"short"});
+
+      var card = document.createElement("div");
+      card.style.cssText = "background:#fff;border:1px solid rgba(201,168,76,0.18);border-radius:14px;padding:16px";
+      card.innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8873A);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🙌</div>' +
+        '<div><div style="font-size:0.78rem;font-weight:600;color:#1A1208">' + (t.anonimo ? "Anônimo" : "Irmão(ã) na fé") + '</div>' +
+        '<div style="font-size:0.65rem;color:#8A7560">' + dt + '</div></div>' +
+        (eumesmo ? '<button onclick="removerTestemunho(\'' + t.id + '\')" style="margin-left:auto;background:transparent;border:none;color:rgba(192,57,43,0.5);font-size:0.7rem;cursor:pointer">Remover</button>' : '') +
+        '</div>' +
+        '<p style="font-size:0.88rem;color:#3D2E1A;line-height:1.7;margin-bottom:14px">' + t.texto + '</p>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+        '<div style="display:flex;align-items:center;gap:6px">' +
+        '<span style="font-size:1rem">🙏</span>' +
+        '<span id="curtidas-' + t.id + '" style="font-family:Playfair Display,serif;font-size:1.1rem;color:#C9A84C;font-weight:700">' + t.curtidas + '</span>' +
+        '<span style="font-size:0.72rem;color:#8A7560">amém</span>' +
+        '</div>' +
+        (eumesmo ? '<span style="font-size:0.7rem;color:#8A7560;background:#FAF6EE;padding:4px 10px;border-radius:20px">Seu testemunho</span>' :
+        '<button onclick="curtirTestemunho(\'' + t.id + '\',this)" ' + (jaCurtiu ? 'disabled ' : '') +
+        'style="background:' + (jaCurtiu ? 'rgba(92,122,94,0.1)' : 'linear-gradient(135deg,#C9A84C,#A8873A)') + ';border:none;color:' + (jaCurtiu ? '#5C7A5E' : '#1A1208') + ';padding:8px 16px;border-radius:20px;font-size:0.75rem;font-weight:700;font-family:DM Sans,sans-serif;cursor:' + (jaCurtiu ? 'default' : 'pointer') + ';min-height:34px">' +
+        (jaCurtiu ? '✓ Amém!' : '🙏 Amém!') + '</button>') +
+        '</div>';
+
+      lista.appendChild(card);
+    });
+
+  } catch(e) {
+    console.error("Erro testemunhos:", e);
+    lista.innerHTML = '<div class="erro-wrap"><p class="erro-txt">Erro ao carregar testemunhos.</p></div>';
+  }
+}
+
+async function enviarTestemunho() {
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+  var texto = document.getElementById("novoTestemunhoTexto")?.value?.trim();
+  var anonimo = document.getElementById("testemunhoAnonimo")?.checked || false;
+
+  if (!texto || texto.length < 20) { mostrarToast("⚠️ Escreva mais detalhes no testemunho"); return; }
+
+  try {
+    var res = await sb.from("testemunhos").insert({
+      user_id: userAtual.id,
+      texto: texto,
+      anonimo: anonimo,
+      curtidas: 0,
+      aprovado: true
+    });
+    if (res.error) throw res.error;
+
+    document.getElementById("novoTestemunhoTexto").value = "";
+    document.getElementById("testemunhoAnonimo").checked = false;
+    mostrarToast("🙌 Testemunho publicado! Glória a Deus!");
+    await carregarTestemunhos();
+  } catch(e) {
+    mostrarToast("❌ Erro ao publicar: " + (e.message || "tente novamente"));
+  }
+}
+
+async function curtirTestemunho(id, btn) {
+  if (!userAtual) { mostrarToast("⚠️ Faça login primeiro"); return; }
+  btn.disabled = true;
+  btn.textContent = "⏳";
+
+  try {
+    var res = await sb.from("curtidas_testemunho").insert({
+      user_id: userAtual.id,
+      testemunho_id: id
+    });
+    if (res.error) throw res.error;
+
+    await sb.rpc("incrementar_curtida", {test_uuid: id});
+
+    btn.textContent = "✓ Amém!";
+    btn.style.background = "rgba(92,122,94,0.1)";
+    btn.style.color = "#5C7A5E";
+
+    var el = document.getElementById("curtidas-" + id);
+    if (el) el.textContent = parseInt(el.textContent) + 1;
+    mostrarToast("🙏 Amém! Deus seja glorificado!");
+  } catch(e) {
+    if (e.code === "23505") {
+      btn.textContent = "✓ Amém!";
+    } else {
+      btn.disabled = false;
+      btn.textContent = "🙏 Amém!";
+      mostrarToast("❌ Erro ao curtir");
+    }
+  }
+}
+
+async function removerTestemunho(id) {
+  if (!userAtual) return;
+  if (!confirm("Remover este testemunho?")) return;
+  await sb.from("testemunhos").update({aprovado: false}).eq("id", id).eq("user_id", userAtual.id);
+  mostrarToast("Testemunho removido");
+  await carregarTestemunhos();
+}
+
+// Integra ao carregarPedidos
+var _carregarPedidosOriginal = window.carregarPedidos || function(){};
+carregarPedidos = async function() {
+  await _carregarPedidosOriginal();
+  await carregarTestemunhos();
 };
 </script>
