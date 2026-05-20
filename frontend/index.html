@@ -404,7 +404,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   </div>
 
   <div class="container">
-    <div class="nav-tabs" style="margin-top:8px">
+    <div class="nav-tabs" style="margin-top:8px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none">
       <div class="nav-tab active" onclick="navTab('devocional',this)">✦ Devocional</div>
       <div class="nav-tab" onclick="navTab('historico',this)">📚 Histórico</div>
       <div class="nav-tab" onclick="navTab('planos',this)">🗓️ Planos</div>
@@ -785,7 +785,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
       <!-- Grid de países -->
       <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8A7560;margin-bottom:12px">Ore pelo mundo</p>
-      <div id="paisesGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+      <div id="paisesGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
     </div>
 
     <div class="footer">
@@ -3681,11 +3681,11 @@ async function carregarMissoes() {
   PAISES.forEach(function(p) {
     var card = document.createElement("div");
     var isDestaque = p.nome === pais.nome;
-    card.style.cssText = "background:#fff;border:1px solid " + (isDestaque ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.12)") + ";border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center";
+    card.style.cssText = "background:" + (isDestaque ? "linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.06))" : "#fff") + ";border:1.5px solid " + (isDestaque ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.1)") + ";border-radius:12px;padding:12px 8px;cursor:pointer;transition:all 0.2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.04)";
     card.innerHTML =
-      '<div style="font-size:1.8rem;margin-bottom:6px">' + p.emoji + '</div>' +
-      '<div style="font-size:0.82rem;font-weight:600;color:#1A1208;margin-bottom:4px">' + p.nome + '</div>' +
-      (isDestaque ? '<div style="font-size:0.6rem;background:rgba(201,168,76,0.1);color:#C9A84C;padding:2px 8px;border-radius:20px;font-weight:700">Esta semana</div>' : '<div style="font-size:0.68rem;color:#8A7560">Toque para orar</div>');
+      '<div style="font-size:1.6rem;margin-bottom:4px">' + p.emoji + '</div>' +
+      '<div style="font-size:0.72rem;font-weight:600;color:#1A1208;line-height:1.3">' + p.nome + '</div>' +
+      (isDestaque ? '<div style="font-size:0.55rem;background:rgba(201,168,76,0.15);color:#C9A84C;padding:2px 6px;border-radius:20px;font-weight:700;margin-top:4px;display:inline-block">Semana</div>' : '');
     card.onclick = function() { orarPorPais(p); };
     grid.appendChild(card);
   });
