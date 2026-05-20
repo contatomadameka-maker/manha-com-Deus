@@ -841,3 +841,9 @@ REGRAS:
 
     return StreamingResponse(stream(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ── TESTEMUNHOS ───────────────────────────────────────
+@app.get("/testemunhos")
+async def listar_testemunhos():
+    return {"ok": True}
