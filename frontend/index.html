@@ -4146,14 +4146,7 @@ var _celulaAtual = null;
 
 async function carregarCelula() {
   if (!userAtual) return;
-  if (planoUser !== "mensal") {
-    document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
-    document.querySelector(".nav-tab").classList.add("active");
-    document.getElementById("abaDevocional").style.display = "block";
-    document.getElementById("abaCelula").style.display = "none";
-    tela("paywall");
-    return;
-  }
+  // Abre a aba — paywall só na hora de criar/entrar
 
   var salvo = localStorage.getItem("celula_" + userAtual.id);
   if (salvo) {
