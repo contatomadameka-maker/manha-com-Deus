@@ -579,9 +579,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         </div>
         <div class="acoes-wrap" id="acoesWrap" style="display:none">
           <button class="btn-principal" onclick="reiniciar()">✦ Novo Devocional</button>
-          <button class="btn-sec" onclick="compartilhar()" style="white-space:nowrap">🕊️ Compartilhar</button>
-      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C;white-space:nowrap">📸 Stories</button>
-      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="white-space:nowrap">🎧 Ouvir</button>
+          <button class="btn-sec" onclick="compartilhar()">🕊️ Compartilhar</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card para Stories</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()">🎧 Ouvir devocional</button>
 
         </div>
       </div>
@@ -1907,9 +1907,9 @@ function relerDevocional(id) {
   // Ações
   document.getElementById('acoesWrap').innerHTML = `
     <button class="btn-principal" onclick="reiniciar()">✦ Voltar ao início</button>
-    <button class="btn-sec" onclick="compartilhar()" style="white-space:nowrap">🕊️ Compartilhar</button>
-      <button class="btn-sec" onclick="gerarCardStory()" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-color:rgba(201,168,76,0.3);color:#C9A84C;white-space:nowrap">📸 Stories</button>
-      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()" style="white-space:nowrap">🎧 Ouvir</button>
+    <button class="btn-sec" onclick="compartilhar()">🕊️ Compartilhar</button>
+      <button class="btn-sec" onclick="gerarCardStory()" style="border-color:rgba(201,168,76,0.3);color:#C9A84C">📸 Card para Stories</button>
+      <button class="btn-sec" id="btnAudio" onclick="toggleAudio()">🎧 Ouvir devocional</button>
 `;
   document.getElementById('acoesWrap').style.display = 'flex';
 
@@ -3367,14 +3367,12 @@ async function carregarTemporada() {
       var emoji = document.getElementById("bannerSazonalEmoji");
       var nome = document.getElementById("bannerSazonalNome");
       if (banner && inner && emoji && nome) {
-        var cor = dados.cor || "#C9A84C";
-        inner.style.background = "linear-gradient(135deg," + cor + "33," + cor + "18)";
-        inner.style.border = "1.5px solid " + cor + "66";
-        inner.style.boxShadow = "0 4px 16px " + cor + "22";
+        inner.style.background = "linear-gradient(135deg,#2C1F0E,#1A3020)";
+        inner.style.border = "1px solid rgba(201,168,76,0.25)";
+        inner.style.boxShadow = "0 4px 16px rgba(0,0,0,0.15)";
         emoji.textContent = dados.emoji || "✦";
         nome.textContent = dados.nome;
-        nome.style.color = "#FAF6EE";
-        nome.style.textShadow = "0 0 20px " + cor + "88";
+        nome.style.color = "#C9A84C";
         banner.style.display = "block";
       }
     }
