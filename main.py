@@ -924,3 +924,147 @@ async def entrar_familia(request: Request):
         )
     
     return {"ok": True, "grupo": grupo}
+
+
+# ── CÉLULA ────────────────────────────────────────────
+@app.post("/celula/criar")
+async def criar_celula(request: Request):
+    body = await request.json()
+    nome = body.get("nome", "Minha Célula")
+    descricao = body.get("descricao", "")
+    user_id = body.get("user_id")
+    if not user_id:
+        return {"error": "user_id obrigatório"}
+
+    codigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+
+    async with httpx.AsyncClient() as c:
+        r = await c.post(f"{SUPABASE_URL}/rest/v1/celulas",
+            headers=headers,
+            json={"nome": nome, "codigo": codigo, "lider_id": user_id, "descricao": descricao}
+        )
+        celula = r.json()
+        if isinstance(celula, list): celula = celula[0]
+        celula_id = celula.get("id")
+
+        await c.post(f"{SUPABASE_URL}/rest/v1/membros_celula",
+            headers=headers,
+            json={"celula_id": celula_id, "user_id": user_id, "nome": "Líder"}
+        )
+
+    return {"codigo": codigo, "celula_id": celula_id, "nome": nome}
+
+@app.post("/celula/entrar")
+async def entrar_celula(request: Request):
+    body = await request.json()
+    codigo = body.get("codigo", "").upper().strip()
+    user_id = body.get("user_id")
+    nome = body.get("nome", "Membro")
+
+    if not user_id or not codigo:
+        return {"error": "Dados incompletos"}
+
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+
+    async with httpx.AsyncClient() as c:
+        r = await c.get(f"{SUPABASE_URL}/rest/v1/celulas?codigo=eq.{codigo}",
+            headers=headers)
+        celulas = r.json()
+        if not celulas:
+            return {"error": "Código inválido"}
+        celula = celulas[0]
+
+        await c.post(f"{SUPABASE_URL}/rest/v1/membros_celula",
+            headers=headers,
+            json={"celula_id": celula["id"], "user_id": user_id, "nome": nome}
+        )
+
+    return {"ok": True, "celula": celula}
+
+@app.post("/celula/gerar-aula")
+async def gerar_aula_celula(request: Request):
+    body = await request.json()
+    tema = body.get("tema", "")
+    passagem = body.get("passagem", "")
+    nivel = body.get("nivel", "adultos")
+
+    prompt = f"""Você é um preparador de aulas para células e grupos bíblicos. Gere uma aula completa e rica.
+
+TEMA: {tema}
+PASSAGEM BÍBLICA: {passagem if passagem else "Escolha a mais adequada para o tema"}
+PÚBLICO: {nivel}
+
+Gere uma aula completa com este formato:
+
+═══════════════════════════════════════
+📖 AULA DA CÉLULA
+{tema.upper()}
+═══════════════════════════════════════
+
+⏱️ DURAÇÃO SUGERIDA: 60-90 minutos
+
+📌 OBJETIVO DA AULA:
+[1-2 frases sobre o que os membros vão aprender/vivenciar]
+
+📖 PASSAGEM BASE:
+"[versículo principal]"
+— [Referência]
+
+🎯 INTRODUÇÃO (10 min):
+[Dinâmica ou pergunta quebra-gelo para engajar o grupo]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✦ PONTO 1: [Título do primeiro ponto]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Desenvolvimento do primeiro ponto — 3-4 parágrafos com base bíblica]
+
+❓ Pergunta de discussão: [pergunta para o grupo]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✦ PONTO 2: [Título do segundo ponto]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Desenvolvimento do segundo ponto — 3-4 parágrafos com base bíblica]
+
+❓ Pergunta de discussão: [pergunta para o grupo]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✦ PONTO 3: [Título do terceiro ponto]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Desenvolvimento do terceiro ponto — 3-4 parágrafos com base bíblica]
+
+❓ Pergunta de discussão: [pergunta para o grupo]
+
+🎯 APLICAÇÃO PRÁTICA (10 min):
+[Desafio concreto para a semana — específico e aplicável]
+
+🙏 ORAÇÃO DE ENCERRAMENTO:
+[Oração modelo para o líder usar ao fechar a célula]
+
+💡 DICA PARA O LÍDER:
+[1-2 dicas práticas sobre como conduzir esta aula]
+
+═══════════════════════════════════════"""
+
+    def stream():
+        with client.messages.stream(
+            model="claude-sonnet-4-20250514",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": prompt}]
+        ) as s:
+            for text in s.text_stream:
+                yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
