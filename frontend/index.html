@@ -234,6 +234,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
 #acoesWrap{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important}
 #acoesWrap button{width:100%!important;white-space:normal!important;word-break:break-word!important}
+
+body.auth-mode > * { visibility: hidden; }
+body.auth-mode #authScreen { visibility: visible; }
 </style>
 </head>
 <body>
@@ -1038,7 +1041,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
 
 async function iniciarApp(user){
   userAtual=user;
-  document.getElementById("authScreen").style.display="none";
+  document.getElementById("authScreen").style.display="none"; document.body.classList.remove("auth-mode");
   document.getElementById("appScreen").style.display="block";
   const emailEl=document.getElementById("headerEmail");
   if(emailEl)emailEl.textContent=user.email;
@@ -1053,7 +1056,7 @@ async function iniciarApp(user){
 }
 
 function mostrarAuth(){
-  document.getElementById("authScreen").style.display="flex";
+  document.getElementById("authScreen").style.display="flex"; document.body.classList.add("auth-mode");
   document.getElementById("appScreen").style.display="none";
   userAtual=null;
   const btn=document.getElementById("btnAuth");
@@ -1234,7 +1237,7 @@ async function logout(){
   }finally{
     userAtual=null;
     document.getElementById("appScreen").style.display="none";
-    document.getElementById("authScreen").style.display="flex";
+    document.getElementById("authScreen").style.display="flex"; document.body.classList.add("auth-mode");
     document.getElementById("authEmail").value="";
     document.getElementById("authSenha").value="";
     // Garante botão habilitado
