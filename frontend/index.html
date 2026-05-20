@@ -232,6 +232,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
 
 
+#acoesWrap{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important}
+#acoesWrap button{width:100%!important;white-space:normal!important;word-break:break-word!important}
 </style>
 </head>
 <body>
@@ -372,7 +374,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 
   <!-- BANNER SAZONAL -->
   <div id="bannerSazonal" style="display:none;max-width:680px;margin:12px auto 0;padding:0 16px">
-    <div id="bannerSazonalInner" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px">
+    <div id="bannerSazonalInner" onclick="gerarDevoSazonal()" style="border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer">
       <span id="bannerSazonalEmoji" style="font-size:1.8rem;flex-shrink:0"></span>
       <div style="flex:1">
         <div id="bannerSazonalNome" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px"></div>
@@ -3522,4 +3524,49 @@ carregarPedidos = async function() {
   await _carregarPedidosOriginal();
   await carregarTestemunhos();
 };
+</script>
+<script>
+async function gerarDevoSazonal() {
+  // Gera devocional do dia com tema sazonal
+  mostrarToast("✦ Gerando devocional especial...");
+  // Seleciona modo 1 e inicia geração
+  modo = 1;
+  estado = null;
+  textoCompleto = "";
+  tela("loading");
+  try {
+    var resp = await fetch("/devocional", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({modo: 1})
+    });
+    if (!resp.ok) throw new Error();
+    tela("devocional");
+    document.getElementById("devoStreaming").style.display = "flex";
+    document.getElementById("acoesWrap").style.display = "none";
+    document.getElementById("estadoBanner").style.display = "none";
+    var reader = resp.body.getReader();
+    var dec = new TextDecoder();
+    var buf = "";
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buf += dec.decode(chunk.value, {stream: true});
+      var lines = buf.split("\n"); buf = lines.pop();
+      for (var i = 0; i < lines.length; i++) {
+        if (!lines[i].startsWith("data: ")) continue;
+        var d = lines[i].slice(6).trim();
+        if (d === "[DONE]") continue;
+        try { var p = JSON.parse(d); if (p.text) { textoCompleto += p.text; renderDevo(textoCompleto); } } catch(e) {}
+      }
+    }
+    document.getElementById("devoStreaming").style.display = "none";
+    document.getElementById("acoesWrap").style.display = "flex";
+    var titulo = document.getElementById("devoTitulo").textContent;
+    await salvarDevocional(titulo, textoCompleto);
+    await atualizarStreak();
+  } catch(e) {
+    tela("erro");
+  }
+}
 </script>
