@@ -1383,13 +1383,21 @@ function compartilhar(){
 window.navTab = function(aba, el) {
   document.querySelectorAll(".nav-tab").forEach(function(t) { t.classList.remove("active"); });
   el.classList.add("active");
-  document.getElementById("abaDevocional").style.display = aba === "devocional" ? "block" : "none";
-  document.getElementById("abaHistorico").style.display = aba === "historico" ? "block" : "none";
-  document.getElementById("abaPlanos").style.display = aba === "planos" ? "block" : "none";
-  document.getElementById("abaQuiz").style.display = aba === "quiz" ? "block" : "none";
-  document.getElementById("abaComunidade").style.display = aba === "comunidade" ? "block" : "none";
-  var elRel = document.getElementById("abaRelatorio");
-  if (elRel) elRel.style.display = aba === "relatorio" ? "block" : "none";
+  // Esconde todas as abas
+  var todasAbas = ["abaDevocional","abaHistorico","abaPlanos","abaQuiz","abaComunidade","abaRelatorio","abaMissoes","abaFamilia","abaCelula"];
+  todasAbas.forEach(function(id) {
+    var el2 = document.getElementById(id);
+    if (el2) el2.style.display = "none";
+  });
+  // Mostra a aba selecionada
+  var mapa = {
+    devocional:"abaDevocional", historico:"abaHistorico", planos:"abaPlanos",
+    quiz:"abaQuiz", comunidade:"abaComunidade", relatorio:"abaRelatorio",
+    missoes:"abaMissoes", familia:"abaFamilia", celula:"abaCelula"
+  };
+  var elAtivo = document.getElementById(mapa[aba]);
+  if (elAtivo) elAtivo.style.display = "block";
+  // Callbacks
   if (aba === "historico") carregarHistorico();
   if (aba === "planos") {
     var grid = document.getElementById("planosGrid");
@@ -1398,9 +1406,12 @@ window.navTab = function(aba, el) {
   }
   if (aba === "quiz") carregarRanking();
   if (aba === "comunidade") carregarPedidos();
-  document.getElementById("abaRelatorio").style.display = aba === "relatorio" ? "block" : "none";
+  if (aba === "relatorio" && typeof carregarStatsRelatorio === "function") carregarStatsRelatorio();
+  if (aba === "missoes" && typeof carregarMissoes === "function") carregarMissoes();
+  if (aba === "familia" && typeof carregarFamilia === "function") carregarFamilia();
+  if (aba === "celula" && typeof carregarCelula === "function") carregarCelula();
   if (aba === "relatorio") { if(typeof carregarStatsRelatorio === "function") carregarStatsRelatorio(); }
-  var elMissoes = document.getElementById("abaMissoes");
+  // var elMissoes = document.getElementById("abaMissoes");
   if (elMissoes) elMissoes.style.display = aba === "missoes" ? "block" : "none";
   if (aba === "missoes") carregarMissoes();
   var elFamilia = document.getElementById("abaFamilia");
