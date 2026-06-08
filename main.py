@@ -1,14 +1,15 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-import anthropic, json, os, asyncio
+from openai import OpenAI
+import json, os, asyncio
 from pathlib import Path
 from datetime import datetime
 import httpx
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ttcdhthjtdnudczakuhu.supabase.co")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 FRONTEND_PATH = Path(__file__).parent / "frontend"
@@ -107,12 +108,15 @@ As perguntas devem:
 Responda APENAS com as 3 perguntas, uma por linha, sem numeração, sem explicações."""
 
     def stream():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=200,
+            stream=True,
             messages=[{"role": "user", "content": prompt}]
-        ) as s:
-            for text in s.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -156,30 +160,17 @@ async def salvar_notificacao(request: Request):
 def get_temporada_sazonal(agora):
     mes = agora.month
     dia = agora.day
-    
-    # Natal e Advento
     if mes == 12 and dia >= 25: return {"nome": "Natal de Jesus", "emoji": "⭐", "cor": "#C9A84C"}
     if mes == 12 and dia >= 1: return {"nome": "Advento", "emoji": "🕯️", "cor": "#7B3FA0"}
     if mes == 1 and dia == 1: return {"nome": "Ano Novo", "emoji": "🎊", "cor": "#C9A84C"}
     if mes == 1 and dia <= 6: return {"nome": "Reis Magos", "emoji": "⭐", "cor": "#C9A84C"}
-    
-    # Páscoa (aproximação simples — domingo após 14 dias de março/abril)
     if mes == 3 and dia >= 22 and dia <= 31: return {"nome": "Semana Santa", "emoji": "✝️", "cor": "#8B4513"}
     if mes == 4 and dia <= 25: return {"nome": "Tempo Pascal", "emoji": "🌅", "cor": "#FFD700"}
-    
-    # Pentecostes (50 dias após Páscoa — maio/junho)
     if mes == 5 and dia >= 15: return {"nome": "Pentecostes", "emoji": "🔥", "cor": "#FF4500"}
     if mes == 6 and dia <= 15: return {"nome": "Pentecostes", "emoji": "🔥", "cor": "#FF4500"}
-    
-    # Finados/Todos os Santos
     if mes == 11 and dia in [1, 2]: return {"nome": "Todos os Santos", "emoji": "🕊️", "cor": "#5C7A5E"}
-    
-    # Dia das Mães
     if mes == 5 and agora.weekday() == 6 and 8 <= dia <= 14: return {"nome": "Dia das Mães", "emoji": "💐", "cor": "#FF69B4"}
-    
-    # Dia dos Pais
     if mes == 8 and agora.weekday() == 6 and 8 <= dia <= 14: return {"nome": "Dia dos Pais", "emoji": "👨", "cor": "#4A7FA5"}
-    
     return None
 
 @app.get("/temporada")
@@ -296,9 +287,15 @@ ___________
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
 
     def stream_generator():
-        with client.messages.stream(model="claude-sonnet-4-20250514", max_tokens=2000,
-            messages=[{"role": "user", "content": prompt}]) as stream:
-            for text in stream.text_stream:
+        s = client.chat.completions.create(
+            model="gpt-4o",
+            max_tokens=2000,
+            stream=True,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -359,23 +356,23 @@ USE EXATAMENTE este formato:
 — [Livro Cap:Ver]
 
 💭 REFLEXÃO:
-[parágrafo 1 — introduce o aspecto do tema para o dia {dia}]
+[parágrafo 1]
 
-[parágrafo 2 — aprofundamento bíblico]
+[parágrafo 2]
 
-[parágrafo 3 — personagem bíblico que viveu isso]
+[parágrafo 3]
 
-[parágrafo 4 — aplicação prática para hoje]
+[parágrafo 4]
 
-[parágrafo 5 — encorajamento e conexão com o próximo dia]
+[parágrafo 5]
 
 ✦ "[FRASE DE DESTAQUE]"
 
 🙏 ORAÇÃO:
-[oração específica para o tema {plano['nome']} no dia {dia}]
+[oração específica para o tema]
 
 💡 AÇÃO PRÁTICA PARA HOJE:
-[ação concreta relacionada ao tema]
+[ação concreta]
 
 📝 ANOTAÇÕES:
 ___________
@@ -388,12 +385,15 @@ ___________
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
 
     def stream_generator():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=2000,
+            stream=True,
             messages=[{"role": "user", "content": prompt}]
-        ) as stream:
-            for text in stream.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -413,44 +413,33 @@ async def gerar_quiz(request: Request):
     semana = body.get("semana", "")
 
     niveis = {
-        "iniciante": "perguntas básicas sobre histórias e personagens bíblicos conhecidos. Ex: Quem construiu a arca? Quantos discípulos tinha Jesus?",
-        "intermediario": "perguntas intermediárias sobre ensinamentos, livros e contexto bíblico. Ex: Qual livro tem mais capítulos? Quem escreveu Apocalipse?",
-        "avancado": "perguntas avançadas sobre teologia, profetas menores, genealogias e detalhes específicos da Bíblia."
+        "iniciante": "perguntas básicas sobre histórias e personagens bíblicos conhecidos.",
+        "intermediario": "perguntas intermediárias sobre ensinamentos, livros e contexto bíblico.",
+        "avancado": "perguntas avançadas sobre teologia, profetas menores, genealogias e detalhes específicos."
     }
 
     prompt = f"""Gere um quiz bíblico com EXATAMENTE 5 perguntas de nível {nivel} para a semana {semana}.
 
 Nível: {niveis.get(nivel, niveis['iniciante'])}
 
-REGRAS IMPORTANTES:
+REGRAS:
 - Cada pergunta deve ter exatamente 4 alternativas (A, B, C, D)
 - Apenas UMA alternativa correta
-- As perguntas devem ser variadas — não repita temas
-- As alternativas erradas devem ser plausíveis (não óbvias)
-- Inclua uma explicação curta (1-2 linhas) para a resposta correta
+- As perguntas devem ser variadas
+- As alternativas erradas devem ser plausíveis
+- Inclua uma explicação curta para a resposta correta
 
 Responda APENAS em JSON válido, sem markdown, sem explicações fora do JSON:
 
-{{
-  "perguntas": [
-    {{
-      "id": 1,
-      "pergunta": "texto da pergunta",
-      "alternativas": {{"A": "texto", "B": "texto", "C": "texto", "D": "texto"}},
-      "correta": "A",
-      "explicacao": "explicação da resposta correta"
-    }}
-  ]
-}}"""
+{{"perguntas": [{{"id": 1, "pergunta": "texto", "alternativas": {{"A": "texto", "B": "texto", "C": "texto", "D": "texto"}}, "correta": "A", "explicacao": "explicação"}}]}}"""
 
     try:
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+        response = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=2000,
             messages=[{"role": "user", "content": prompt}]
         )
-        texto = response.content[0].text.strip()
-        # Limpa markdown se houver
+        texto = response.choices[0].message.content.strip()
         texto = texto.replace("```json", "").replace("```", "").strip()
         import json as json_lib
         dados = json_lib.loads(texto)
@@ -477,32 +466,25 @@ async def gerar_oracao(request: Request):
 Data: {data_formatada}
 {f"Tema do dia: {tema}" if tema else ""}
 
-A oração deve:
-- Ser íntima, pessoal e acolhedora
-- Ter 5 partes bem definidas com títulos
-- Incluir gratidão pelo dia, perdão, paz para dormir
-- Terminar com declaração de fé e descanso em Deus
-- Tom suave e tranquilizador para a noite
-
 USE EXATAMENTE este formato:
 
 🌙 ORAÇÃO DA NOITE
 {data_formatada}
 
 ✦ GRATIDÃO PELO DIA
-[2-3 linhas de gratidão específica pelo dia vivido]
+[2-3 linhas de gratidão]
 
 ✦ PERDÃO E ENTREGA
-[2-3 linhas pedindo perdão e entregando as preocupações do dia]
+[2-3 linhas]
 
 ✦ INTERCESSÃO
-[2-3 linhas orando por família, amigos e próximo]
+[2-3 linhas]
 
 ✦ PAZ PARA DORMIR
-[2-3 linhas pedindo paz, descanso e proteção durante a noite]
+[2-3 linhas]
 
 ✦ DECLARAÇÃO FINAL
-[1-2 linhas de declaração de fé e descanso em Deus]
+[1-2 linhas]
 
 Amém. 🙏"""
     else:
@@ -513,42 +495,38 @@ Amém. 🙏"""
 Data: {data_formatada}
 {estado_ctx}
 
-A oração deve:
-- Ser íntima, pessoal e profunda
-- Ter 5 partes bem definidas com títulos
-- Conectar com a Palavra e o dia que começa
-- Ser específica — não genérica
-- Tom de conversa íntima com Deus
-
 USE EXATAMENTE este formato:
 
 ☀️ ORAÇÃO DA MANHÃ
 {data_formatada}
 
 ✦ ADORAÇÃO
-[2-3 linhas adorando e reconhecendo quem Deus é]
+[2-3 linhas]
 
 ✦ GRATIDÃO
-[2-3 linhas de gratidão específica]
+[2-3 linhas]
 
 ✦ CONFISSÃO
-[2-3 linhas de confissão e pedido de perdão]
+[2-3 linhas]
 
 ✦ PEDIDOS DO DIA
-[3-4 linhas com pedidos específicos para o dia]
+[3-4 linhas]
 
 ✦ DECLARAÇÃO E ENVIO
-[2-3 linhas de declaração de fé para o dia que começa]
+[2-3 linhas]
 
 Amém. 🙏"""
 
     def stream():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=800,
+            stream=True,
             messages=[{"role": "user", "content": prompt}]
-        ) as s:
-            for text in s.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -567,27 +545,19 @@ async def meditacao_noturna(request: Request):
     dias_sem = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
     data_formatada = dias_sem[agora.weekday()] + ", " + str(agora.day) + " de " + meses[agora.month-1] + " de " + str(agora.year)
 
-    prompt = f"""Gere uma meditação noturna cristã suave e tranquilizadora para encerrar o dia.
+    prompt = f"""Gere uma meditação noturna cristã suave e tranquilizadora.
 Data: {data_formatada}
 {f"Tema do dia: {tema}" if tema else ""}
-
-REGRAS:
-- Tom completamente suave, acolhedor e tranquilo — para relaxar e dormir
-- Versículo de paz e descanso (Salmos, Provérbios ou palavras de Jesus)
-- Reflexão curta de 2-3 parágrafos — não longa
-- Exercício de respiração guiada (4 tempos)
-- Oração de encerramento suave
-- Terminar com declaração de paz para dormir
 
 USE EXATAMENTE este formato:
 
 🌙 MEDITAÇÃO NOTURNA
 {data_formatada}
 
-✦ [TÍTULO SUAVE — ex: "O Descanso que Vem de Deus"]
+✦ [TÍTULO SUAVE]
 
 📖 VERSÍCULO DA NOITE:
-"[versículo sobre paz, descanso ou proteção noturna]"
+"[versículo sobre paz ou descanso]"
 — [Referência]
 
 💭 REFLEXÃO:
@@ -599,22 +569,25 @@ USE EXATAMENTE este formato:
 
 🌬️ RESPIRAÇÃO GUIADA:
 Inspire por 4 tempos... segure por 4... expire por 6...
-[2-3 frases suaves guiando a respiração e o relaxamento]
+[2-3 frases suaves]
 
 🙏 ORAÇÃO DA NOITE:
-[oração curta e suave de 3-4 linhas para dormir em paz]
+[oração curta de 3-4 linhas]
 
-✦ "[FRASE DE PAZ — para carregar ao adormecer]"
+✦ "[FRASE DE PAZ]"
 
 Boa noite. 🌙"""
 
     def stream():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=800,
+            stream=True,
             messages=[{"role": "user", "content": prompt}]
-        ) as s:
-            for text in s.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -658,46 +631,38 @@ async def relatorio_mensal(request: Request):
     planos_ativos = dados.get("planos_ativos", 0)
     dias_lidos = dados.get("dias_lidos", 0)
 
-    prompt = f"""Você é o assistente espiritual do app "Manhã com Deus". Gere um relatório espiritual mensal personalizado e encorajador para o usuário.
+    prompt = f"""Você é o assistente espiritual do app "Manhã com Deus". Gere um relatório espiritual mensal personalizado e encorajador.
 
 MÊS: {nome_mes} de {ano}
 
-DADOS DO USUÁRIO:
+DADOS:
 - Devocionais lidos: {devocionais}
 - Dias com leitura: {dias_lidos}
-- Maior sequência (streak): {streak_max} dias
+- Maior sequência: {streak_max} dias
 - Orações realizadas: {oracoes}
 - Meditações noturnas: {meditacoes}
-- Quiz bíblico: {quiz_acertos} acertos de {quiz_total} perguntas
-- Planos temáticos em andamento: {planos_ativos}
-
-REGRAS:
-- Tom pastoral, acolhedor e encorajador — nunca crítico
-- Celebre CADA conquista, mesmo pequena
-- Se os números forem baixos, seja ainda mais encorajador
-- Inclua um versículo específico para a jornada do usuário
-- Termine com uma palavra profética/encorajadora para o próximo mês
-- Seja específico com os números — não genérico
+- Quiz: {quiz_acertos} acertos de {quiz_total} perguntas
+- Planos ativos: {planos_ativos}
 
 USE EXATAMENTE este formato:
 
 📊 RELATÓRIO ESPIRITUAL
 {nome_mes} de {ano}
 
-✦ [TÍTULO DA JORNADA — ex: "Um Mês de Crescimento"]
+✦ [TÍTULO DA JORNADA]
 
 🌟 SUA JORNADA EM NÚMEROS:
-[Celebre cada dado de forma calorosa e específica — 4-5 linhas]
+[Celebre cada dado — 4-5 linhas]
 
 📖 PALAVRA PARA ESTA JORNADA:
-"[Versículo específico para a jornada do usuário]"
+"[Versículo]"
 — [Referência]
 
 💭 REFLEXÃO DO MÊS:
-[2-3 parágrafos celebrando o crescimento, reconhecendo os desafios e encorajando]
+[2-3 parágrafos encorajadores]
 
 🌱 SEMENTE PARA {meses[agora.month] if agora.month <= 12 else "Janeiro"}:
-[Desafio/encorajamento específico para o próximo mês]
+[Encorajamento para o próximo mês]
 
 ✦ "[FRASE DE ENCORAJAMENTO FINAL]"
 
@@ -705,12 +670,15 @@ Com amor e fé,
 Manhã com Deus 🙏"""
 
     def stream():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=1000,
+            stream=True,
             messages=[{"role": "user", "content": prompt}]
-        ) as s:
-            for text in s.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -727,73 +695,50 @@ async def palavra_profetica():
     dias_sem = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira",
                 "Sexta-feira","Sábado","Domingo"]
     data_formatada = dias_sem[agora.weekday()] + ", " + str(agora.day) + " de " + meses[agora.month-1] + " de " + str(agora.year)
-    
-    # Semana do ano para variar a palavra
     semana = agora.isocalendar()[1]
     mes = agora.month
-    
-    # Determina temporada espiritual
-    if mes in [12, 1]:
-        temporada = "Advento e Natal — tempo de esperança e nascimento"
-    elif mes in [2, 3]:
-        temporada = "Quaresma — tempo de reflexão, jejum e renovação"
-    elif mes == 4:
-        temporada = "Páscoa — tempo de ressurreição e vitória"
-    elif mes == 5:
-        temporada = "Pentecostes — tempo do Espírito Santo e poder"
-    elif mes in [6, 7]:
-        temporada = "Tempo Comum — crescimento e discipulado"
-    elif mes in [8, 9]:
-        temporada = "Tempo de Colheita — gratidão e provisão"
-    elif mes in [10, 11]:
-        temporada = "Tempo de Renovação — preparação e busca"
-    else:
-        temporada = "Tempo Comum — fé e perseverança"
 
-    prompt = f"""Você é um profeta e pastor no app "Manhã com Deus". Gere uma palavra profética semanal para esta semana.
+    if mes in [12, 1]: temporada = "Advento e Natal"
+    elif mes in [2, 3]: temporada = "Quaresma"
+    elif mes == 4: temporada = "Páscoa"
+    elif mes == 5: temporada = "Pentecostes"
+    else: temporada = "Tempo Comum"
+
+    prompt = f"""Gere uma palavra profética semanal para esta semana.
 
 Data: {data_formatada}
 Semana {semana} do ano
 Temporada espiritual: {temporada}
-
-A palavra deve:
-- Ser específica para este momento do ano — não genérica
-- Tom profético mas acessível — não místico ou obscuro
-- Conectar com a temporada espiritual da semana
-- Trazer direção, encorajamento e desafio
-- Incluir versículo âncora
-- Ser memorável — o usuário vai carregar essa palavra a semana toda
-- Tamanho médio — não muito longa
 
 USE EXATAMENTE este formato:
 
 ⚡ PALAVRA DA SEMANA
 Semana {semana} · {data_formatada}
 
-✦ [TÍTULO DA PALAVRA — 3-5 palavras impactantes]
+✦ [TÍTULO — 3-5 palavras impactantes]
 
 📖 VERSÍCULO ÂNCORA:
-"[versículo específico para esta temporada]"
+"[versículo]"
 — [Referência]
 
 🔥 A PALAVRA:
-[2-3 parágrafos proféticos e encorajadores, específicos para esta semana e temporada]
+[2-3 parágrafos proféticos e encorajadores]
 
 🎯 DECLARAÇÃO DA SEMANA:
-"[Frase de declaração/afirmação que o usuário vai repetir essa semana — começa com EU SOU, EU TENHO ou EU POSSO]"
+"[Frase começando com EU SOU, EU TENHO ou EU POSSO]"
 
 🙏 ORA ASSIM:
-[Uma oração curta de 2-3 linhas alinhada com a palavra]
+[Oração curta de 2-3 linhas]
 
 ✦ Que esta palavra frutifique em sua vida esta semana. 🙏"""
 
     try:
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+        response = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=800,
             messages=[{"role": "user", "content": prompt}]
         )
-        texto = response.content[0].text.strip()
+        texto = response.choices[0].message.content.strip()
         return {"texto": texto, "semana": semana, "data": data_formatada}
     except Exception as e:
         return {"error": str(e)}
@@ -811,31 +756,29 @@ async def aconselhamento(request: Request):
 
     system = """Você é um conselheiro cristão compassivo e sábio no app "Manhã com Deus". 
 Seu papel é ouvir com empatia, responder com base bíblica e oferecer direção espiritual.
-
-REGRAS:
-- Sempre comece reconhecendo o sentimento da pessoa — nunca minimize
-- Use versículos relevantes mas de forma natural, não mecânica
+- Sempre comece reconhecendo o sentimento da pessoa
+- Use versículos relevantes de forma natural
 - Tom de pastor amigo, não de pregador formal
-- Seja específico para o que a pessoa disse — não genérico
-- Ofereça uma pergunta reflexiva ao final para aprofundar
-- Máximo 4-5 parágrafos — não seja longo demais
-- Nunca substitua ajuda profissional para casos graves — sugira quando necessário
-- Português brasileiro natural e acolhedor
-- Termine sempre com encorajamento baseado em promessa bíblica"""
+- Seja específico para o que a pessoa disse
+- Ofereça uma pergunta reflexiva ao final
+- Máximo 4-5 parágrafos
+- Português brasileiro natural e acolhedor"""
 
-    mensagens = []
-    for h in historico[-6:]:  # últimas 6 mensagens para contexto
+    mensagens = [{"role": "system", "content": system}]
+    for h in historico[-6:]:
         mensagens.append({"role": h["role"], "content": h["content"]})
     mensagens.append({"role": "user", "content": mensagem})
 
     def stream():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=600,
-            system=system,
+            stream=True,
             messages=mensagens
-        ) as s:
-            for text in s.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -863,7 +806,7 @@ async def criar_familia(request: Request):
     user_id = body.get("user_id")
     if not user_id:
         return {"error": "user_id obrigatório"}
-    
+
     codigo = gerar_codigo()
     headers = {
         "apikey": SUPABASE_KEY,
@@ -871,9 +814,8 @@ async def criar_familia(request: Request):
         "Content-Type": "application/json",
         "Prefer": "return=representation"
     }
-    
+
     async with httpx.AsyncClient() as c:
-        # Cria o grupo
         r = await c.post(f"{SUPABASE_URL}/rest/v1/grupos_familia",
             headers=headers,
             json={"nome": nome, "codigo": codigo, "criador_id": user_id}
@@ -881,13 +823,12 @@ async def criar_familia(request: Request):
         grupo = r.json()
         if isinstance(grupo, list): grupo = grupo[0]
         grupo_id = grupo.get("id")
-        
-        # Adiciona criador como membro
+
         await c.post(f"{SUPABASE_URL}/rest/v1/membros_familia",
             headers=headers,
             json={"grupo_id": grupo_id, "user_id": user_id, "apelido": "Líder"}
         )
-    
+
     return {"codigo": codigo, "grupo_id": grupo_id, "nome": nome}
 
 @app.post("/familia/entrar")
@@ -896,33 +837,30 @@ async def entrar_familia(request: Request):
     codigo = body.get("codigo", "").upper().strip()
     user_id = body.get("user_id")
     apelido = body.get("apelido", "Membro")
-    
+
     if not user_id or not codigo:
         return {"error": "Dados incompletos"}
-    
+
     headers = {
         "apikey": SUPABASE_KEY,
         "Authorization": f"Bearer {SUPABASE_KEY}",
         "Content-Type": "application/json",
         "Prefer": "return=representation"
     }
-    
+
     async with httpx.AsyncClient() as c:
-        # Busca grupo pelo código
         r = await c.get(f"{SUPABASE_URL}/rest/v1/grupos_familia?codigo=eq.{codigo}",
-            headers=headers
-        )
+            headers=headers)
         grupos = r.json()
         if not grupos:
             return {"error": "Código inválido"}
         grupo = grupos[0]
-        
-        # Entra no grupo
+
         await c.post(f"{SUPABASE_URL}/rest/v1/membros_familia",
             headers=headers,
             json={"grupo_id": grupo["id"], "user_id": user_id, "apelido": apelido}
         )
-    
+
     return {"ok": True, "grupo": grupo}
 
 
@@ -1003,9 +941,7 @@ async def gerar_aula_celula(request: Request):
 
 TEMA: {tema}
 PASSAGEM BÍBLICA: {passagem if passagem else "Escolha a mais adequada para o tema"}
-PÚBLICO: {nivel}
-
-Gere uma aula completa com este formato:
+P�BLICO: {nivel}
 
 ═══════════════════════════════════════
 📖 AULA DA CÉLULA
@@ -1015,54 +951,57 @@ Gere uma aula completa com este formato:
 ⏱️ DURAÇÃO SUGERIDA: 60-90 minutos
 
 📌 OBJETIVO DA AULA:
-[1-2 frases sobre o que os membros vão aprender/vivenciar]
+[1-2 frases]
 
 📖 PASSAGEM BASE:
 "[versículo principal]"
 — [Referência]
 
 🎯 INTRODUÇÃO (10 min):
-[Dinâmica ou pergunta quebra-gelo para engajar o grupo]
+[Dinâmica ou pergunta quebra-gelo]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✦ PONTO 1: [Título do primeiro ponto]
+✦ PONTO 1: [Título]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[Desenvolvimento do primeiro ponto — 3-4 parágrafos com base bíblica]
+[Desenvolvimento — 3-4 parágrafos]
 
-❓ Pergunta de discussão: [pergunta para o grupo]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✦ PONTO 2: [Título do segundo ponto]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[Desenvolvimento do segundo ponto — 3-4 parágrafos com base bíblica]
-
-❓ Pergunta de discussão: [pergunta para o grupo]
+❓ Pergunta de discussão: [pergunta]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✦ PONTO 3: [Título do terceiro ponto]
+✦ PONTO 2: [Título]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[Desenvolvimento do terceiro ponto — 3-4 parágrafos com base bíblica]
+[Desenvolvimento — 3-4 parágrafos]
 
-❓ Pergunta de discussão: [pergunta para o grupo]
+❓ Pergunta de discussão: [pergunta]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✦ PONTO 3: [Título]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Desenvolvimento — 3-4 parágrafos]
+
+❓ Pergunta de discussão: [pergunta]
 
 🎯 APLICAÇÃO PRÁTICA (10 min):
-[Desafio concreto para a semana — específico e aplicável]
+[Desafio concreto para a semana]
 
 🙏 ORAÇÃO DE ENCERRAMENTO:
-[Oração modelo para o líder usar ao fechar a célula]
+[Oração modelo]
 
 💡 DICA PARA O LÍDER:
-[1-2 dicas práticas sobre como conduzir esta aula]
+[1-2 dicas práticas]
 
 ═══════════════════════════════════════"""
 
     def stream():
-        with client.messages.stream(
-            model="claude-sonnet-4-20250514",
+        s = client.chat.completions.create(
+            model="gpt-4o",
             max_tokens=2000,
+            stream=True,
             messages=[{"role": "user", "content": prompt}]
-        ) as s:
-            for text in s.text_stream:
+        )
+        for chunk in s:
+            text = chunk.choices[0].delta.content or ""
+            if text:
                 yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
