@@ -941,7 +941,7 @@ async def gerar_aula_celula(request: Request):
 
 TEMA: {tema}
 PASSAGEM BÍBLICA: {passagem if passagem else "Escolha a mais adequada para o tema"}
-P�BLICO: {nivel}
+PÚBLICO: {nivel}
 
 ═══════════════════════════════════════
 📖 AULA DA CÉLULA
@@ -992,7 +992,7 @@ P�BLICO: {nivel}
 
 ═══════════════════════════════════════"""
 
-def stream():
+    def stream():
         s = client.chat.completions.create(
             model="gpt-4o",
             max_tokens=2000,
@@ -1007,6 +1007,7 @@ def stream():
 
     return StreamingResponse(stream(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
 
 @app.get("/landing", response_class=HTMLResponse)
 async def landing():
