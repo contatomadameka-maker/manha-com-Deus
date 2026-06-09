@@ -1007,3 +1007,10 @@ P�BLICO: {nivel}
 
     return StreamingResponse(stream(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+        return StreamingResponse(stream(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.get("/landing", response_class=HTMLResponse)
+async def landing():
+    return HTMLResponse(content=(FRONTEND_PATH / "landing.html").read_text(encoding="utf-8"))
