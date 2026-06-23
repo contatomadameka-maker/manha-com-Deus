@@ -187,6 +187,10 @@ tr:hover td{background:var(--pale)}
       <div class="sidebar-item" onclick="navegar('capitulos',this)">
         <span class="sidebar-icon">📖</span> Capítulos
       </div>
+      <div class="sidebar-section">Importar</div>
+      <div class="sidebar-item" onclick="navegar('importar',this)">
+        <span class="sidebar-icon">⬆️</span> Importar JSON
+      </div>
       <div class="sidebar-section">Comunidade</div>
       <div class="sidebar-item" onclick="navegar('alunos',this)">
         <span class="sidebar-icon">👥</span> Alunos
@@ -384,7 +388,7 @@ function navegar(pagina, el) {
   if (el) el.classList.add("active");
   const c = document.getElementById("adminContent");
   c.innerHTML = `<div class="spinner"></div>`;
-  const fns = { dashboard: renderDashboard, modulos: renderModulos, capitulos: renderCapitulos, alunos: renderAlunos, comentarios: renderComentarios };
+  const fns = { dashboard: renderDashboard, modulos: renderModulos, capitulos: renderCapitulos, alunos: renderAlunos, comentarios: renderComentarios, importar: renderImportar };
   if (fns[pagina]) fns[pagina]();
 }
 
@@ -698,6 +702,87 @@ async function deletarCapitulo(id, titulo) {
 }
 
 function fecharModal(id) { document.getElementById(id).classList.remove("show"); }
+
+// ── IMPORTAR JSON ────────────────────────────────────────────────────
+function renderImportar() {
+  const c = document.getElementById("adminContent");
+  c.innerHTML = `
+  <div class="page-title">Importar JSON</div>
+  <div class="page-sub">Cole o JSON de um módulo completo e importe tudo de uma vez</div>
+  <div class="table-wrap" style="padding:20px">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">Cole o JSON aqui</div>
+    <textarea id="jsonImport" style="width:100%;min-height:280px;padding:12px;border:1.5px solid var(--borda);border-radius:8px;font-family:monospace;font-size:0.8rem;background:var(--pale);color:var(--ink);outline:none;resize:vertical" placeholder='{"modulo": {...}, "capitulos": [...]}'></textarea>
+    <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+      <button class="btn-salvar" onclick="processarImport()" style="padding:10px 24px">⬆ Importar tudo</button>
+      <button class="btn-cancelar" onclick="document.getElementById('jsonImport').value=''">Limpar</button>
+      <span id="importStatus" style="font-size:0.82rem;color:var(--muted)"></span>
+    </div>
+    <div style="margin-top:20px;padding:14px;background:var(--pale);border-radius:8px;font-size:0.78rem;color:var(--muted);line-height:1.8">
+      <strong style="color:var(--ink)">Formato esperado:</strong><br>
+      O JSON deve ter a estrutura: <code>{ "modulo": {...}, "capitulos": [{...}, {...}] }</code><br>
+      O campo <code>modulo_id</code> é o identificador único (ex: "apostasia", "cavaleiros")<br>
+      Se o módulo ou capítulo já existir, será atualizado automaticamente.
+    </div>
+  </div>`;
+}
+
+async function processarImport() {
+  const txt = document.getElementById("jsonImport").value.trim();
+  const status = document.getElementById("importStatus");
+  if (!txt) { status.textContent = "⚠️ Cole o JSON primeiro"; return; }
+
+  let dados;
+  try {
+    dados = JSON.parse(txt);
+  } catch(e) {
+    status.textContent = "❌ JSON inválido — verifique a formatação";
+    status.style.color = "#C0392B";
+    return;
+  }
+
+  if (!dados.modulo || !dados.capitulos) {
+    status.textContent = "❌ JSON deve ter 'modulo' e 'capitulos'";
+    status.style.color = "#C0392B";
+    return;
+  }
+
+  status.textContent = "⏳ Importando módulo...";
+  status.style.color = "var(--muted)";
+
+  try {
+    // Salvar módulo
+    const { error: modErr } = await sb.from("modulos_conteudo")
+      .upsert(dados.modulo, { onConflict: "modulo_id" });
+
+    if (modErr) throw modErr;
+
+    // Salvar capítulos
+    status.textContent = `⏳ Importando ${dados.capitulos.length} capítulos...`;
+    let ok = 0;
+    for (const cap of dados.capitulos) {
+      const payload = {
+        modulo_id:    dados.modulo.modulo_id,
+        numero:       cap.numero,
+        titulo:       cap.titulo,
+        ancora_texto: cap.ancora_texto,
+        ancora_ref:   cap.ancora_ref,
+        conteudo:     cap.conteudo
+      };
+      const { error: capErr } = await sb.from("capitulos_conteudo")
+        .upsert(payload, { onConflict: "modulo_id,numero" });
+      if (!capErr) ok++;
+    }
+
+    status.textContent = `✓ Importado! Módulo "${dados.modulo.titulo}" + ${ok} capítulos.`;
+    status.style.color = "var(--sage)";
+    document.getElementById("jsonImport").value = "";
+
+  } catch(e) {
+    status.textContent = "❌ Erro: " + (e.message || "verifique o console");
+    status.style.color = "#C0392B";
+    console.error(e);
+  }
+}
 
 function mostrarToast(msg) {
   const t = document.createElement("div");
