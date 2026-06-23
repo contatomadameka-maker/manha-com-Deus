@@ -125,6 +125,8 @@ async def prompt_diario(request: Request):
     contexto = f'sobre o devocional "{titulo_devocional}"' if titulo_devocional else ""
     estado_ctx = f" para alguém que estava se sentindo {estado}" if estado else ""
 
+    prompt = f"""Gere 3 perguntas reflexivas curtas e profundas para um diário espiritual cristão {contexto}{estado_ctx}.
+
 As perguntas devem:
 - Ser pessoais e introspectivas
 - Conectar a Palavra de Deus com a vida prática
