@@ -6,9 +6,12 @@ import json, os, asyncio
 from pathlib import Path
 from datetime import datetime
 import httpx
+from escola_routes import router as escola_router
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.include_router(escola_router)
+
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ttcdhthjtdnudczakuhu.supabase.co")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
@@ -86,6 +89,24 @@ async def versiculo_do_dia():
     return {"texto": v["texto"], "ref": v["ref"],
             "data": datetime.now().strftime("%A, %d de %B de %Y").capitalize(),
             "dia": dia}
+    
+    # ── ESCOLA PROFÉTICA ─────────────────────────────────
+@app.get("/escola", response_class=HTMLResponse)
+@app.get("/escola/", response_class=HTMLResponse)
+async def escola_home():
+    p = FRONTEND_PATH / "escola" / "index.html"
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
+
+@app.get("/escola/modulo", response_class=HTMLResponse)
+async def escola_modulo():
+    p = FRONTEND_PATH / "escola" / "modulo.html"
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
+
+@app.get("/blog", response_class=HTMLResponse)
+@app.get("/blog/", response_class=HTMLResponse)
+async def blog():
+    p = FRONTEND_PATH / "blog" / "index.html"
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
 
 # ── DIÁRIO ESPIRITUAL ─────────────────────────────────
 @app.post("/prompt-diario")
