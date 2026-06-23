@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#26215C">
+<title>Módulo — Escola Profética</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --deep:#26215C;--mid:#534AB7;--accent:#7F77DD;--light:#EEEDFE;--pale:#F5F4FF;
+  --ink:#1a1a2e;--muted:#6B6890;--cream:#FAF9FF;
+  --sage:#0F6E56;--sage-light:#E1F5EE;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --borda:rgba(127,119,221,0.18);
+  --safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom);
+}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#topbarWrap{position:sticky;top:0;z-index:100;background:var(--deep)}
+.topbar{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  padding-top:calc(12px + var(--safe-top));background:var(--deep);
+  border-bottom:1px solid rgba(127,119,221,0.2)}
+.topbar-back{background:transparent;border:none;color:rgba(255,255,255,0.6);
+  font-size:1.1rem;cursor:pointer;padding:4px;line-height:1;min-width:28px}
+.topbar-title{flex:1;font-size:0.85rem;font-weight:600;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-cap{font-size:0.7rem;color:rgba(127,119,221,0.8);
+  background:rgba(127,119,221,0.15);padding:3px 10px;border-radius:20px;flex-shrink:0}
+
+.tabs{display:flex;background:var(--deep);border-bottom:1px solid rgba(127,119,221,0.15)}
+.tab{flex:1;text-align:center;padding:10px 4px;font-size:0.72rem;color:rgba(255,255,255,0.45);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+
+.toolbar{display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  padding:8px 14px;background:#fff;border-bottom:1px solid var(--borda);
+  position:sticky;top:88px;z-index:50}
+.tool-sep{width:1px;height:18px;background:var(--borda);margin:0 3px}
+.tool-btn{font-size:0.7rem;padding:5px 10px;border-radius:8px;
+  border:1px solid var(--borda);background:#fff;color:var(--muted);cursor:pointer;
+  display:flex;align-items:center;gap:4px;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.tool-btn:hover{background:var(--light);color:var(--mid)}
+.tool-btn.hl-ativo{background:var(--light);color:var(--mid);border-color:var(--accent)}
+.tool-label{font-size:0.65rem;color:var(--muted)}
+
+/* POPUP SELEÇÃO — aparece no ponto do toque/clique */
+.sel-popup{
+  position:fixed;z-index:200;
+  display:none;background:var(--deep);border-radius:10px;padding:8px 10px;
+  gap:6px;flex-wrap:wrap;border:1px solid rgba(127,119,221,0.3);
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+}
+.sel-popup.show{display:flex}
+.sel-btn{font-size:0.72rem;padding:5px 11px;border-radius:20px;border:none;cursor:pointer;font-weight:600}
+.sel-amarelo{background:#FAEEDA;color:#633806}
+.sel-roxo{background:var(--accent);color:#fff}
+.sel-sub{background:transparent;color:#AFA9EC;border:1px solid #AFA9EC}
+.sel-ia{background:#1D9E75;color:#fff}
+
+.reader{padding:20px 18px 100px;max-width:680px;margin:0 auto}
+.cap-header{margin-bottom:20px}
+.cap-num{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--accent);margin-bottom:6px}
+.cap-titulo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--deep);line-height:1.3;margin-bottom:10px}
+.cap-meta{font-size:0.72rem;color:var(--muted);display:flex;gap:12px}
+.anchor-verse{background:var(--deep);border-radius:12px;padding:14px 16px;margin:16px 0;text-align:center}
+.anchor-verse p{font-family:'Playfair Display',serif;font-size:0.95rem;color:rgba(250,246,238,0.9);font-style:italic;line-height:1.6}
+.anchor-verse span{font-size:0.7rem;color:var(--accent);display:block;margin-top:6px;font-weight:700}
+.para-wrap{position:relative;margin-bottom:14px}
+.para-wrap p{font-size:0.95rem;color:var(--ink);line-height:1.85;user-select:text;-webkit-user-select:text}
+.hl-yellow{background:#FAEEDA;border-radius:2px;padding:0 2px}
+.hl-purple{background:var(--light);border-radius:2px;padding:0 2px}
+.hl-under{text-decoration:underline;text-decoration-color:var(--accent)}
+.verse-block{border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;background:var(--light);border-radius:0 10px 10px 0}
+.verse-block p{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--deep);font-style:italic;line-height:1.6}
+.verse-block span{font-size:0.7rem;color:var(--mid);font-weight:700;display:block;margin-top:5px}
+.reflexao-box{background:var(--sage-light);border:1px solid rgba(15,110,86,0.2);border-radius:12px;padding:14px;margin:16px 0}
+.reflexao-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--sage);margin-bottom:8px}
+.reflexao-q{font-size:0.85rem;color:var(--ink);margin-bottom:8px;line-height:1.5}
+.reflexao-input{width:100%;font-size:0.85rem;padding:9px 11px;border:1px solid rgba(15,110,86,0.25);border-radius:8px;background:#fff;color:var(--ink);resize:none;min-height:72px;font-family:'DM Sans',sans-serif;outline:none}
+.acao-box{background:var(--amber-light);border:1px solid rgba(186,117,23,0.2);border-radius:12px;padding:14px;margin:14px 0}
+.acao-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--amber);margin-bottom:6px}
+.acao-txt{font-size:0.87rem;color:#412402;line-height:1.6}
+.oracao-box{background:var(--light);border:1px solid rgba(127,119,221,0.2);border-radius:12px;padding:14px;margin:16px 0}
+.oracao-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--mid);margin-bottom:6px}
+.oracao-txt{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--deep);font-style:italic;line-height:1.7}
+
+.sticky-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--borda);
+  padding:10px 16px;padding-bottom:calc(10px + var(--safe-bottom));
+  display:flex;gap:8px;max-width:680px;margin:0 auto}
+.btn-prev{font-size:0.8rem;padding:8px 14px;border-radius:10px;border:1px solid var(--borda);background:transparent;color:var(--muted);cursor:pointer}
+.btn-next{flex:1;padding:9px;border-radius:10px;background:linear-gradient(135deg,var(--mid),var(--deep));color:#fff;border:none;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-pdf{padding:9px 13px;border-radius:10px;border:1px solid var(--borda);background:transparent;color:var(--muted);cursor:pointer;font-size:0.8rem;display:flex;align-items:center;gap:5px}
+
+.painel{padding:16px;max-width:680px;margin:0 auto;padding-bottom:100px}
+.painel-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.nota-count{font-size:0.7rem;background:var(--light);color:var(--mid);padding:2px 7px;border-radius:10px;font-weight:700}
+.nota-card{background:#fff;border:1px solid var(--borda);border-radius:10px;padding:10px 12px;margin-bottom:8px;animation:fadeUp 0.3s ease}
+.nota-tag{font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;margin-bottom:5px}
+.tag-reflexao{background:var(--sage-light);color:var(--sage)}
+.tag-duvida{background:var(--light);color:var(--mid)}
+.tag-destaque{background:var(--amber-light);color:var(--amber)}
+.nota-texto{font-size:0.82rem;color:var(--muted);line-height:1.5}
+.nota-source{font-size:0.65rem;color:var(--muted);margin-top:4px;opacity:.7}
+.nota-del{float:right;background:transparent;border:none;color:#E24B4A;font-size:0.65rem;cursor:pointer;opacity:.5}
+.add-nota-wrap{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:12px;margin-top:14px}
+.nota-textarea{width:100%;font-size:0.82rem;padding:9px 10px;border:1px solid var(--borda);border-radius:8px;background:var(--pale);color:var(--ink);resize:none;min-height:65px;font-family:'DM Sans',sans-serif;outline:none}
+.nota-actions{display:flex;gap:6px;margin-top:7px;align-items:center}
+.tag-btn{font-size:0.7rem;padding:4px 9px;border-radius:20px;border:1px solid var(--borda);background:transparent;color:var(--muted);cursor:pointer}
+.tag-btn.on{background:var(--light);color:var(--mid);border-color:var(--accent)}
+.btn-salvar-nota{font-size:0.78rem;padding:6px 14px;border-radius:8px;background:var(--mid);color:#fff;border:none;cursor:pointer;margin-left:auto;font-family:'DM Sans',sans-serif}
+
+.ia-wrap{padding:14px 16px;max-width:680px;margin:0 auto;padding-bottom:100px}
+.ia-ctx{background:var(--light);border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:0.78rem;color:var(--mid);line-height:1.5;display:flex;align-items:flex-start;gap:7px;border:1px solid rgba(127,119,221,0.2)}
+.ia-msg-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.ia-msg-user{background:rgba(186,117,23,0.1);border:1px solid rgba(186,117,23,0.2);border-radius:12px 12px 4px 12px;padding:10px 13px;font-size:0.85rem;color:var(--ink);line-height:1.6;align-self:flex-end;max-width:90%}
+.ia-msg-bot{background:#fff;border:1px solid var(--borda);border-radius:12px 12px 12px 4px;padding:10px 13px;font-size:0.85rem;color:var(--ink);line-height:1.6;max-width:95%}
+.ia-input-row{display:flex;gap:7px}
+.ia-input{flex:1;font-size:0.85rem;padding:9px 11px;border:1px solid var(--borda);border-radius:10px;background:var(--pale);color:var(--ink);font-family:'DM Sans',sans-serif;outline:none}
+.ia-send{padding:9px 14px;border-radius:10px;background:var(--mid);color:#fff;border:none;cursor:pointer;font-size:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:0.72rem;padding:4px 10px;border-radius:20px;border:1px solid var(--borda);color:var(--muted);cursor:pointer;background:transparent}
+.chip:hover{background:var(--light);color:var(--mid)}
+
+.com-wrap{padding:14px 16px;max-width:680px;margin:0 auto;padding-bottom:100px}
+.com-input-card{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:16px}
+.com-input-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:8px}
+.com-input{width:100%;font-size:0.85rem;padding:10px 12px;border:1px solid var(--borda);border-radius:8px;background:var(--pale);color:var(--ink);resize:none;min-height:70px;font-family:'DM Sans',sans-serif;outline:none}
+.btn-publicar{float:right;margin-top:8px;font-size:0.8rem;padding:7px 16px;border-radius:8px;background:var(--mid);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.com-card{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:13px;margin-bottom:9px;animation:fadeUp 0.3s ease}
+.com-avatar{width:30px;height:30px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--mid);flex-shrink:0}
+.com-nome{font-size:0.8rem;font-weight:600;color:var(--ink)}
+.com-tempo{font-size:0.65rem;color:var(--muted)}
+.com-texto{font-size:0.85rem;color:var(--muted);line-height:1.55;margin-top:5px}
+.btn-curtir{background:transparent;border:none;font-size:0.72rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:7px;padding:0}
+
+.pdf-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:center;justify-content:center;padding:16px}
+.pdf-modal-bg.show{display:flex}
+.pdf-modal{background:#fff;border-radius:16px;border:1px solid var(--borda);padding:20px;width:100%;max-width:360px}
+.pdf-opt{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--borda);border-radius:10px;margin-bottom:8px;cursor:pointer}
+.pdf-opt:hover{background:var(--pale)}
+.pdf-opt-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.opt-a{background:var(--light);color:var(--mid)}
+.opt-b{background:var(--sage-light);color:var(--sage)}
+.opt-c{background:var(--amber-light);color:var(--amber)}
+.pdf-opt-t{font-size:0.85rem;font-weight:600;color:var(--ink)}
+.pdf-opt-s{font-size:0.72rem;color:var(--muted)}
+.pdf-close{font-size:0.8rem;color:var(--muted);cursor:pointer;text-align:center;margin-top:10px}
+
+.spinner{width:32px;height:32px;border:2px solid var(--borda);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:40px auto;display:block}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--deep);color:#fff;padding:9px 20px;border-radius:40px;font-size:0.8rem;z-index:999;border:1px solid rgba(127,119,221,0.3);animation:fadeUp 0.3s ease;white-space:nowrap;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div id="topbarWrap">
+  <div class="topbar">
+    <button class="topbar-back" onclick="window.location='/escola/'">←</button>
+    <div class="topbar-title" id="topTitle">Carregando...</div>
+    <div class="topbar-cap" id="topCap">Cap 1</div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" id="tabLer"   onclick="trocarAba('ler')">📖 Leitura</div>
+    <div class="tab"        id="tabNotas" onclick="trocarAba('notas')">📝 Anotações</div>
+    <div class="tab"        id="tabIA"    onclick="trocarAba('ia')">✦ IA</div>
+    <div class="tab"        id="tabCom"   onclick="trocarAba('com')">🤝 Comunidade</div>
+  </div>
+</div>
+
+<!-- ABA LEITURA -->
+<div id="abaLer">
+  <div class="toolbar">
+    <span class="tool-label">Destacar:</span>
+    <button class="tool-btn hl-ativo" id="tbAmarelo" onclick="setHL('amarelo')">🟡 Amarelo</button>
+    <button class="tool-btn" id="tbRoxo" onclick="setHL('roxo')">🟣 Roxo</button>
+    <button class="tool-btn" id="tbSub"  onclick="setHL('sub')">Sublinhar</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="trocarAba('ia')">✦ IA</button>
+    <button class="tool-btn" onclick="showPdfModal()">⬇ PDF</button>
+  </div>
+  <div class="reader" id="readerBody">
+    <div id="capConteudo"><div class="spinner"></div></div>
+  </div>
+  <div class="sticky-footer">
+    <button class="btn-prev" id="btnPrev" onclick="irCap(-1)">← Anterior</button>
+    <button class="btn-pdf" onclick="showPdfModal()">⬇ PDF</button>
+    <button class="btn-next" id="btnNext" onclick="irCap(1)">Próximo capítulo →</button>
+  </div>
+</div>
+
+<!-- POPUP SELEÇÃO DE TEXTO (desktop + mobile) -->
+<div id="selPopup" class="sel-popup">
+  <button class="sel-btn sel-amarelo" onclick="applyHL('yellow')">🟡</button>
+  <button class="sel-btn sel-roxo"   onclick="applyHL('purple')">🟣</button>
+  <button class="sel-btn sel-sub"    onclick="applyHL('under')">__</button>
+  <button class="sel-btn sel-ia"     onclick="hlParaIA()">✦ IA</button>
+</div>
+
+<!-- ABA ANOTAÇÕES -->
+<div id="abaNotas" style="display:none">
+  <div class="painel">
+    <div class="painel-label">
+      <span>Minhas anotações</span>
+      <span class="nota-count" id="notaCount">0</span>
+    </div>
+    <div id="notaLista"></div>
+    <div class="add-nota-wrap">
+      <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:8px">Adicionar anotação</div>
+      <textarea class="nota-textarea" id="notaInput" placeholder="Escreva sua reflexão, dúvida ou destaque..."></textarea>
+      <div class="nota-actions">
+        <button class="tag-btn on" id="tagReflexao" onclick="setTag('reflexao')">Reflexão</button>
+        <button class="tag-btn"    id="tagDuvida"   onclick="setTag('duvida')">Dúvida</button>
+        <button class="tag-btn"    id="tagDestaque" onclick="setTag('destaque')">Destaque</button>
+        <button class="btn-salvar-nota" onclick="salvarNota()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA IA -->
+<div id="abaIA" style="display:none">
+  <div class="ia-wrap">
+    <div class="ia-ctx" id="iaCtx">
+      <span style="font-size:13px;flex-shrink:0">✦</span>
+      <span id="iaCtxTxt">Selecione um trecho no texto e toque em "✦ IA" para enviar como contexto.</span>
+    </div>
+    <div class="ia-msg-wrap" id="iaMsgs">
+      <div class="ia-msg-bot">Olá! Estou aqui para aprofundar seu estudo. Selecione um trecho ou me faça uma pergunta. 🙏</div>
+    </div>
+    <div class="ia-input-row">
+      <input class="ia-input" id="iaInput" placeholder="Faça uma pergunta sobre o módulo..." onkeydown="if(event.key==='Enter')enviarIA()">
+      <button class="ia-send" onclick="enviarIA()">→</button>
+    </div>
+    <div class="chips" id="iaChips"></div>
+  </div>
+</div>
+
+<!-- ABA COMUNIDADE -->
+<div id="abaCom" style="display:none">
+  <div class="com-wrap">
+    <div class="com-input-card">
+      <div class="com-input-label">✦ Compartilhe o que tocou seu coração</div>
+      <textarea class="com-input" id="comInput" placeholder="O que mais te marcou neste capítulo?"></textarea>
+      <button class="btn-publicar" onclick="publicarComentario()">Publicar →</button>
+      <div style="clear:both"></div>
+    </div>
+    <div id="comLista"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- PDF MODAL -->
+<div class="pdf-modal-bg" id="pdfModal">
+  <div class="pdf-modal">
+    <div style="font-size:0.95rem;font-weight:600;color:var(--ink);margin-bottom:4px">Baixar conteúdo</div>
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:14px">Escolha o que incluir:</div>
+    <div class="pdf-opt" onclick="gerarPDF('conteudo')">
+      <div class="pdf-opt-icon opt-a">📄</div>
+      <div><div class="pdf-opt-t">Conteúdo do capítulo</div><div class="pdf-opt-s">Texto completo com versículos</div></div>
+    </div>
+    <div class="pdf-opt" onclick="gerarPDF('notas')">
+      <div class="pdf-opt-icon opt-b">📝</div>
+      <div><div class="pdf-opt-t">Conteúdo + anotações</div><div class="pdf-opt-s">Inclui suas reflexões salvas</div></div>
+    </div>
+    <div class="pdf-opt" onclick="gerarPDF('completo')">
+      <div class="pdf-opt-icon opt-c">✦</div>
+      <div><div class="pdf-opt-t">PDF completo personalizado</div><div class="pdf-opt-s">Anotações + respostas da IA</div></div>
+    </div>
+    <div class="pdf-close" onclick="hidePdfModal()">Cancelar</div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://ttcdhthjtdnudczakuhu.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0Y2RodGhqdGRudWRjemFrdWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTkxODIsImV4cCI6MjA5NDYzNTE4Mn0.fDVyCS3uj2qIJHDJOqMvRSLhkW_aGC5lXzQnLNdH6AI";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const params  = new URLSearchParams(location.search);
+let moduloId  = params.get("id") || "apostasia";
+let capAtual  = parseInt(params.get("cap") || "1");
+let userAtual = null;
+let hlMode    = "amarelo";
+let tagAtual  = "reflexao";
+let notasLocal = [];
+let iaHist    = [];
+let iaCtxSelecionado = "";
+let respostasIA = [];
+let moduloInfo  = null;
+let totalCaps   = 1;
+let selTxt = "";
+let selRange = null;
+
+// ── INIT ─────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = "/escola/"; return; }
+  userAtual = session.user;
+  await carregarModulo();
+  renderIAChips();
+  ajustarToolbar();
+  setupSelecao();
+});
+
+function ajustarToolbar() {
+  const wrap = document.getElementById("topbarWrap");
+  const tb = document.querySelector(".toolbar");
+  if (wrap && tb) tb.style.top = wrap.offsetHeight + "px";
+}
+
+// ── CARREGAR CONTEÚDO DO SUPABASE ─────────────────────────────────────
+async function carregarModulo() {
+  const { data: mod } = await sb.from("modulos_conteudo")
+    .select("*").eq("modulo_id", moduloId).single();
+
+  if (!mod) {
+    document.getElementById("capConteudo").innerHTML =
+      `<p style='padding:30px;color:var(--muted);text-align:center'>
+        Módulo não encontrado ou ainda não publicado.<br>
+        <a href='/escola/' style='color:var(--accent)'>← Voltar à escola</a>
+      </p>`;
+    return;
+  }
+
+  moduloInfo = mod;
+  totalCaps  = mod.capitulos;
+  document.getElementById("topTitle").textContent = mod.titulo;
+  await renderCap();
+  carregarNotas();
+}
+
+async function renderCap() {
+  document.getElementById("capConteudo").innerHTML = `<div class="spinner"></div>`;
+  document.getElementById("topCap").textContent = `Cap ${capAtual} de ${totalCaps}`;
+  document.getElementById("btnPrev").disabled = capAtual <= 1;
+  document.getElementById("btnNext").textContent =
+    capAtual >= totalCaps ? "Concluir módulo ✓" : "Próximo capítulo →";
+
+  const { data: cap } = await sb.from("capitulos_conteudo")
+    .select("*").eq("modulo_id", moduloId).eq("numero", capAtual).single();
+
+  if (!cap) {
+    document.getElementById("capConteudo").innerHTML =
+      `<p style='padding:30px;color:var(--muted);text-align:center'>
+        Capítulo em preparação — em breve! 🙏
+      </p>`;
+    return;
+  }
+
+  const con = cap.conteudo || {};
+  let html = `
+  <div class="cap-header">
+    <div class="cap-num">Capítulo ${cap.numero}</div>
+    <div class="cap-titulo">${cap.titulo}</div>
+    <div class="cap-meta"><span>📖 ${totalCaps} capítulos</span><span>·</span><span>~15 min</span></div>
+  </div>
+  <div class="anchor-verse">
+    <p>"${cap.ancora_texto || ''}"</p>
+    <span>${cap.ancora_ref || ''} — versículo âncora</span>
+  </div>
+  <div class="para-wrap"><p id="p-intro">${con.intro || ''}</p></div>`;
+
+  (con.secoes || []).forEach((sec, si) => {
+    html += `<h3 style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--deep);margin:20px 0 8px;font-weight:700">${sec.titulo}</h3>`;
+    html += `<div class="para-wrap"><p id="p-${si}">${sec.texto}</p></div>`;
+    if (sec.versiculo) {
+      html += `<div class="verse-block"><p>"${sec.versiculo.texto}"</p><span>${sec.versiculo.ref}</span></div>`;
+    }
+  });
+
+  if (con.reflexoes?.length) {
+    html += `<div class="reflexao-box"><div class="reflexao-label">💡 Reflexão pessoal</div>`;
+    con.reflexoes.forEach(q => { html += `<div class="reflexao-q">• ${q}</div>`; });
+    html += `<textarea class="reflexao-input" placeholder="Escreva suas reflexões aqui (só você verá)..."></textarea></div>`;
+  }
+  if (con.acao) html += `<div class="acao-box"><div class="acao-label">🎯 Ação da semana</div><div class="acao-txt">${con.acao}</div></div>`;
+  if (con.oracao) html += `<div class="oracao-box"><div class="oracao-label">🙏 Oração do capítulo</div><div class="oracao-txt">${con.oracao}</div></div>`;
+
+  document.getElementById("capConteudo").innerHTML = html;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function irCap(delta) {
+  const nova = capAtual + delta;
+  if (nova < 1) return;
+  if (nova > totalCaps) { concluirModulo(); return; }
+  capAtual = nova;
+  salvarProgresso();
+  renderCap();
+}
+
+async function salvarProgresso() {
+  if (!userAtual) return;
+  await fetch("/escola/progresso", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userAtual.id, modulo_id: moduloId, capitulo: capAtual })
+  });
+}
+
+async function concluirModulo() {
+  await fetch("/escola/progresso", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userAtual.id, modulo_id: moduloId, capitulo: capAtual, concluido: true })
+  });
+  mostrarToast("🎉 Módulo concluído! Parabéns!");
+  setTimeout(() => { window.location.href = "/escola/"; }, 2000);
+}
+
+// ── ABAS ──────────────────────────────────────────────────────────────
+function trocarAba(aba) {
+  const mapa = {
+    "ler":   { aba:"abaLer",   tab:"tabLer"   },
+    "notas": { aba:"abaNotas", tab:"tabNotas" },
+    "ia":    { aba:"abaIA",    tab:"tabIA"    },
+    "com":   { aba:"abaCom",   tab:"tabCom"   },
+  };
+  Object.entries(mapa).forEach(([key, ids]) => {
+    const a = document.getElementById(ids.aba);
+    const t = document.getElementById(ids.tab);
+    if (a) a.style.display = key === aba ? "block" : "none";
+    if (t) t.classList.toggle("active", key === aba);
+  });
+  if (aba === "notas") carregarNotas();
+  if (aba === "com") carregarCom();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── DESTAQUE — DESKTOP + MOBILE ───────────────────────────────────────
+function setupSelecao() {
+  const reader = document.getElementById("readerBody");
+  const popup  = document.getElementById("selPopup");
+
+  // Fecha popup ao clicar fora
+  document.addEventListener("mousedown", (e) => {
+    if (!popup.contains(e.target)) fecharPopup();
+  });
+  document.addEventListener("touchstart", (e) => {
+    if (!popup.contains(e.target) && !reader.contains(e.target)) fecharPopup();
+  }, { passive: true });
+
+  // Desktop — mouseup
+  reader.addEventListener("mouseup", (e) => {
+    setTimeout(() => mostrarPopupSel(e.clientX, e.clientY), 10);
+  });
+
+  // Mobile — touchend
+  reader.addEventListener("touchend", (e) => {
+    const touch = e.changedTouches[0];
+    setTimeout(() => mostrarPopupSel(touch.clientX, touch.clientY), 200);
+  });
+}
+
+function mostrarPopupSel(x, y) {
+  const sel = window.getSelection();
+  if (!sel || sel.toString().trim().length < 2) { fecharPopup(); return; }
+  selTxt = sel.toString().trim();
+  selRange = sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
+
+  const popup = document.getElementById("selPopup");
+  popup.classList.add("show");
+
+  // Posiciona popup próximo ao toque/clique
+  const pw = popup.offsetWidth || 200;
+  const ph = popup.offsetHeight || 50;
+  let left = x - pw / 2;
+  let top  = y - ph - 12;
+  if (left < 8) left = 8;
+  if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+  if (top < 60) top = y + 20;
+  popup.style.left = left + "px";
+  popup.style.top  = top + "px";
+}
+
+function fecharPopup() {
+  document.getElementById("selPopup").classList.remove("show");
+  selTxt = ""; selRange = null;
+}
+
+function setHL(mode) {
+  hlMode = mode;
+  ["tbAmarelo","tbRoxo","tbSub"].forEach(id => document.getElementById(id)?.classList.remove("hl-ativo"));
+  const map = { amarelo:"tbAmarelo", roxo:"tbRoxo", sub:"tbSub" };
+  document.getElementById(map[mode])?.classList.add("hl-ativo");
+}
+
+function applyHL(type) {
+  if (!selTxt || !selRange) { fecharPopup(); return; }
+  const classMap = { yellow:"hl-yellow", purple:"hl-purple", under:"hl-under" };
+  try {
+    const span = document.createElement("span");
+    span.className = classMap[type];
+    selRange.surroundContents(span);
+  } catch(e) {
+    // Seleção cruzou elementos — aplica no texto mais próximo
+    mostrarToast("⚠️ Selecione dentro de um parágrafo");
+  }
+  fecharPopup();
+  mostrarToast("✓ Destaque aplicado");
+}
+
+function hlParaIA() {
+  if (selTxt) {
+    iaCtxSelecionado = selTxt;
+    document.getElementById("iaCtxTxt").textContent = `"${selTxt.substring(0,100)}${selTxt.length>100?"…":""}"`;
+    document.getElementById("iaCtx").style.background = "var(--sage-light)";
+    trocarAba("ia");
+  }
+  fecharPopup();
+}
+
+// ── ANOTAÇÕES ─────────────────────────────────────────────────────────
+function setTag(tag) {
+  tagAtual = tag;
+  ["reflexao","duvida","destaque"].forEach(t => {
+    document.getElementById("tag"+t.charAt(0).toUpperCase()+t.slice(1))?.classList.toggle("on", t===tag);
+  });
+}
+
+async function salvarNota() {
+  const txt = document.getElementById("notaInput").value.trim();
+  if (!txt || !userAtual) { mostrarToast("⚠️ Escreva algo primeiro"); return; }
+  await fetch("/escola/anotacao", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ user_id:userAtual.id, modulo_id:moduloId, capitulo:capAtual, texto:txt, tag:tagAtual })
+  });
+  document.getElementById("notaInput").value = "";
+  mostrarToast("💾 Anotação salva!");
+  carregarNotas();
+}
+
+async function carregarNotas() {
+  if (!userAtual) return;
+  try {
+    const r = await fetch(`/escola/anotacoes?user_id=${userAtual.id}&modulo_id=${moduloId}`);
+    notasLocal = await r.json();
+    renderNotas();
+  } catch(e) {}
+}
+
+function renderNotas() {
+  const lista = document.getElementById("notaLista");
+  const count = document.getElementById("notaCount");
+  if (!lista) return;
+  count.textContent = notasLocal.length;
+  if (!notasLocal.length) {
+    lista.innerHTML = `<p style="font-size:0.82rem;color:var(--muted);text-align:center;padding:20px">Nenhuma anotação ainda. Comece pela leitura! 📖</p>`;
+    return;
+  }
+  lista.innerHTML = notasLocal.map(n => `
+  <div class="nota-card">
+    <button class="nota-del" onclick="deletarNota('${n.id}')">✕</button>
+    <span class="nota-tag tag-${n.tag}">${n.tag}</span>
+    <div class="nota-texto">${n.texto}</div>
+    <div class="nota-source">Cap. ${n.capitulo} · ${new Date(n.created_at).toLocaleDateString("pt-BR")}</div>
+  </div>`).join("");
+}
+
+async function deletarNota(id) {
+  await fetch(`/escola/anotacao/${id}?user_id=${userAtual.id}`, { method:"DELETE" });
+  mostrarToast("Anotação removida");
+  carregarNotas();
+}
+
+// ── IA ────────────────────────────────────────────────────────────────
+function renderIAChips() {
+  const chips = ["Qual o versículo âncora?","Explique com um exemplo","Como aplicar na minha vida?","Outros versículos sobre isso?"];
+  document.getElementById("iaChips").innerHTML = chips.map(c =>
+    `<button class="chip" onclick="fillIA('${c}')">${c}</button>`
+  ).join("");
+}
+
+function fillIA(txt) { document.getElementById("iaInput").value = txt; document.getElementById("iaInput").focus(); }
+
+async function enviarIA() {
+  const input = document.getElementById("iaInput");
+  const pergunta = input.value.trim();
+  if (!pergunta) return;
+  input.value = "";
+  const msgs = document.getElementById("iaMsgs");
+  msgs.innerHTML += `<div class="ia-msg-user">${pergunta}</div>`;
+  msgs.innerHTML += `<div class="ia-msg-bot" id="iaBotAtual">⏳ Pensando...</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  iaHist.push({ role:"user", content:pergunta });
+  try {
+    const resp = await fetch("/escola/ia", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ pergunta, modulo_id:moduloId, contexto:iaCtxSelecionado, historico:iaHist.slice(-6) })
+    });
+    const el = document.getElementById("iaBotAtual");
+    el.textContent = "";
+    let resposta = "";
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream:true });
+      const lines = buf.split("\n"); buf = lines.pop();
+      for (const l of lines) {
+        if (!l.startsWith("data: ")) continue;
+        const d = l.slice(6).trim();
+        if (d === "[DONE]") continue;
+        try { const p = JSON.parse(d); if (p.text) { resposta += p.text; el.textContent = resposta; msgs.scrollTop = msgs.scrollHeight; } } catch {}
+      }
+    }
+    iaHist.push({ role:"assistant", content:resposta });
+    respostasIA.push({ pergunta, resposta });
+    el.removeAttribute("id");
+    iaCtxSelecionado = "";
+    document.getElementById("iaCtx").style.background = "var(--light)";
+    document.getElementById("iaCtxTxt").textContent = "Selecione um trecho e toque em '✦ IA' para enviar como contexto.";
+  } catch(e) {
+    const el = document.getElementById("iaBotAtual");
+    if (el) el.textContent = "❌ Erro ao conectar. Tente novamente.";
+  }
+}
+
+// ── COMUNIDADE ────────────────────────────────────────────────────────
+async function carregarCom() {
+  const lista = document.getElementById("comLista");
+  lista.innerHTML = `<div class="spinner"></div>`;
+  try {
+    const r = await fetch(`/escola/comentarios?modulo_id=${moduloId}&capitulo=${capAtual}`);
+    const dados = await r.json();
+    if (!dados?.length) {
+      lista.innerHTML = `<p style="font-size:0.82rem;color:var(--muted);text-align:center;padding:20px">Seja o primeiro a compartilhar! 🙏</p>`;
+      return;
+    }
+    lista.innerHTML = dados.map(c => {
+      const inicial = (c.user_id||"A")[0].toUpperCase();
+      const dt = new Date(c.created_at).toLocaleDateString("pt-BR", { day:"numeric", month:"short" });
+      return `<div class="com-card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+          <div class="com-avatar">${inicial}</div>
+          <div><div class="com-nome">Aluno da Escola</div><div class="com-tempo">${dt}</div></div>
+        </div>
+        <div class="com-texto">${c.texto}</div>
+        <button class="btn-curtir" onclick="curtirCom('${c.id}',this)">🙏 <span>${c.curtidas}</span> amaram</button>
+      </div>`;
+    }).join("");
+  } catch(e) { lista.innerHTML = `<p style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px">Erro ao carregar.</p>`; }
+}
+
+async function publicarComentario() {
+  const txt = document.getElementById("comInput").value.trim();
+  if (!txt || !userAtual) { mostrarToast("⚠️ Escreva algo primeiro"); return; }
+  await fetch("/escola/comentario", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ user_id:userAtual.id, modulo_id:moduloId, capitulo:capAtual, texto:txt })
+  });
+  document.getElementById("comInput").value = "";
+  mostrarToast("✓ Publicado!");
+  carregarCom();
+}
+
+async function curtirCom(id, btn) {
+  try {
+    await fetch(`/escola/comentario/${id}/curtir`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ user_id:userAtual?.id })
+    });
+    const span = btn.querySelector("span");
+    span.textContent = parseInt(span.textContent) + 1;
+    btn.disabled = true;
+  } catch(e) {}
+}
+
+// ── PDF ───────────────────────────────────────────────────────────────
+function showPdfModal() { document.getElementById("pdfModal").classList.add("show"); }
+function hidePdfModal() { document.getElementById("pdfModal").classList.remove("show"); }
+
+async function gerarPDF(tipo) {
+  hidePdfModal();
+  mostrarToast("⏳ Gerando...");
+  try {
+    const r = await fetch("/escola/gerar-pdf", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ modulo_id:moduloId, anotacoes: tipo!=="conteudo" ? notasLocal : [], respostas_ia: tipo==="completo" ? respostasIA : [] })
+    });
+    const dados = await r.json();
+    const blob = new Blob([dados.conteudo], { type:"text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `escola-${moduloId}-cap${capAtual}.txt`;
+    a.click(); URL.revokeObjectURL(url);
+    mostrarToast("✓ Baixado!");
+  } catch(e) { mostrarToast("❌ Erro ao gerar"); }
+}
+
+function mostrarToast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
+</body>
+</html>
