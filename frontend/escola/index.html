@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#26215C">
+<meta name="description" content="Escola Profética — Estudo completo do Apocalipse com IA">
+<title>Escola Profética — Manhã com Deus</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --deep:#26215C; --mid:#534AB7; --accent:#7F77DD; --light:#EEEDFE;
+  --pale:#F5F4FF;
+  --gold:#C9A84C; --gold-pale:#F7EDD6;
+  --ink:#1a1a2e; --muted:#6B6890; --cream:#FAF9FF;
+  --sage:#0F6E56; --sage-light:#E1F5EE;
+  --borda:rgba(127,119,221,0.18);
+  --safe-top:env(safe-area-inset-top); --safe-bottom:env(safe-area-inset-bottom);
+}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── HEADER ── */
+.header{
+  background:var(--deep);padding:14px 20px;
+  padding-top:calc(14px + var(--safe-top));
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  border-bottom:1px solid rgba(127,119,221,0.25);
+}
+.header-logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.05rem;color:#fff}
+.logo-text span{color:var(--accent);font-style:italic}
+.header-right{display:flex;align-items:center;gap:8px}
+.btn-voltar{background:transparent;border:1px solid rgba(127,119,221,0.3);
+  color:rgba(255,255,255,0.6);font-size:0.72rem;padding:5px 12px;
+  border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-voltar:hover{border-color:var(--accent);color:#fff}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,var(--deep) 0%,#3C3489 60%,#1D9E75 100%);
+  padding:32px 20px 40px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%,rgba(127,119,221,0.2),transparent 60%)}
+.hero-tag{font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(127,119,221,0.8);margin-bottom:10px;position:relative}
+.hero h1{font-family:'Playfair Display',serif;font-size:1.9rem;color:#fff;
+  margin-bottom:8px;position:relative;line-height:1.2}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero-sub{color:rgba(255,255,255,0.55);font-size:0.85rem;position:relative;
+  line-height:1.6;max-width:380px;margin:0 auto 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(127,119,221,0.15);border:1px solid rgba(127,119,221,0.35);
+  border-radius:20px;padding:8px 18px;font-size:0.78rem;color:rgba(255,255,255,0.7);position:relative}
+.hero-badge strong{color:var(--accent)}
+
+/* ── ACESSO BLOQUEADO ── */
+.paywall{
+  margin:20px 16px;background:#fff;border:1px solid var(--borda);
+  border-radius:18px;overflow:hidden;animation:fadeUp 0.5s ease;
+}
+.paywall-top{background:linear-gradient(135deg,var(--deep),var(--mid));padding:28px 20px;text-align:center}
+.paywall-top h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:#fff;margin-bottom:6px}
+.paywall-top p{color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.5}
+.paywall-preco{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--deep);font-weight:700;text-align:center;margin:20px 0 4px}
+.paywall-preco small{font-size:1rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400}
+.paywall-body{padding:20px}
+.paywall-lista{list-style:none;margin:16px 0}
+.paywall-lista li{font-size:0.85rem;color:var(--ink);padding:8px 0;
+  border-bottom:1px solid var(--borda);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.paywall-lista li:last-child{border:none}
+.paywall-lista li::before{content:'✦';color:var(--accent);font-size:0.7rem;margin-top:3px;flex-shrink:0}
+.btn-comprar{width:100%;background:linear-gradient(135deg,var(--mid),var(--deep));
+  border:none;color:#fff;padding:16px;border-radius:12px;font-size:1rem;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;min-height:52px}
+.paywall-nota{text-align:center;color:var(--muted);font-size:0.72rem;margin-top:10px}
+
+/* ── CONTAINER ── */
+.container{max-width:680px;margin:0 auto;padding:20px 16px calc(60px + var(--safe-bottom))}
+
+/* ── BOAS-VINDAS ── */
+.welcome-strip{
+  background:linear-gradient(90deg,var(--light),#F0EFFD);
+  border-radius:14px;padding:16px 18px;margin-bottom:20px;
+  display:flex;align-items:center;gap:14px;
+  border:1px solid rgba(127,119,221,0.2);animation:fadeUp 0.4s ease;
+}
+.welcome-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;
+  font-size:1.1rem;color:#fff;flex-shrink:0;font-weight:700}
+.welcome-text{flex:1}
+.welcome-title{font-size:0.88rem;font-weight:600;color:var(--deep);margin-bottom:2px}
+.welcome-sub{font-size:0.75rem;color:var(--muted)}
+
+/* ── SEÇÃO LABEL ── */
+.sec-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:2.5px;color:var(--muted);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--borda)}
+
+/* ── PROGRESS GERAL ── */
+.progress-geral{
+  background:#fff;border:1px solid var(--borda);border-radius:14px;
+  padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;
+}
+.prog-ring{width:52px;height:52px;flex-shrink:0;position:relative}
+.prog-ring svg{transform:rotate(-90deg)}
+.prog-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:0.72rem;font-weight:700;color:var(--mid)}
+.prog-info{flex:1}
+.prog-title{font-size:0.88rem;font-weight:600;color:var(--ink);margin-bottom:2px}
+.prog-sub{font-size:0.72rem;color:var(--muted)}
+
+/* ── MÓDULO CARD ── */
+.modulos-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.modulo-card{
+  background:#fff;border:1px solid var(--borda);border-radius:16px;
+  padding:16px;display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all 0.2s;text-decoration:none;
+  animation:fadeUp 0.4s ease both;
+}
+.modulo-card:hover{border-color:var(--accent);transform:translateX(2px)}
+.modulo-card.locked{opacity:0.55;cursor:default}
+.modulo-card.locked:hover{transform:none;border-color:var(--borda)}
+.modulo-num{width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.num-done{background:var(--sage-light);color:var(--sage)}
+.num-active{background:var(--light);color:var(--mid)}
+.num-locked{background:var(--pale);color:var(--muted)}
+.modulo-info{flex:1;min-width:0}
+.modulo-titulo{font-size:0.9rem;font-weight:600;color:var(--ink);margin-bottom:3px;
+  line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modulo-meta{font-size:0.72rem;color:var(--muted);display:flex;gap:10px;align-items:center}
+.modulo-bar-wrap{height:3px;background:var(--pale);border-radius:2px;margin-top:7px}
+.modulo-bar-fill{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--mid),var(--accent));transition:width 0.4s}
+.modulo-action{font-size:16px;color:var(--muted);flex-shrink:0}
+.badge-concluido{font-size:0.58rem;background:var(--sage-light);color:var(--sage);
+  padding:2px 7px;border-radius:20px;font-weight:700}
+.badge-em-andamento{font-size:0.58rem;background:var(--light);color:var(--mid);
+  padding:2px 7px;border-radius:20px;font-weight:700}
+
+/* ── DEVOCIONAL STRIP ── */
+.devo-strip{
+  background:linear-gradient(135deg,var(--deep),#2C1F0E);
+  border-radius:14px;padding:16px 18px;margin-bottom:20px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  border:1px solid rgba(127,119,221,0.2);
+}
+.devo-strip-icon{width:38px;height:38px;border-radius:9px;background:rgba(201,168,76,0.15);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.devo-strip-text{flex:1}
+.devo-strip-tag{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+  color:var(--gold);margin-bottom:3px}
+.devo-strip-title{font-size:0.88rem;font-weight:600;color:#fff}
+.devo-strip-sub{font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:1px}
+
+/* ── LOADING ── */
+.loading-full{min-height:60vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.spinner{width:36px;height:36px;border:2px solid var(--borda);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+.loading-txt{font-size:0.88rem;color:var(--muted);font-style:italic;font-family:'Playfair Display',serif}
+
+/* ── AUTH OVERLAY ── */
+.auth-overlay{position:fixed;inset:0;background:rgba(38,33,92,0.97);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{background:#fff;border-radius:20px;padding:32px 24px;width:100%;max-width:380px;animation:fadeUp 0.4s ease}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo h1{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--deep)}
+.auth-logo p{color:var(--muted);font-size:0.82rem;margin-top:4px}
+.auth-input{width:100%;background:var(--pale);border:1.5px solid var(--borda);border-radius:10px;
+  padding:13px 15px;font-size:0.95rem;font-family:'DM Sans',sans-serif;color:var(--ink);
+  outline:none;margin-bottom:12px;transition:border-color 0.2s}
+.auth-input:focus{border-color:var(--accent)}
+.btn-auth{width:100%;background:linear-gradient(135deg,var(--mid),var(--deep));border:none;
+  color:#fff;padding:15px;border-radius:12px;font-size:0.95rem;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;min-height:50px}
+.auth-msg{text-align:center;font-size:0.8rem;margin-top:10px;padding:10px;border-radius:8px}
+.auth-msg.erro{background:#FFF0F0;color:#C0392B}
+.auth-msg.ok{background:#EAFAF1;color:#27AE60}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--deep);color:#fff;padding:10px 22px;border-radius:50px;
+  font-size:0.82rem;z-index:999;border:1px solid rgba(127,119,221,0.3);
+  animation:fadeUp 0.3s ease;white-space:nowrap;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Escola <em style="color:var(--accent);font-style:italic">Profética</em></h1>
+      <p>Entre com sua conta Manhã com Deus</p>
+    </div>
+    <input class="auth-input" type="email" id="authEmail" placeholder="seu@email.com" autocomplete="email">
+    <input class="auth-input" type="password" id="authSenha" placeholder="Senha" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')fazerLogin()">
+    <button class="btn-auth" id="btnLogin" onclick="fazerLogin()">Entrar</button>
+    <div id="authMsg" style="display:none" class="auth-msg"></div>
+    <p style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:14px">
+      Não tem conta?
+      <a href="/" style="color:var(--accent);text-decoration:none">Crie gratuitamente no app</a>
+    </p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appWrap" style="display:none">
+  <header class="header">
+    <div class="header-logo">
+      <div class="logo-icon">✦</div>
+      <div class="logo-text">Escola <span>Profética</span></div>
+    </div>
+    <div class="header-right">
+      <a href="/" class="btn-voltar">← Manhã com Deus</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-tag">✦ Manhã com Deus</div>
+    <h1>Escola <em>Profética</em></h1>
+    <p class="hero-sub">8 módulos completos sobre o Apocalipse — estude no seu ritmo, com IA ao seu lado.</p>
+    <div class="hero-badge"><strong>Escola do Apocalipse</strong> · Acesso completo</div>
+  </div>
+
+  <div class="container">
+    <div id="mainContent">
+      <div class="loading-full">
+        <div class="spinner"></div>
+        <p class="loading-txt">Carregando seus módulos...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://ttcdhthjtdnudczakuhu.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0Y2RodGhqdGRudWRjemFrdWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTkxODIsImV4cCI6MjA5NDYzNTE4Mn0.fDVyCS3uj2qIJHDJOqMvRSLhkW_aGC5lXzQnLNdH6AI";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let userAtual = null;
+let temAcesso = false;
+let progressoGeral = {};
+
+const MODULOS = [
+  {id:"apostasia",     titulo:"A Apostasia dos Últimos Dias",       capitulos:3, minutos:40, ordem:1},
+  {id:"arrebatamento", titulo:"O Arrebatamento e os Últimos Dias",  capitulos:5, minutos:70, ordem:2},
+  {id:"cavaleiros",    titulo:"Os 4 Cavaleiros do Apocalipse",      capitulos:4, minutos:55, ordem:3},
+  {id:"tribulacao",    titulo:"A Grande Tribulação",                capitulos:4, minutos:60, ordem:4},
+  {id:"anticristo",    titulo:"O Anticristo e a Marca da Besta",    capitulos:3, minutos:50, ordem:5},
+  {id:"segunda_vinda", titulo:"A Segunda Vinda de Cristo",          capitulos:3, minutos:45, ordem:6},
+  {id:"milenio",       titulo:"O Milênio e o Reino de Cristo",      capitulos:3, minutos:40, ordem:7},
+  {id:"nova_jerusalem",titulo:"A Nova Jerusalém e a Eternidade",    capitulos:3, minutos:35, ordem:8},
+];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await iniciar(session.user);
+  sb.auth.onAuthStateChange(async (_, s) => { if (s) await iniciar(s.user); });
+});
+
+async function iniciar(user) {
+  userAtual = user;
+  document.getElementById("authOverlay").style.display = "none";
+  document.getElementById("appWrap").style.display = "block";
+  await verificarAcesso();
+  await carregarProgresso();
+  renderMain();
+}
+
+async function verificarAcesso() {
+  try {
+    const r = await fetch(`/escola/acesso?user_id=${userAtual.id}&produto=escola_apocalipse`);
+    const d = await r.json();
+    temAcesso = d.acesso;
+  } catch(e) { temAcesso = false; }
+}
+
+async function carregarProgresso() {
+  if (!temAcesso) return;
+  try {
+    const r = await fetch(`/escola/progresso?user_id=${userAtual.id}`);
+    const dados = await r.json();
+    dados.forEach(p => { progressoGeral[p.modulo_id] = p; });
+  } catch(e) {}
+}
+
+function getPct(moduloId, totalCaps) {
+  const p = progressoGeral[moduloId];
+  if (!p) return 0;
+  if (p.concluido) return 100;
+  return Math.round(((p.ultimo_capitulo - 1) / totalCaps) * 100);
+}
+
+function renderMain() {
+  const el = document.getElementById("mainContent");
+  const iniciados = MODULOS.filter(m => progressoGeral[m.id]);
+  const concluidos = MODULOS.filter(m => progressoGeral[m.id]?.concluido);
+  const totalPct = Math.round((concluidos.length / MODULOS.length) * 100);
+
+  let html = "";
+
+  // Boas-vindas
+  const inicial = (userAtual.email || "A")[0].toUpperCase();
+  html += `
+  <div class="welcome-strip">
+    <div class="welcome-avatar">${inicial}</div>
+    <div class="welcome-text">
+      <div class="welcome-title">Bem-vindo de volta, ${userAtual.email.split("@")[0]}!</div>
+      <div class="welcome-sub">${temAcesso
+        ? `${concluidos.length} de ${MODULOS.length} módulos concluídos`
+        : "Adquira o acesso completo para começar"
+      }</div>
+    </div>
+  </div>`;
+
+  if (!temAcesso) {
+    html += renderPaywall();
+  } else {
+    // Progresso geral
+    const circ = 2 * Math.PI * 20;
+    const dash = circ - (circ * totalPct / 100);
+    html += `
+    <div class="progress-geral">
+      <div class="prog-ring">
+        <svg width="52" height="52" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#EEEDFE" stroke-width="3"/>
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#7F77DD" stroke-width="3"
+            stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dash.toFixed(1)}"
+            stroke-linecap="round"/>
+        </svg>
+        <div class="prog-pct">${totalPct}%</div>
+      </div>
+      <div class="prog-info">
+        <div class="prog-title">Sua jornada pelo Apocalipse</div>
+        <div class="prog-sub">${concluidos.length} concluídos · ${iniciados.length - concluidos.length} em andamento · ${MODULOS.length - iniciados.length} não iniciados</div>
+      </div>
+    </div>`;
+
+    // Link devocional
+    html += `
+    <div class="devo-strip" onclick="window.location='/'">
+      <div class="devo-strip-icon">☀️</div>
+      <div class="devo-strip-text">
+        <div class="devo-strip-tag">Manhã com Deus</div>
+        <div class="devo-strip-title">Devocional de hoje está esperando</div>
+        <div class="devo-strip-sub">Toque para abrir</div>
+      </div>
+      <span style="font-size:16px;color:rgba(201,168,76,0.6)">→</span>
+    </div>`;
+
+    // Módulos
+    html += `<div class="sec-label">Seus módulos</div>`;
+    html += `<div class="modulos-grid">`;
+
+    MODULOS.forEach((m, i) => {
+      const p = progressoGeral[m.id];
+      const pct = getPct(m.id, m.capitulos);
+      const concluido = p?.concluido;
+      const emAndamento = p && !concluido;
+
+      const numClass = concluido ? "num-done" : emAndamento ? "num-active" : "num-locked";
+      const numIcon = concluido ? "✓" : (i + 1);
+
+      const badge = concluido
+        ? `<span class="badge-concluido">✓ Concluído</span>`
+        : emAndamento
+        ? `<span class="badge-em-andamento">Em andamento</span>`
+        : "";
+
+      const actionIcon = concluido ? "✓" : emAndamento ? "→" : "▶";
+      const actionColor = concluido ? "#0F6E56" : emAndamento ? "#7F77DD" : "#8A7560";
+
+      html += `
+      <div class="modulo-card" onclick="abrirModulo('${m.id}')" style="animation-delay:${i * 0.05}s">
+        <div class="modulo-num ${numClass}">${numIcon}</div>
+        <div class="modulo-info">
+          <div class="modulo-titulo">${m.titulo}</div>
+          <div class="modulo-meta">
+            <span>${m.capitulos} capítulos</span>
+            <span>·</span>
+            <span>${m.minutos} min</span>
+            ${badge}
+          </div>
+          ${pct > 0 ? `<div class="modulo-bar-wrap"><div class="modulo-bar-fill" style="width:${pct}%"></div></div>` : ""}
+        </div>
+        <div class="modulo-action" style="color:${actionColor}">${actionIcon}</div>
+      </div>`;
+    });
+
+    html += `</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+function renderPaywall() {
+  return `
+  <div class="paywall">
+    <div class="paywall-top">
+      <h2>Escola do Apocalipse</h2>
+      <p>8 módulos completos com IA integrada, anotações e comunidade</p>
+    </div>
+    <div class="paywall-body">
+      <div class="paywall-preco">R$47 <small style="font-size:0.85rem">pagamento único</small></div>
+      <p style="text-align:center;color:var(--muted);font-size:0.75rem;margin-bottom:16px">Acesso vitalício · PDF de cada módulo incluso</p>
+      <ul class="paywall-lista">
+        <li>8 módulos completos — do Apocalipse à Eternidade</li>
+        <li>Leitor com destaque, anotações e tags pessoais</li>
+        <li>Assistente IA para tirar dúvidas por capítulo</li>
+        <li>Comunidade: comente e veja reflexões de outros alunos</li>
+        <li>PDF personalizado com suas anotações para baixar</li>
+        <li>Plano de 30 dias de leitura bíblica incluso</li>
+        <li>Integrado ao app Manhã com Deus que você já usa</li>
+      </ul>
+      <button class="btn-comprar" onclick="comprar()">✦ Adquirir acesso — R$47</button>
+      <p class="paywall-nota">🔒 Pagamento seguro via Stripe · Suporte via WhatsApp</p>
+    </div>
+  </div>`;
+}
+
+function abrirModulo(moduloId) {
+  if (!temAcesso) { mostrarToast("⚠️ Adquira o acesso para estudar"); return; }
+  const p = progressoGeral[moduloId];
+  const cap = p ? p.ultimo_capitulo : 1;
+  window.location.href = `/escola/modulo?id=${moduloId}&cap=${cap}`;
+}
+
+function comprar() {
+  mostrarToast("⏳ Redirecionando para o pagamento...");
+  // Integre com Stripe Checkout aqui
+  // window.location.href = `https://buy.stripe.com/SEU_LINK?client_reference_id=${userAtual.id}`;
+  alert("Configure seu link do Stripe Checkout aqui!\n\nAdicione o metadata: user_id=" + userAtual.id);
+}
+
+async function fazerLogin() {
+  const email = document.getElementById("authEmail").value.trim();
+  const senha = document.getElementById("authSenha").value;
+  const btn = document.getElementById("btnLogin");
+  if (!email || !senha) { mostrarAuthMsg("Preencha email e senha", "erro"); return; }
+  btn.disabled = true; btn.textContent = "Aguarde...";
+  const { error } = await sb.auth.signInWithPassword({ email, password: senha });
+  btn.disabled = false; btn.textContent = "Entrar";
+  if (error) {
+    const msgs = { "Invalid login credentials": "Email ou senha incorretos" };
+    mostrarAuthMsg(msgs[error.message] || error.message, "erro");
+  }
+}
+
+function mostrarAuthMsg(txt, tipo) {
+  const el = document.getElementById("authMsg");
+  el.textContent = txt; el.className = "auth-msg " + tipo; el.style.display = "block";
+}
+
+function mostrarToast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
+</body>
+</html>
