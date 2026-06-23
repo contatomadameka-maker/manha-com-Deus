@@ -108,6 +108,14 @@ async def blog():
     p = FRONTEND_PATH / "blog" / "index.html"
     return HTMLResponse(content=p.read_text(encoding="utf-8"))
 
+@app.get("/admin", response_class=HTMLResponse)
+@app.get("/admin/", response_class=HTMLResponse)
+async def admin():
+    p = FRONTEND_PATH / "admin" / "index.html"
+    if not p.exists():
+        raise HTTPException(404)
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
+
 # ── DIÁRIO ESPIRITUAL ─────────────────────────────────
 @app.post("/prompt-diario")
 async def prompt_diario(request: Request):
