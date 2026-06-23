@@ -89,8 +89,8 @@ async def versiculo_do_dia():
     return {"texto": v["texto"], "ref": v["ref"],
             "data": datetime.now().strftime("%A, %d de %B de %Y").capitalize(),
             "dia": dia}
-    
-    # ── ESCOLA PROFÉTICA ─────────────────────────────────
+
+# ── ESCOLA PROFÉTICA ─────────────────────────────────
 @app.get("/escola", response_class=HTMLResponse)
 @app.get("/escola/", response_class=HTMLResponse)
 async def escola_home():
@@ -122,11 +122,8 @@ async def prompt_diario(request: Request):
     body = await request.json()
     titulo_devocional = body.get("titulo", "")
     estado = body.get("estado", "")
-
     contexto = f'sobre o devocional "{titulo_devocional}"' if titulo_devocional else ""
     estado_ctx = f" para alguém que estava se sentindo {estado}" if estado else ""
-
-    prompt = f"""Gere 3 perguntas reflexivas curtas e profundas para um diário espiritual cristão {contexto}{estado_ctx}.
 
 As perguntas devem:
 - Ser pessoais e introspectivas
