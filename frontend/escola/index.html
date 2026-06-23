@@ -253,16 +253,15 @@ let userAtual = null;
 let temAcesso = false;
 let progressoGeral = {};
 
-const MODULOS = [
-  {id:"apostasia",     titulo:"A Apostasia dos Últimos Dias",       capitulos:3, minutos:40, ordem:1},
-  {id:"arrebatamento", titulo:"O Arrebatamento e os Últimos Dias",  capitulos:5, minutos:70, ordem:2},
-  {id:"cavaleiros",    titulo:"Os 4 Cavaleiros do Apocalipse",      capitulos:4, minutos:55, ordem:3},
-  {id:"tribulacao",    titulo:"A Grande Tribulação",                capitulos:4, minutos:60, ordem:4},
-  {id:"anticristo",    titulo:"O Anticristo e a Marca da Besta",    capitulos:3, minutos:50, ordem:5},
-  {id:"segunda_vinda", titulo:"A Segunda Vinda de Cristo",          capitulos:3, minutos:45, ordem:6},
-  {id:"milenio",       titulo:"O Milênio e o Reino de Cristo",      capitulos:3, minutos:40, ordem:7},
-  {id:"nova_jerusalem",titulo:"A Nova Jerusalém e a Eternidade",    capitulos:3, minutos:35, ordem:8},
-];
+let MODULOS = [];
+
+async function carregarModulos() {
+  const { data } = await sb.from("modulos_conteudo")
+    .select("*")
+    .eq("ativo", true)
+    .order("ordem");
+  MODULOS = data || [];
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   const { data: { session } } = await sb.auth.getSession();
@@ -275,6 +274,7 @@ async function iniciar(user) {
   document.getElementById("authOverlay").style.display = "none";
   document.getElementById("appWrap").style.display = "block";
   await verificarAcesso();
+  await carregarModulos();      // ← adiciona essa linha
   await carregarProgresso();
   renderMain();
 }
