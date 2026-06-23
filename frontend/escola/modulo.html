@@ -570,11 +570,20 @@ async function concluirModulo() {
 
 // ── Abas ────────────────────────────────────────────────────────────
 function trocarAba(aba) {
-  ["ler","notas","ia","com"].forEach(a => {
-    document.getElementById("aba" + a.charAt(0).toUpperCase() + a.slice(1)).style.display = a === aba ? "block" : "none";
-    const t = document.getElementById("tab" + a.charAt(0).toUpperCase() + a.slice(1));
-    if (t) t.classList.toggle("active", a === aba);
+  const idMapa = {
+    "ler":   { aba: "abaLer",   tab: "tabLer"   },
+    "notas": { aba: "abaNotas", tab: "tabNotas" },
+    "ia":    { aba: "abaIA",    tab: "tabIA"    },
+    "com":   { aba: "abaCom",   tab: "tabCom"   },
+  };
+
+  Object.entries(idMapa).forEach(([key, ids]) => {
+    const abaEl = document.getElementById(ids.aba);
+    const tabEl = document.getElementById(ids.tab);
+    if (abaEl) abaEl.style.display = key === aba ? "block" : "none";
+    if (tabEl) tabEl.classList.toggle("active", key === aba);
   });
+
   if (aba === "notas") carregarNotas();
   if (aba === "com") carregarCom();
 }
