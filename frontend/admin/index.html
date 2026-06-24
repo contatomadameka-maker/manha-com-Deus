@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#26215C">
-<title>Admin — Escola Profética</title>
+<title>Admin — Escola Profética & Blog</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -13,13 +13,13 @@
   --deep:#26215C;--mid:#534AB7;--accent:#7F77DD;--light:#EEEDFE;--pale:#F5F4FF;
   --ink:#1a1a2e;--muted:#6B6890;--cream:#FAF9FF;
   --sage:#0F6E56;--sage-light:#E1F5EE;
+  --gold:#C9A84C;--gold-pale:#FBF3E0;
   --borda:rgba(127,119,221,0.18);
 }
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(135deg,var(--deep),var(--mid));padding:20px}
 .login-card{background:#fff;border-radius:20px;padding:32px 28px;width:100%;max-width:380px;
@@ -37,7 +37,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .login-erro{background:#FFF0F0;color:#C0392B;font-size:0.8rem;padding:10px;
   border-radius:8px;text-align:center;margin-top:10px;display:none}
 
-/* HEADER ADMIN */
 .admin-header{background:var(--deep);padding:14px 24px;display:flex;align-items:center;
   justify-content:space-between;border-bottom:1px solid rgba(127,119,221,0.2);
   position:sticky;top:0;z-index:100}
@@ -46,7 +45,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .btn-sair{background:transparent;border:1px solid rgba(127,119,221,0.3);color:rgba(255,255,255,0.6);
   font-size:0.75rem;padding:5px 12px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif}
 
-/* LAYOUT */
 .admin-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 52px)}
 .sidebar{background:#fff;border-right:1px solid var(--borda);padding:20px 0}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 20px;
@@ -57,18 +55,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .sidebar-section{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
   color:var(--muted);padding:16px 20px 6px}
 
-/* CONTEÚDO */
-.admin-content{padding:28px 32px;max-width:900px}
+.admin-content{padding:28px 32px;max-width:960px}
 .page-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--deep);margin-bottom:4px}
 .page-sub{font-size:0.82rem;color:var(--muted);margin-bottom:24px}
 
-/* CARDS STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
 .stat-card{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:16px 18px}
 .stat-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--mid);font-weight:700}
 .stat-label{font-size:0.75rem;color:var(--muted);margin-top:2px}
 
-/* TABELA */
 .table-wrap{background:#fff;border:1px solid var(--borda);border-radius:14px;overflow:hidden;margin-bottom:20px}
 .table-header{display:flex;align-items:center;justify-content:space-between;
   padding:14px 18px;border-bottom:1px solid var(--borda)}
@@ -86,18 +81,19 @@ tr:hover td{background:var(--pale)}
   padding:2px 8px;border-radius:20px;font-weight:700}
 .badge-inativo{background:#FFF0F0;color:#C0392B;font-size:0.68rem;
   padding:2px 8px;border-radius:20px;font-weight:700}
+.badge-rascunho{background:var(--gold-pale);color:var(--gold);font-size:0.68rem;
+  padding:2px 8px;border-radius:20px;font-weight:700}
 .btn-edit{font-size:0.72rem;padding:4px 10px;border-radius:6px;
   border:1px solid var(--borda);background:transparent;color:var(--muted);cursor:pointer}
 .btn-edit:hover{background:var(--light);color:var(--mid)}
 .btn-del{font-size:0.72rem;padding:4px 10px;border-radius:6px;
   border:1px solid rgba(192,57,43,0.2);background:transparent;color:#C0392B;cursor:pointer}
 
-/* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
-  z-index:200;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+  z-index:200;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .modal-bg.show{display:flex}
-.modal{background:#fff;border-radius:18px;padding:28px;width:100%;max-width:640px;
-  max-height:90vh;overflow-y:auto;animation:fadeUp 0.3s ease}
+.modal{background:#fff;border-radius:18px;padding:28px;width:100%;max-width:720px;
+  margin:auto;animation:fadeUp 0.3s ease}
 .modal-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--deep);margin-bottom:18px}
 .form-group{margin-bottom:14px}
 .form-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
@@ -110,23 +106,26 @@ tr:hover td{background:var(--pale)}
   font-size:0.88rem;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;
   background:var(--pale);resize:vertical;min-height:100px;line-height:1.6}
 .form-textarea:focus{border-color:var(--accent)}
+.form-textarea.corpo{min-height:240px;font-family:monospace;font-size:0.82rem}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
 .btn-cancelar{font-size:0.85rem;padding:9px 18px;border-radius:8px;
   border:1px solid var(--borda);background:transparent;color:var(--muted);cursor:pointer}
 .btn-salvar{font-size:0.85rem;padding:9px 20px;border-radius:8px;
   background:var(--mid);color:#fff;border:none;cursor:pointer;font-weight:600;font-family:'DM Sans',sans-serif}
+.btn-publicar{font-size:0.85rem;padding:9px 20px;border-radius:8px;
+  background:var(--sage);color:#fff;border:none;cursor:pointer;font-weight:600;font-family:'DM Sans',sans-serif}
 
-/* CAPITULOS */
-.cap-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-.cap-item{background:var(--pale);border:1px solid var(--borda);border-radius:10px;
-  padding:12px 14px;display:flex;align-items:center;gap:10px}
-.cap-num-badge{width:28px;height:28px;border-radius:50%;background:var(--light);
-  color:var(--mid);display:flex;align-items:center;justify-content:center;
-  font-size:0.78rem;font-weight:700;flex-shrink:0}
-.cap-info{flex:1}
-.cap-titulo-text{font-size:0.85rem;font-weight:600;color:var(--ink)}
-.cap-meta-text{font-size:0.72rem;color:var(--muted);margin-top:2px}
+.corpo-hint{font-size:0.72rem;color:var(--muted);margin-top:5px;line-height:1.5}
+.corpo-hint code{background:var(--pale);padding:1px 5px;border-radius:3px;font-size:0.75rem}
+
+.preview-box{background:var(--pale);border:1px solid var(--borda);border-radius:8px;
+  padding:14px;margin-top:8px;font-size:0.85rem;line-height:1.7;max-height:200px;overflow-y:auto}
+.preview-box h2{font-family:'Playfair Display',serif;font-size:1rem;color:var(--deep);margin:12px 0 6px}
+.preview-box p{margin-bottom:8px;color:var(--ink)}
+.preview-box blockquote{border-left:3px solid var(--accent);padding:8px 12px;
+  background:var(--light);border-radius:0 6px 6px 0;margin:10px 0;font-style:italic}
 
 .spinner{width:32px;height:32px;border:2px solid var(--borda);border-top-color:var(--accent);
   border-radius:50%;animation:spin 0.8s linear infinite;margin:40px auto;display:block}
@@ -135,7 +134,11 @@ tr:hover td{background:var(--pale)}
   font-size:0.82rem;z-index:999;white-space:nowrap;animation:fadeUp 0.3s ease;pointer-events:none}
 .empty{text-align:center;padding:40px;color:var(--muted);font-size:0.85rem}
 
-/* ALUNOS */
+.nl-item{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--borda)}
+.nl-item:last-child{border:none}
+.nl-email{font-size:0.85rem;font-weight:500;color:var(--ink);flex:1}
+.nl-data{font-size:0.7rem;color:var(--muted)}
+
 .aluno-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--borda)}
 .aluno-row:last-child{border:none}
 .aluno-avatar{width:34px;height:34px;border-radius:50%;background:var(--light);
@@ -155,11 +158,10 @@ tr:hover td{background:var(--pale)}
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginWrap">
   <div class="login-card">
     <div class="login-title">⚙️ Admin</div>
-    <div class="login-sub">Escola Profética — Painel de Gestão</div>
+    <div class="login-sub">Escola Profética & Blog — Painel de Gestão</div>
     <input class="inp" type="password" id="senhaAdmin" placeholder="Senha de administrador"
       onkeydown="if(event.key==='Enter')fazerLogin()">
     <button class="btn-login" onclick="fazerLogin()">Entrar no painel</button>
@@ -167,17 +169,14 @@ tr:hover td{background:var(--pale)}
   </div>
 </div>
 
-<!-- ADMIN APP -->
 <div id="adminApp" style="display:none">
   <div class="admin-header">
-    <div class="admin-logo">Escola <em>Profética</em> · Admin</div>
+    <div class="admin-logo">Admin · <em>Escola & Blog</em></div>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
-
   <div class="admin-layout">
-    <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="sidebar-section">Gestão</div>
+      <div class="sidebar-section">Escola Profética</div>
       <div class="sidebar-item active" onclick="navegar('dashboard',this)">
         <span class="sidebar-icon">📊</span> Dashboard
       </div>
@@ -187,9 +186,15 @@ tr:hover td{background:var(--pale)}
       <div class="sidebar-item" onclick="navegar('capitulos',this)">
         <span class="sidebar-icon">📖</span> Capítulos
       </div>
-      <div class="sidebar-section">Importar</div>
       <div class="sidebar-item" onclick="navegar('importar',this)">
         <span class="sidebar-icon">⬆️</span> Importar JSON
+      </div>
+      <div class="sidebar-section">Blog</div>
+      <div class="sidebar-item" onclick="navegar('blog',this)">
+        <span class="sidebar-icon">✍️</span> Posts do Blog
+      </div>
+      <div class="sidebar-item" onclick="navegar('newsletter',this)">
+        <span class="sidebar-icon">📧</span> Newsletter
       </div>
       <div class="sidebar-section">Comunidade</div>
       <div class="sidebar-item" onclick="navegar('alunos',this)">
@@ -199,8 +204,6 @@ tr:hover td{background:var(--pale)}
         <span class="sidebar-icon">💬</span> Comentários
       </div>
     </div>
-
-    <!-- CONTEÚDO -->
     <div class="admin-content" id="adminContent">
       <div class="spinner"></div>
     </div>
@@ -213,7 +216,7 @@ tr:hover td{background:var(--pale)}
     <div class="modal-title" id="modalModuloTitle">Novo Módulo</div>
     <input type="hidden" id="mEditId">
     <div class="form-group">
-      <label class="form-label">ID do módulo (sem espaços, ex: apostasia)</label>
+      <label class="form-label">ID do módulo (sem espaços)</label>
       <input class="form-inp" id="mId" placeholder="apostasia">
     </div>
     <div class="form-group">
@@ -221,7 +224,7 @@ tr:hover td{background:var(--pale)}
       <input class="form-inp" id="mTitulo" placeholder="A Apostasia dos Últimos Dias">
     </div>
     <div class="form-group">
-      <label class="form-label">Descrição curta</label>
+      <label class="form-label">Descrição</label>
       <input class="form-inp" id="mDesc" placeholder="Breve descrição do módulo">
     </div>
     <div class="form-row">
@@ -230,7 +233,7 @@ tr:hover td{background:var(--pale)}
         <input class="form-inp" id="mCaps" type="number" value="3" min="1">
       </div>
       <div class="form-group">
-        <label class="form-label">Duração (minutos)</label>
+        <label class="form-label">Duração (min)</label>
         <input class="form-inp" id="mMin" type="number" value="40" min="5">
       </div>
     </div>
@@ -242,8 +245,8 @@ tr:hover td{background:var(--pale)}
       <div class="form-group">
         <label class="form-label">Status</label>
         <select class="form-inp" id="mAtivo">
-          <option value="true">Ativo (visível)</option>
-          <option value="false">Inativo (oculto)</option>
+          <option value="true">Ativo</option>
+          <option value="false">Inativo</option>
         </select>
       </div>
     </div>
@@ -265,27 +268,27 @@ tr:hover td{background:var(--pale)}
         <select class="form-inp" id="cModuloId"></select>
       </div>
       <div class="form-group">
-        <label class="form-label">Número do capítulo</label>
+        <label class="form-label">Número</label>
         <input class="form-inp" id="cNumero" type="number" value="1" min="1">
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Título do capítulo</label>
-      <input class="form-inp" id="cTitulo" placeholder="O que é Apostasia nas Escrituras?">
+      <label class="form-label">Título</label>
+      <input class="form-inp" id="cTitulo" placeholder="Título do capítulo">
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Versículo âncora (texto)</label>
-        <input class="form-inp" id="cAncoraTexto" placeholder="Texto do versículo...">
+        <label class="form-label">Versículo âncora</label>
+        <input class="form-inp" id="cAncoraTexto" placeholder="Texto do versículo">
       </div>
       <div class="form-group">
-        <label class="form-label">Referência (ex: 1 Tm 4:1)</label>
+        <label class="form-label">Referência</label>
         <input class="form-inp" id="cAncoraRef" placeholder="1 Timóteo 4:1">
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Introdução do capítulo</label>
-      <textarea class="form-textarea" id="cIntro" placeholder="Parágrafo introdutório do capítulo..."></textarea>
+      <label class="form-label">Introdução</label>
+      <textarea class="form-textarea" id="cIntro" placeholder="Parágrafo introdutório..."></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Seção 1 — Título</label>
@@ -293,54 +296,148 @@ tr:hover td{background:var(--pale)}
     </div>
     <div class="form-group">
       <label class="form-label">Seção 1 — Texto</label>
-      <textarea class="form-textarea" id="cSec1Texto" style="min-height:80px" placeholder="Conteúdo da primeira seção..."></textarea>
+      <textarea class="form-textarea" id="cSec1Texto" style="min-height:80px"></textarea>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Seção 1 — Versículo</label>
-        <input class="form-inp" id="cSec1VersTexto" placeholder="Texto do versículo">
+        <input class="form-inp" id="cSec1VersTexto" placeholder="Texto">
       </div>
       <div class="form-group">
-        <label class="form-label">Seção 1 — Referência</label>
-        <input class="form-inp" id="cSec1VersRef" placeholder="Ex: João 3:16">
+        <label class="form-label">Seção 1 — Ref.</label>
+        <input class="form-inp" id="cSec1VersRef" placeholder="João 3:16">
       </div>
     </div>
     <div class="form-group">
       <label class="form-label">Seção 2 — Título</label>
-      <input class="form-inp" id="cSec2Titulo" placeholder="Título da segunda seção">
+      <input class="form-inp" id="cSec2Titulo">
     </div>
     <div class="form-group">
       <label class="form-label">Seção 2 — Texto</label>
-      <textarea class="form-textarea" id="cSec2Texto" style="min-height:80px" placeholder="Conteúdo da segunda seção..."></textarea>
+      <textarea class="form-textarea" id="cSec2Texto" style="min-height:80px"></textarea>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Seção 2 — Versículo</label>
-        <input class="form-inp" id="cSec2VersTexto" placeholder="Texto do versículo">
+        <input class="form-inp" id="cSec2VersTexto">
       </div>
       <div class="form-group">
-        <label class="form-label">Seção 2 — Referência</label>
-        <input class="form-inp" id="cSec2VersRef" placeholder="Ex: Mateus 24:12">
+        <label class="form-label">Seção 2 — Ref.</label>
+        <input class="form-inp" id="cSec2VersRef">
       </div>
     </div>
     <div class="form-group">
       <label class="form-label">Reflexões (uma por linha)</label>
-      <textarea class="form-textarea" id="cReflexoes" style="min-height:70px"
-        placeholder="Você consegue identificar...&#10;Qual a diferença entre..."></textarea>
+      <textarea class="form-textarea" id="cReflexoes" style="min-height:70px"></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Ação da semana</label>
-      <textarea class="form-textarea" id="cAcao" style="min-height:60px"
-        placeholder="Esta semana, leia..."></textarea>
+      <textarea class="form-textarea" id="cAcao" style="min-height:60px"></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">Oração do capítulo</label>
-      <textarea class="form-textarea" id="cOracao" style="min-height:70px"
-        placeholder="Senhor, guarda meu coração..."></textarea>
+      <label class="form-label">Oração</label>
+      <textarea class="form-textarea" id="cOracao" style="min-height:70px"></textarea>
     </div>
     <div class="modal-actions">
       <button class="btn-cancelar" onclick="fecharModal('modalCapitulo')">Cancelar</button>
       <button class="btn-salvar" onclick="salvarCapitulo()">Salvar capítulo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POST BLOG -->
+<div class="modal-bg" id="modalPost">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-title" id="modalPostTitle">Novo Post</div>
+    <input type="hidden" id="pEditId">
+
+    <div class="form-group">
+      <label class="form-label">Título do post</label>
+      <input class="form-inp" id="pTitulo" placeholder="Ex: O que a Bíblia diz sobre os últimos dias?"
+        oninput="gerarSlug(this.value)">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Slug (URL)</label>
+        <input class="form-inp" id="pSlug" placeholder="o-que-a-biblia-diz">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select class="form-inp" id="pCategoria">
+          <option value="apostasia">Apostasia</option>
+          <option value="profecias">Profecias</option>
+          <option value="vida-crista">Vida cristã</option>
+          <option value="arrebatamento">Arrebatamento</option>
+          <option value="apocalipse">Apocalipse</option>
+          <option value="oracao">Oração</option>
+          <option value="discernimento">Discernimento</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row-3">
+      <div class="form-group">
+        <label class="form-label">Emoji</label>
+        <input class="form-inp" id="pEmoji" value="✦" maxlength="4">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Leitura (min)</label>
+        <input class="form-inp" id="pLeitura" type="number" value="5" min="1" max="60">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cor de fundo</label>
+        <select class="form-inp" id="pImgClass">
+          <option value="deep">Roxo escuro</option>
+          <option value="sage">Verde</option>
+          <option value="amber">Âmbar</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Resumo (excerpt)</label>
+      <textarea class="form-textarea" id="pExcerpt" style="min-height:70px"
+        placeholder="Uma frase impactante que vai aparecer na listagem do blog..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Corpo do post (HTML)</label>
+      <textarea class="form-textarea corpo" id="pCorpo"
+        placeholder="<h2>Título da seção</h2>&#10;<p>Texto do parágrafo...</p>&#10;<blockquote>Versículo<span class=&quot;versiculo-ref&quot;>Ref</span></blockquote>"
+        oninput="atualizarPreview()"></textarea>
+      <div class="corpo-hint">
+        Use HTML: <code>&lt;h2&gt;</code> para seções · <code>&lt;p&gt;</code> para parágrafos ·
+        <code>&lt;blockquote&gt;texto&lt;span class="versiculo-ref"&gt;Ref&lt;/span&gt;&lt;/blockquote&gt;</code> para versículos
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Preview do corpo</label>
+      <div class="preview-box" id="postPreview"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Destaque na home?</label>
+        <select class="form-inp" id="pDestaque">
+          <option value="false">Não</option>
+          <option value="true">Sim — aparece em destaque</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-inp" id="pPublicado">
+          <option value="true">Publicado</option>
+          <option value="false">Rascunho</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancelar" onclick="fecharModal('modalPost')">Cancelar</button>
+      <button class="btn-salvar" onclick="salvarPost(false)">Salvar rascunho</button>
+      <button class="btn-publicar" onclick="salvarPost(true)">✓ Publicar</button>
     </div>
   </div>
 </div>
@@ -350,9 +447,7 @@ const SUPABASE_URL = "https://ttcdhthjtdnudczakuhu.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0Y2RodGhqdGRudWRjemFrdWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTkxODIsImV4cCI6MjA5NDYzNTE4Mn0.fDVyCS3uj2qIJHDJOqMvRSLhkW_aGC5lXzQnLNdH6AI";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── SENHA ADMIN — TROQUE AQUI ────────────────────────────────────────
 const SENHA_ADMIN = "escola2025";
-
 let paginaAtual = "dashboard";
 let modulosCache = [];
 
@@ -368,13 +463,7 @@ function fazerLogin() {
     document.getElementById("loginErro").style.display = "block";
   }
 }
-
-function sair() {
-  sessionStorage.removeItem("adminOk");
-  location.reload();
-}
-
-// Verifica se já estava logado
+function sair() { sessionStorage.removeItem("adminOk"); location.reload(); }
 if (sessionStorage.getItem("adminOk") === "1") {
   document.getElementById("loginWrap").style.display = "none";
   document.getElementById("adminApp").style.display = "block";
@@ -386,109 +475,114 @@ function navegar(pagina, el) {
   paginaAtual = pagina;
   document.querySelectorAll(".sidebar-item").forEach(i => i.classList.remove("active"));
   if (el) el.classList.add("active");
-  const c = document.getElementById("adminContent");
-  c.innerHTML = `<div class="spinner"></div>`;
-  const fns = { dashboard: renderDashboard, modulos: renderModulos, capitulos: renderCapitulos, alunos: renderAlunos, comentarios: renderComentarios, importar: renderImportar };
+  document.getElementById("adminContent").innerHTML = `<div class="spinner"></div>`;
+  const fns = { dashboard: renderDashboard, modulos: renderModulos, capitulos: renderCapitulos,
+    alunos: renderAlunos, comentarios: renderComentarios, importar: renderImportar,
+    blog: renderBlog, newsletter: renderNewsletter };
   if (fns[pagina]) fns[pagina]();
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────
 async function renderDashboard() {
   const c = document.getElementById("adminContent");
-  const [modRes, capRes, aluRes] = await Promise.all([
+  const [modRes, capRes, aluRes, postRes, nlRes] = await Promise.all([
     sb.from("modulos_conteudo").select("*", { count: "exact" }),
     sb.from("capitulos_conteudo").select("*", { count: "exact" }),
     sb.from("purchases").select("*", { count: "exact" }).eq("ativo", true),
+    sb.from("blog_posts").select("*", { count: "exact" }).eq("publicado", true),
+    sb.from("newsletter_subscribers").select("*", { count: "exact" }).eq("ativo", true),
   ]);
-  const totalMod = modRes.count || 0;
-  const totalCap = capRes.count || 0;
-  const totalAlu = aluRes.count || 0;
-
   c.innerHTML = `
   <div class="page-title">Dashboard</div>
-  <div class="page-sub">Visão geral da Escola Profética</div>
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-num">${totalMod}</div><div class="stat-label">Módulos cadastrados</div></div>
-    <div class="stat-card"><div class="stat-num">${totalCap}</div><div class="stat-label">Capítulos publicados</div></div>
-    <div class="stat-card"><div class="stat-num">${totalAlu}</div><div class="stat-label">Alunos com acesso</div></div>
+  <div class="page-sub">Visão geral — Escola Profética & Blog</div>
+  <div class="stats-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="stat-card"><div class="stat-num">${modRes.count||0}</div><div class="stat-label">Módulos</div></div>
+    <div class="stat-card"><div class="stat-num">${capRes.count||0}</div><div class="stat-label">Capítulos</div></div>
+    <div class="stat-card"><div class="stat-num">${aluRes.count||0}</div><div class="stat-label">Alunos</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${postRes.count||0}</div><div class="stat-label">Posts publicados</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--sage)">${nlRes.count||0}</div><div class="stat-label">Assinantes</div></div>
   </div>
-  <div class="table-wrap">
-    <div class="table-header"><span class="table-title">Módulos publicados</span>
-      <button class="btn-add" onclick="abrirModalModulo()">+ Novo módulo</button>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="table-wrap">
+      <div class="table-header"><span class="table-title">📚 Últimos módulos</span>
+        <button class="btn-add" onclick="abrirModalModulo()">+ Módulo</button></div>
+      <div id="dashModulosList"><div class="spinner"></div></div>
     </div>
-    <div id="dashModulosList"><div class="spinner"></div></div>
+    <div class="table-wrap">
+      <div class="table-header"><span class="table-title">✍️ Últimos posts</span>
+        <button class="btn-add" onclick="navegar('blog',document.querySelectorAll('.sidebar-item')[6])">Ver todos</button></div>
+      <div id="dashPostsList"><div class="spinner"></div></div>
+    </div>
   </div>`;
-  await carregarModulosDash();
+  carregarModulosDash();
+  carregarPostsDash();
 }
 
 async function carregarModulosDash() {
-  const { data } = await sb.from("modulos_conteudo").select("*").order("ordem");
+  const { data } = await sb.from("modulos_conteudo").select("*").order("ordem").limit(5);
   modulosCache = data || [];
   const el = document.getElementById("dashModulosList");
   if (!el) return;
-  if (!modulosCache.length) { el.innerHTML = `<div class="empty">Nenhum módulo ainda. Clique em "+ Novo módulo" para começar.</div>`; return; }
-  el.innerHTML = `<table><thead><tr><th>Ordem</th><th>ID</th><th>Título</th><th>Caps</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+  if (!modulosCache.length) { el.innerHTML = `<div class="empty">Nenhum módulo ainda.</div>`; return; }
+  el.innerHTML = `<table><thead><tr><th>Título</th><th>Status</th><th>Ações</th></tr></thead><tbody>
   ${modulosCache.map(m => `<tr>
-    <td>${m.ordem}</td>
-    <td><code style="font-size:0.75rem;background:var(--pale);padding:2px 6px;border-radius:4px">${m.modulo_id}</code></td>
     <td>${m.titulo}</td>
-    <td>${m.capitulos}</td>
-    <td><span class="${m.ativo ? 'badge-ativo' : 'badge-inativo'}">${m.ativo ? 'Ativo' : 'Inativo'}</span></td>
-    <td style="display:flex;gap:6px">
-      <button class="btn-edit" onclick="editarModulo('${m.id}')">Editar</button>
-      <button class="btn-del" onclick="deletarModulo('${m.id}','${m.titulo}')">Excluir</button>
-    </td>
-  </tr>`).join("")}
-  </tbody></table>`;
+    <td><span class="${m.ativo?'badge-ativo':'badge-inativo'}">${m.ativo?'Ativo':'Inativo'}</span></td>
+    <td><button class="btn-edit" onclick="editarModulo('${m.id}')">Editar</button></td>
+  </tr>`).join("")}</tbody></table>`;
+}
+
+async function carregarPostsDash() {
+  const { data } = await sb.from("blog_posts").select("id,titulo,publicado,created_at").order("created_at",{ascending:false}).limit(5);
+  const el = document.getElementById("dashPostsList");
+  if (!el) return;
+  if (!data||!data.length) { el.innerHTML = `<div class="empty">Nenhum post ainda.</div>`; return; }
+  el.innerHTML = `<table><thead><tr><th>Título</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+  ${data.map(p => `<tr>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.titulo}</td>
+    <td><span class="${p.publicado?'badge-ativo':'badge-rascunho'}">${p.publicado?'Publicado':'Rascunho'}</span></td>
+    <td><button class="btn-edit" onclick="editarPost('${p.id}')">Editar</button></td>
+  </tr>`).join("")}</tbody></table>`;
 }
 
 // ── MÓDULOS ───────────────────────────────────────────────────────────
 async function renderModulos() {
   const c = document.getElementById("adminContent");
-  c.innerHTML = `
-  <div class="page-title">Módulos</div>
-  <div class="page-sub">Gerencie os módulos da Escola Profética</div>
+  c.innerHTML = `<div class="page-title">Módulos</div><div class="page-sub">Gerencie os módulos da Escola Profética</div>
   <div class="table-wrap">
     <div class="table-header"><span class="table-title">Todos os módulos</span>
-      <button class="btn-add" onclick="abrirModalModulo()">+ Novo módulo</button>
-    </div>
+      <button class="btn-add" onclick="abrirModalModulo()">+ Novo módulo</button></div>
     <div id="modulosList"><div class="spinner"></div></div>
   </div>`;
   const { data } = await sb.from("modulos_conteudo").select("*").order("ordem");
   modulosCache = data || [];
   const el = document.getElementById("modulosList");
   if (!modulosCache.length) { el.innerHTML = `<div class="empty">Nenhum módulo cadastrado ainda.</div>`; return; }
-  el.innerHTML = `<table><thead><tr><th>Ordem</th><th>Módulo</th><th>Título</th><th>Caps</th><th>Min</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+  el.innerHTML = `<table><thead><tr><th>Ordem</th><th>Módulo</th><th>Título</th><th>Caps</th><th>Status</th><th>Ações</th></tr></thead><tbody>
   ${modulosCache.map(m => `<tr>
     <td>${m.ordem}</td>
     <td><code style="font-size:0.75rem;background:var(--pale);padding:2px 6px;border-radius:4px">${m.modulo_id}</code></td>
-    <td>${m.titulo}</td>
-    <td>${m.capitulos}</td>
-    <td>${m.minutos}min</td>
-    <td><span class="${m.ativo ? 'badge-ativo' : 'badge-inativo'}">${m.ativo ? 'Ativo' : 'Inativo'}</span></td>
+    <td>${m.titulo}</td><td>${m.capitulos}</td>
+    <td><span class="${m.ativo?'badge-ativo':'badge-inativo'}">${m.ativo?'Ativo':'Inativo'}</span></td>
     <td style="display:flex;gap:6px">
       <button class="btn-edit" onclick="editarModulo('${m.id}')">Editar</button>
       <button class="btn-del" onclick="deletarModulo('${m.id}','${m.titulo}')">Excluir</button>
     </td>
-  </tr>`).join("")}
-  </tbody></table>`;
+  </tr>`).join("")}</tbody></table>`;
 }
 
 // ── CAPÍTULOS ─────────────────────────────────────────────────────────
 async function renderCapitulos() {
   const c = document.getElementById("adminContent");
-  c.innerHTML = `
-  <div class="page-title">Capítulos</div>
-  <div class="page-sub">Gerencie o conteúdo de cada capítulo</div>
+  c.innerHTML = `<div class="page-title">Capítulos</div><div class="page-sub">Gerencie o conteúdo de cada capítulo</div>
   <div class="table-wrap">
     <div class="table-header"><span class="table-title">Todos os capítulos</span>
-      <button class="btn-add" onclick="abrirModalCapitulo()">+ Novo capítulo</button>
-    </div>
+      <button class="btn-add" onclick="abrirModalCapitulo()">+ Novo capítulo</button></div>
     <div id="capitulosList"><div class="spinner"></div></div>
   </div>`;
   const { data } = await sb.from("capitulos_conteudo").select("*").order("modulo_id").order("numero");
   const el = document.getElementById("capitulosList");
-  if (!data || !data.length) { el.innerHTML = `<div class="empty">Nenhum capítulo cadastrado ainda.</div>`; return; }
+  if (!data||!data.length) { el.innerHTML = `<div class="empty">Nenhum capítulo cadastrado ainda.</div>`; return; }
   el.innerHTML = `<table><thead><tr><th>Módulo</th><th>Cap.</th><th>Título</th><th>Ações</th></tr></thead><tbody>
   ${data.map(cap => `<tr>
     <td><code style="font-size:0.75rem;background:var(--pale);padding:2px 6px;border-radius:4px">${cap.modulo_id}</code></td>
@@ -498,33 +592,167 @@ async function renderCapitulos() {
       <button class="btn-edit" onclick="editarCapitulo('${cap.id}')">Editar</button>
       <button class="btn-del" onclick="deletarCapitulo('${cap.id}','${cap.titulo}')">Excluir</button>
     </td>
-  </tr>`).join("")}
-  </tbody></table>`;
+  </tr>`).join("")}</tbody></table>`;
+}
+
+// ── BLOG ──────────────────────────────────────────────────────────────
+async function renderBlog() {
+  const c = document.getElementById("adminContent");
+  c.innerHTML = `<div class="page-title">Posts do Blog</div>
+  <div class="page-sub">Crie e publique artigos sem tocar no código — direto pelo admin</div>
+  <div class="table-wrap">
+    <div class="table-header"><span class="table-title">Todos os posts</span>
+      <button class="btn-add" onclick="abrirModalPost()">+ Novo post</button></div>
+    <div id="blogLista"><div class="spinner"></div></div>
+  </div>`;
+  const { data } = await sb.from("blog_posts").select("*").order("created_at",{ascending:false});
+  const el = document.getElementById("blogLista");
+  if (!data||!data.length) { el.innerHTML = `<div class="empty">Nenhum post ainda. Clique em "+ Novo post" para começar.</div>`; return; }
+  el.innerHTML = `<table><thead><tr><th>Título</th><th>Categoria</th><th>Leitura</th><th>Destaque</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead><tbody>
+  ${data.map(p => `<tr>
+    <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${p.titulo}</td>
+    <td><span style="background:var(--light);color:var(--mid);font-size:0.68rem;padding:2px 8px;border-radius:20px">${p.categoria}</span></td>
+    <td>${p.leitura_min}min</td>
+    <td>${p.destaque?'⭐':'—'}</td>
+    <td><span class="${p.publicado?'badge-ativo':'badge-rascunho'}">${p.publicado?'Publicado':'Rascunho'}</span></td>
+    <td style="font-size:0.75rem;color:var(--muted)">${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
+    <td style="display:flex;gap:6px">
+      <button class="btn-edit" onclick="editarPost('${p.id}')">Editar</button>
+      <button class="btn-del" onclick="deletarPost('${p.id}','${p.titulo}')">Excluir</button>
+    </td>
+  </tr>`).join("")}</tbody></table>`;
+}
+
+function abrirModalPost(dados = null) {
+  document.getElementById("modalPostTitle").textContent = dados ? "Editar Post" : "Novo Post";
+  document.getElementById("pEditId").value = dados?.id || "";
+  document.getElementById("pTitulo").value = dados?.titulo || "";
+  document.getElementById("pSlug").value = dados?.slug || "";
+  document.getElementById("pCategoria").value = dados?.categoria || "vida-crista";
+  document.getElementById("pEmoji").value = dados?.emoji || "✦";
+  document.getElementById("pLeitura").value = dados?.leitura_min || 5;
+  document.getElementById("pImgClass").value = dados?.img_class || "deep";
+  document.getElementById("pExcerpt").value = dados?.excerpt || "";
+  document.getElementById("pCorpo").value = dados?.corpo || "";
+  document.getElementById("pDestaque").value = dados?.destaque ? "true" : "false";
+  document.getElementById("pPublicado").value = dados?.publicado !== false ? "true" : "false";
+  atualizarPreview();
+  document.getElementById("modalPost").classList.add("show");
+}
+
+async function editarPost(id) {
+  const { data } = await sb.from("blog_posts").select("*").eq("id", id).single();
+  if (data) abrirModalPost(data);
+}
+
+async function salvarPost(publicar) {
+  const id = document.getElementById("pEditId").value;
+  const payload = {
+    titulo:      document.getElementById("pTitulo").value.trim(),
+    slug:        document.getElementById("pSlug").value.trim(),
+    categoria:   document.getElementById("pCategoria").value,
+    emoji:       document.getElementById("pEmoji").value.trim() || "✦",
+    leitura_min: parseInt(document.getElementById("pLeitura").value),
+    img_class:   document.getElementById("pImgClass").value,
+    excerpt:     document.getElementById("pExcerpt").value.trim(),
+    corpo:       document.getElementById("pCorpo").value.trim(),
+    destaque:    document.getElementById("pDestaque").value === "true",
+    publicado:   publicar,
+    updated_at:  new Date().toISOString()
+  };
+  if (!payload.titulo || !payload.slug) { mostrarToast("⚠️ Preencha título e slug"); return; }
+  if (id) {
+    await sb.from("blog_posts").update(payload).eq("id", id);
+  } else {
+    await sb.from("blog_posts").insert(payload);
+  }
+  fecharModal("modalPost");
+  mostrarToast(publicar ? "✓ Post publicado!" : "✓ Rascunho salvo!");
+  navegar("blog", null);
+}
+
+async function deletarPost(id, titulo) {
+  if (!confirm(`Excluir o post "${titulo}"?`)) return;
+  await sb.from("blog_posts").delete().eq("id", id);
+  mostrarToast("✓ Post excluído");
+  navegar("blog", null);
+}
+
+function gerarSlug(titulo) {
+  const slug = titulo.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim().replace(/\s+/g, "-")
+    .replace(/-+/g, "-").substring(0, 80);
+  document.getElementById("pSlug").value = slug;
+}
+
+function atualizarPreview() {
+  const corpo = document.getElementById("pCorpo").value;
+  document.getElementById("postPreview").innerHTML = corpo || '<span style="color:var(--muted);font-size:0.8rem">Preview aparece aqui...</span>';
+}
+
+// ── NEWSLETTER ────────────────────────────────────────────────────────
+async function renderNewsletter() {
+  const c = document.getElementById("adminContent");
+  const { data, count } = await sb.from("newsletter_subscribers")
+    .select("*", { count: "exact" })
+    .eq("ativo", true)
+    .order("created_at", { ascending: false });
+
+  c.innerHTML = `<div class="page-title">Newsletter</div>
+  <div class="page-sub">${count||0} assinantes ativos</div>
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn-add" onclick="exportarEmails()">📥 Exportar CSV</button>
+  </div>
+  <div class="table-wrap">
+    <div class="table-header"><span class="table-title">Assinantes</span></div>
+    <div id="nlLista">${!data||!data.length
+      ? '<div class="empty">Nenhum assinante ainda.</div>'
+      : data.map(s => `<div class="nl-item">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--sage-light);color:var(--sage);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0">${s.email[0].toUpperCase()}</div>
+          <div class="nl-email">${s.email}</div>
+          <div class="nl-data">${s.origem||'blog'} · ${new Date(s.created_at).toLocaleDateString('pt-BR')}</div>
+          <button class="btn-del" onclick="removerAssinante('${s.id}','${s.email}')">Remover</button>
+        </div>`).join("")
+    }</div>
+  </div>`;
+}
+
+function exportarEmails() {
+  sb.from("newsletter_subscribers").select("email,nome,created_at").eq("ativo",true).then(({data}) => {
+    if (!data||!data.length) { mostrarToast("⚠️ Nenhum assinante para exportar"); return; }
+    const csv = "email,nome,data\n" + data.map(s => `${s.email},${s.nome||""},${new Date(s.created_at).toLocaleDateString('pt-BR')}`).join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    a.download = "newsletter-" + new Date().toISOString().split("T")[0] + ".csv";
+    a.click();
+    mostrarToast("✓ CSV exportado!");
+  });
+}
+
+async function removerAssinante(id, email) {
+  if (!confirm(`Remover ${email} da newsletter?`)) return;
+  await sb.from("newsletter_subscribers").update({ ativo: false }).eq("id", id);
+  mostrarToast("✓ Assinante removido");
+  navegar("newsletter", null);
 }
 
 // ── ALUNOS ────────────────────────────────────────────────────────────
 async function renderAlunos() {
   const c = document.getElementById("adminContent");
-  c.innerHTML = `
-  <div class="page-title">Alunos</div>
-  <div class="page-sub">Alunos com acesso à escola</div>
-  <div class="table-wrap">
-    <div class="table-header"><span class="table-title">Acessos ativos</span></div>
-    <div id="alunosList"><div class="spinner"></div></div>
-  </div>`;
-
-  const { data } = await sb.from("purchases").select("user_id, produto, created_at, ativo").eq("ativo", true).order("created_at", { ascending: false });
+  c.innerHTML = `<div class="page-title">Alunos</div><div class="page-sub">Alunos com acesso à escola</div>
+  <div class="table-wrap"><div class="table-header"><span class="table-title">Acessos ativos</span></div>
+  <div id="alunosList"><div class="spinner"></div></div></div>`;
+  const { data } = await sb.from("purchases").select("user_id,produto,created_at,ativo").eq("ativo",true).order("created_at",{ascending:false});
   const el = document.getElementById("alunosList");
-  if (!data || !data.length) { el.innerHTML = `<div class="empty">Nenhum aluno com acesso ainda.</div>`; return; }
+  if (!data||!data.length) { el.innerHTML = `<div class="empty">Nenhum aluno com acesso ainda.</div>`; return; }
   el.innerHTML = data.map(a => {
     const dt = new Date(a.created_at).toLocaleDateString("pt-BR");
-    const inicial = a.user_id.substring(0, 2).toUpperCase();
     return `<div class="aluno-row">
-      <div class="aluno-avatar">${inicial}</div>
-      <div class="aluno-info">
-        <div class="aluno-email">${a.user_id}</div>
-        <div class="aluno-data">${a.produto} · Acesso desde ${dt}</div>
-      </div>
+      <div class="aluno-avatar">${a.user_id.substring(0,2).toUpperCase()}</div>
+      <div class="aluno-info"><div class="aluno-email">${a.user_id}</div>
+      <div class="aluno-data">${a.produto} · Desde ${dt}</div></div>
       <span class="badge-ativo">Ativo</span>
     </div>`;
   }).join("");
@@ -533,16 +761,12 @@ async function renderAlunos() {
 // ── COMENTÁRIOS ───────────────────────────────────────────────────────
 async function renderComentarios() {
   const c = document.getElementById("adminContent");
-  c.innerHTML = `
-  <div class="page-title">Comentários</div>
-  <div class="page-sub">Comentários da comunidade por módulo</div>
-  <div class="table-wrap">
-    <div class="table-header"><span class="table-title">Todos os comentários</span></div>
-    <div id="comentariosList"><div class="spinner"></div></div>
-  </div>`;
-  const { data } = await sb.from("module_comments").select("*").order("created_at", { ascending: false }).limit(50);
+  c.innerHTML = `<div class="page-title">Comentários</div><div class="page-sub">Comentários da comunidade</div>
+  <div class="table-wrap"><div class="table-header"><span class="table-title">Todos os comentários</span></div>
+  <div id="comentariosList"><div class="spinner"></div></div></div>`;
+  const { data } = await sb.from("module_comments").select("*").order("created_at",{ascending:false}).limit(50);
   const el = document.getElementById("comentariosList");
-  if (!data || !data.length) { el.innerHTML = `<div class="empty">Nenhum comentário ainda.</div>`; return; }
+  if (!data||!data.length) { el.innerHTML = `<div class="empty">Nenhum comentário ainda.</div>`; return; }
   el.innerHTML = `<table><thead><tr><th>Módulo</th><th>Cap.</th><th>Comentário</th><th>Curtidas</th><th>Data</th></tr></thead><tbody>
   ${data.map(com => `<tr>
     <td><code style="font-size:0.75rem;background:var(--pale);padding:2px 6px;border-radius:4px">${com.modulo_id}</code></td>
@@ -550,8 +774,45 @@ async function renderComentarios() {
     <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${com.texto}</td>
     <td>🙏 ${com.curtidas}</td>
     <td>${new Date(com.created_at).toLocaleDateString("pt-BR")}</td>
-  </tr>`).join("")}
-  </tbody></table>`;
+  </tr>`).join("")}</tbody></table>`;
+}
+
+// ── IMPORTAR ──────────────────────────────────────────────────────────
+function renderImportar() {
+  document.getElementById("adminContent").innerHTML = `
+  <div class="page-title">Importar JSON</div>
+  <div class="page-sub">Cole o JSON de um módulo completo e importe tudo de uma vez</div>
+  <div class="table-wrap" style="padding:20px">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">Cole o JSON aqui</div>
+    <textarea id="jsonImport" style="width:100%;min-height:280px;padding:12px;border:1.5px solid var(--borda);border-radius:8px;font-family:monospace;font-size:0.8rem;background:var(--pale);color:var(--ink);outline:none;resize:vertical"></textarea>
+    <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+      <button class="btn-salvar" onclick="processarImport()" style="padding:10px 24px">⬆ Importar</button>
+      <button class="btn-cancelar" onclick="document.getElementById('jsonImport').value=''">Limpar</button>
+      <span id="importStatus" style="font-size:0.82rem;color:var(--muted)"></span>
+    </div>
+  </div>`;
+}
+
+async function processarImport() {
+  const txt = document.getElementById("jsonImport").value.trim();
+  const status = document.getElementById("importStatus");
+  if (!txt) { status.textContent = "⚠️ Cole o JSON primeiro"; return; }
+  let dados;
+  try { dados = JSON.parse(txt); } catch(e) { status.textContent = "❌ JSON inválido"; return; }
+  if (!dados.modulo||!dados.capitulos) { status.textContent = "❌ JSON deve ter 'modulo' e 'capitulos'"; return; }
+  status.textContent = "⏳ Importando...";
+  try {
+    await sb.from("modulos_conteudo").upsert(dados.modulo, { onConflict: "modulo_id" });
+    let ok = 0;
+    for (const cap of dados.capitulos) {
+      const payload = { modulo_id: dados.modulo.modulo_id, numero: cap.numero, titulo: cap.titulo,
+        ancora_texto: cap.ancora_texto, ancora_ref: cap.ancora_ref, conteudo: cap.conteudo };
+      const { error } = await sb.from("capitulos_conteudo").upsert(payload, { onConflict: "modulo_id,numero" });
+      if (!error) ok++;
+    }
+    status.textContent = `✓ Módulo "${dados.modulo.titulo}" + ${ok} capítulos importados!`;
+    status.style.color = "var(--sage)";
+  } catch(e) { status.textContent = "❌ Erro: " + e.message; status.style.color = "#C0392B"; }
 }
 
 // ── MODAL MÓDULO ──────────────────────────────────────────────────────
@@ -568,16 +829,12 @@ function abrirModalModulo(dados = null) {
   document.getElementById("mId").disabled = !!dados;
   document.getElementById("modalModulo").classList.add("show");
 }
-
-function editarModulo(id) {
-  const m = modulosCache.find(x => x.id === id);
-  if (m) abrirModalModulo(m);
-}
+function editarModulo(id) { const m = modulosCache.find(x => x.id === id); if (m) abrirModalModulo(m); }
 
 async function salvarModulo() {
   const id = document.getElementById("mEditId").value;
   const payload = {
-    modulo_id: document.getElementById("mId").value.trim().toLowerCase().replace(/\s/g, "_"),
+    modulo_id: document.getElementById("mId").value.trim().toLowerCase().replace(/\s/g,"_"),
     titulo: document.getElementById("mTitulo").value.trim(),
     descricao: document.getElementById("mDesc").value.trim(),
     capitulos: parseInt(document.getElementById("mCaps").value),
@@ -585,40 +842,30 @@ async function salvarModulo() {
     ordem: parseInt(document.getElementById("mOrdem").value),
     ativo: document.getElementById("mAtivo").value === "true",
   };
-  if (!payload.modulo_id || !payload.titulo) { mostrarToast("⚠️ Preencha ID e título"); return; }
-  if (id) {
-    await sb.from("modulos_conteudo").update(payload).eq("id", id);
-  } else {
-    await sb.from("modulos_conteudo").insert(payload);
-  }
-  fecharModal("modalModulo");
-  mostrarToast("✓ Módulo salvo!");
-  navegar(paginaAtual, null);
+  if (!payload.modulo_id||!payload.titulo) { mostrarToast("⚠️ Preencha ID e título"); return; }
+  if (id) await sb.from("modulos_conteudo").update(payload).eq("id", id);
+  else await sb.from("modulos_conteudo").insert(payload);
+  fecharModal("modalModulo"); mostrarToast("✓ Módulo salvo!"); navegar(paginaAtual, null);
 }
 
 async function deletarModulo(id, titulo) {
-  if (!confirm(`Excluir o módulo "${titulo}"?\n\nIsso também remove todos os capítulos associados.`)) return;
-  await sb.from("capitulos_conteudo").delete().eq("modulo_id", modulosCache.find(m => m.id === id)?.modulo_id);
+  if (!confirm(`Excluir o módulo "${titulo}"?`)) return;
+  await sb.from("capitulos_conteudo").delete().eq("modulo_id", modulosCache.find(m=>m.id===id)?.modulo_id);
   await sb.from("modulos_conteudo").delete().eq("id", id);
-  mostrarToast("✓ Módulo excluído");
-  navegar(paginaAtual, null);
+  mostrarToast("✓ Módulo excluído"); navegar(paginaAtual, null);
 }
 
 // ── MODAL CAPÍTULO ────────────────────────────────────────────────────
 async function abrirModalCapitulo(dados = null) {
   document.getElementById("modalCapTitle").textContent = dados ? "Editar Capítulo" : "Novo Capítulo";
   document.getElementById("cEditId").value = dados?.id || "";
-
-  // Popula select de módulos
-  const { data: mods } = await sb.from("modulos_conteudo").select("modulo_id, titulo").order("ordem");
+  const { data: mods } = await sb.from("modulos_conteudo").select("modulo_id,titulo").order("ordem");
   const sel = document.getElementById("cModuloId");
-  sel.innerHTML = (mods || []).map(m => `<option value="${m.modulo_id}" ${dados?.modulo_id === m.modulo_id ? "selected" : ""}>${m.titulo}</option>`).join("");
-
+  sel.innerHTML = (mods||[]).map(m => `<option value="${m.modulo_id}" ${dados?.modulo_id===m.modulo_id?"selected":""}>${m.titulo}</option>`).join("");
   document.getElementById("cNumero").value = dados?.numero || 1;
   document.getElementById("cTitulo").value = dados?.titulo || "";
   document.getElementById("cAncoraTexto").value = dados?.ancora_texto || "";
   document.getElementById("cAncoraRef").value = dados?.ancora_ref || "";
-
   const con = dados?.conteudo || {};
   document.getElementById("cIntro").value = con.intro || "";
   const s1 = con.secoes?.[0] || {};
@@ -631,10 +878,9 @@ async function abrirModalCapitulo(dados = null) {
   document.getElementById("cSec2Texto").value = s2.texto || "";
   document.getElementById("cSec2VersTexto").value = s2.versiculo?.texto || "";
   document.getElementById("cSec2VersRef").value = s2.versiculo?.ref || "";
-  document.getElementById("cReflexoes").value = (con.reflexoes || []).join("\n");
+  document.getElementById("cReflexoes").value = (con.reflexoes||[]).join("\n");
   document.getElementById("cAcao").value = con.acao || "";
   document.getElementById("cOracao").value = con.oracao || "";
-
   document.getElementById("modalCapitulo").classList.add("show");
 }
 
@@ -645,144 +891,36 @@ async function editarCapitulo(id) {
 
 async function salvarCapitulo() {
   const id = document.getElementById("cEditId").value;
-  const reflexoesRaw = document.getElementById("cReflexoes").value;
-  const reflexoes = reflexoesRaw.split("\n").map(r => r.trim()).filter(Boolean);
-
+  const reflexoes = document.getElementById("cReflexoes").value.split("\n").map(r=>r.trim()).filter(Boolean);
   const secoes = [];
   const s1t = document.getElementById("cSec1Titulo").value.trim();
-  if (s1t) secoes.push({
-    titulo: s1t,
-    texto: document.getElementById("cSec1Texto").value.trim(),
-    versiculo: document.getElementById("cSec1VersTexto").value.trim() ? {
-      texto: document.getElementById("cSec1VersTexto").value.trim(),
-      ref: document.getElementById("cSec1VersRef").value.trim()
-    } : null
-  });
+  if (s1t) secoes.push({ titulo: s1t, texto: document.getElementById("cSec1Texto").value.trim(),
+    versiculo: document.getElementById("cSec1VersTexto").value.trim() ? { texto: document.getElementById("cSec1VersTexto").value.trim(), ref: document.getElementById("cSec1VersRef").value.trim() } : null });
   const s2t = document.getElementById("cSec2Titulo").value.trim();
-  if (s2t) secoes.push({
-    titulo: s2t,
-    texto: document.getElementById("cSec2Texto").value.trim(),
-    versiculo: document.getElementById("cSec2VersTexto").value.trim() ? {
-      texto: document.getElementById("cSec2VersTexto").value.trim(),
-      ref: document.getElementById("cSec2VersRef").value.trim()
-    } : null
-  });
-
+  if (s2t) secoes.push({ titulo: s2t, texto: document.getElementById("cSec2Texto").value.trim(),
+    versiculo: document.getElementById("cSec2VersTexto").value.trim() ? { texto: document.getElementById("cSec2VersTexto").value.trim(), ref: document.getElementById("cSec2VersRef").value.trim() } : null });
   const payload = {
     modulo_id: document.getElementById("cModuloId").value,
     numero: parseInt(document.getElementById("cNumero").value),
     titulo: document.getElementById("cTitulo").value.trim(),
     ancora_texto: document.getElementById("cAncoraTexto").value.trim(),
     ancora_ref: document.getElementById("cAncoraRef").value.trim(),
-    conteudo: {
-      intro: document.getElementById("cIntro").value.trim(),
-      secoes, reflexoes,
-      acao: document.getElementById("cAcao").value.trim(),
-      oracao: document.getElementById("cOracao").value.trim(),
-    }
+    conteudo: { intro: document.getElementById("cIntro").value.trim(), secoes, reflexoes,
+      acao: document.getElementById("cAcao").value.trim(), oracao: document.getElementById("cOracao").value.trim() }
   };
-
-  if (!payload.titulo || !payload.modulo_id) { mostrarToast("⚠️ Preencha módulo e título"); return; }
-
-  if (id) {
-    await sb.from("capitulos_conteudo").update(payload).eq("id", id);
-  } else {
-    await sb.from("capitulos_conteudo").upsert(payload, { onConflict: "modulo_id,numero" });
-  }
-  fecharModal("modalCapitulo");
-  mostrarToast("✓ Capítulo salvo!");
-  navegar(paginaAtual, null);
+  if (!payload.titulo||!payload.modulo_id) { mostrarToast("⚠️ Preencha módulo e título"); return; }
+  if (id) await sb.from("capitulos_conteudo").update(payload).eq("id", id);
+  else await sb.from("capitulos_conteudo").upsert(payload, { onConflict: "modulo_id,numero" });
+  fecharModal("modalCapitulo"); mostrarToast("✓ Capítulo salvo!"); navegar(paginaAtual, null);
 }
 
 async function deletarCapitulo(id, titulo) {
   if (!confirm(`Excluir o capítulo "${titulo}"?`)) return;
   await sb.from("capitulos_conteudo").delete().eq("id", id);
-  mostrarToast("✓ Capítulo excluído");
-  navegar(paginaAtual, null);
+  mostrarToast("✓ Capítulo excluído"); navegar(paginaAtual, null);
 }
 
 function fecharModal(id) { document.getElementById(id).classList.remove("show"); }
-
-// ── IMPORTAR JSON ────────────────────────────────────────────────────
-function renderImportar() {
-  const c = document.getElementById("adminContent");
-  c.innerHTML = `
-  <div class="page-title">Importar JSON</div>
-  <div class="page-sub">Cole o JSON de um módulo completo e importe tudo de uma vez</div>
-  <div class="table-wrap" style="padding:20px">
-    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">Cole o JSON aqui</div>
-    <textarea id="jsonImport" style="width:100%;min-height:280px;padding:12px;border:1.5px solid var(--borda);border-radius:8px;font-family:monospace;font-size:0.8rem;background:var(--pale);color:var(--ink);outline:none;resize:vertical" placeholder='{"modulo": {...}, "capitulos": [...]}'></textarea>
-    <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
-      <button class="btn-salvar" onclick="processarImport()" style="padding:10px 24px">⬆ Importar tudo</button>
-      <button class="btn-cancelar" onclick="document.getElementById('jsonImport').value=''">Limpar</button>
-      <span id="importStatus" style="font-size:0.82rem;color:var(--muted)"></span>
-    </div>
-    <div style="margin-top:20px;padding:14px;background:var(--pale);border-radius:8px;font-size:0.78rem;color:var(--muted);line-height:1.8">
-      <strong style="color:var(--ink)">Formato esperado:</strong><br>
-      O JSON deve ter a estrutura: <code>{ "modulo": {...}, "capitulos": [{...}, {...}] }</code><br>
-      O campo <code>modulo_id</code> é o identificador único (ex: "apostasia", "cavaleiros")<br>
-      Se o módulo ou capítulo já existir, será atualizado automaticamente.
-    </div>
-  </div>`;
-}
-
-async function processarImport() {
-  const txt = document.getElementById("jsonImport").value.trim();
-  const status = document.getElementById("importStatus");
-  if (!txt) { status.textContent = "⚠️ Cole o JSON primeiro"; return; }
-
-  let dados;
-  try {
-    dados = JSON.parse(txt);
-  } catch(e) {
-    status.textContent = "❌ JSON inválido — verifique a formatação";
-    status.style.color = "#C0392B";
-    return;
-  }
-
-  if (!dados.modulo || !dados.capitulos) {
-    status.textContent = "❌ JSON deve ter 'modulo' e 'capitulos'";
-    status.style.color = "#C0392B";
-    return;
-  }
-
-  status.textContent = "⏳ Importando módulo...";
-  status.style.color = "var(--muted)";
-
-  try {
-    // Salvar módulo
-    const { error: modErr } = await sb.from("modulos_conteudo")
-      .upsert(dados.modulo, { onConflict: "modulo_id" });
-
-    if (modErr) throw modErr;
-
-    // Salvar capítulos
-    status.textContent = `⏳ Importando ${dados.capitulos.length} capítulos...`;
-    let ok = 0;
-    for (const cap of dados.capitulos) {
-      const payload = {
-        modulo_id:    dados.modulo.modulo_id,
-        numero:       cap.numero,
-        titulo:       cap.titulo,
-        ancora_texto: cap.ancora_texto,
-        ancora_ref:   cap.ancora_ref,
-        conteudo:     cap.conteudo
-      };
-      const { error: capErr } = await sb.from("capitulos_conteudo")
-        .upsert(payload, { onConflict: "modulo_id,numero" });
-      if (!capErr) ok++;
-    }
-
-    status.textContent = `✓ Importado! Módulo "${dados.modulo.titulo}" + ${ok} capítulos.`;
-    status.style.color = "var(--sage)";
-    document.getElementById("jsonImport").value = "";
-
-  } catch(e) {
-    status.textContent = "❌ Erro: " + (e.message || "verifique o console");
-    status.style.color = "#C0392B";
-    console.error(e);
-  }
-}
 
 function mostrarToast(msg) {
   const t = document.createElement("div");
