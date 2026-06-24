@@ -49,7 +49,11 @@ VERSICULOS = [
     {"texto": "Mas eu, pela tua grande misericórdia, entrarei em tua casa.", "ref": "Salmos 5:7"},
     {"texto": "Aguarda o Senhor; sê forte, e ele fortalecerá o teu coração.", "ref": "Salmos 27:14"},
 ]
-
+@app.get("/escola/landing", response_class=HTMLResponse)
+async def escola_landing():
+    p = FRONTEND_PATH / "landing_escola.html"
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
+    
 @app.get("/", response_class=HTMLResponse)
 async def serve_frontend():
     return HTMLResponse(content=(FRONTEND_PATH / "index.html").read_text(encoding="utf-8"))
