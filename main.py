@@ -49,14 +49,31 @@ VERSICULOS = [
     {"texto": "Mas eu, pela tua grande misericórdia, entrarei em tua casa.", "ref": "Salmos 5:7"},
     {"texto": "Aguarda o Senhor; sê forte, e ele fortalecerá o teu coração.", "ref": "Salmos 27:14"},
 ]
+
+# ── SITE PESSOAL ──────────────────────────────────────
+@app.get("/", response_class=HTMLResponse)
+async def site_pessoal():
+    """Site pessoal dirleiluis.online"""
+    p = FRONTEND_PATH / "site.html"
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
+
+@app.get("/links", response_class=HTMLResponse)
+async def links():
+    """Página de links dirleiluis.online/links"""
+    p = FRONTEND_PATH / "links.html"
+    return HTMLResponse(content=p.read_text(encoding="utf-8"))
+
+# ── APP MANHÃ COM DEUS ────────────────────────────────
+@app.get("/manha-com-deus", response_class=HTMLResponse)
+@app.get("/manha-com-deus/", response_class=HTMLResponse)
+async def serve_frontend():
+    """App Manhã com Deus — dirleiluis.online/manha-com-deus"""
+    return HTMLResponse(content=(FRONTEND_PATH / "index.html").read_text(encoding="utf-8"))
+
 @app.get("/escola/landing", response_class=HTMLResponse)
 async def escola_landing():
     p = FRONTEND_PATH / "landing_escola.html"
     return HTMLResponse(content=p.read_text(encoding="utf-8"))
-    
-@app.get("/", response_class=HTMLResponse)
-async def serve_frontend():
-    return HTMLResponse(content=(FRONTEND_PATH / "index.html").read_text(encoding="utf-8"))
 
 @app.get("/health")
 async def health():
@@ -117,6 +134,7 @@ async def blog():
 async def admin():
     p = FRONTEND_PATH / "admin" / "index.html"
     if not p.exists():
+        from fastapi import HTTPException
         raise HTTPException(404)
     return HTMLResponse(content=p.read_text(encoding="utf-8"))
 
