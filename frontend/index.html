@@ -961,7 +961,7 @@ body.auth-mode { overflow: hidden; max-height: 100vh; }
 
   <!-- ESCOLA PROFÉTICA -->
 <div class="escola-banner" id="escolaBanner" style="display:none">
-  <div class="escola-inner" onclick="window.location.href='/escola/'">
+  <div class="escola-inner" onclick="planoUser==='mensal'?window.location.href='/escola/':window.location.href='/landing'">
     <div class="escola-icon">📖</div>
     <div class="escola-text">
       <div class="escola-tag">✦ NOVO</div>
@@ -1296,7 +1296,7 @@ function selEstado(e){
 }
 
 function gerarOuPaywall(){if(modo===2&&planoUser==="gratis"){tela("paywall");return;}gerarDevocional();}
-function assinar(){alert("Em breve: integração com Stripe!\n\nEntre em contato para assinar o Plano Mensal.");}
+function assinar(){ window.location.href = "/landing"; }
 function voltarInicial(){tela("inicial");}
 
 async function gerarDevocional(){
@@ -1582,7 +1582,7 @@ async function iniciarPlanoNovo(planoId, diaAtual) {
     document.getElementById("abaDevocional").style.display = "block";
     document.getElementById("abaHistorico").style.display = "none";
     document.getElementById("abaPlanos").style.display = "none";
-    tela("paywall");
+    irParaLanding();
     return;
   }
 
@@ -2407,7 +2407,7 @@ async function iniciarQuiz() {
     document.getElementById("abaHistorico").style.display = "none";
     document.getElementById("abaPlanos").style.display = "none";
     document.getElementById("abaQuiz").style.display = "none";
-    tela("paywall");
+    irParaLanding();
     return;
   }
   if (!_nivelSelecionado) return;
@@ -2585,7 +2585,7 @@ var _oracaoTipo = "diaria";
 async function abrirOracao(tipo) {
   if (!userAtual) return;
   if (planoUser !== "mensal") {
-    tela("paywall");
+    irParaLanding();
     document.querySelector(".nav-tab").classList.add("active");
     document.getElementById("abaDevocional").style.display = "block";
     document.getElementById("abaHistorico").style.display = "none";
@@ -2720,7 +2720,7 @@ function verificarPlanoOracao(tipo) {
     document.getElementById("abaHistorico").style.display = "none";
     document.getElementById("abaPlanos").style.display = "none";
     document.getElementById("abaQuiz").style.display = "none";
-    tela("paywall");
+    irParaLanding();
     window.scrollTo({top: 0, behavior: "smooth"});
     return;
   }
@@ -2839,7 +2839,7 @@ async function abrirMeditacao() {
     document.getElementById("abaHistorico").style.display = "none";
     document.getElementById("abaPlanos").style.display = "none";
     document.getElementById("abaQuiz").style.display = "none";
-    tela("paywall");
+    irParaLanding();
     window.scrollTo({top:0,behavior:"smooth"});
     return;
   }
@@ -3376,7 +3376,7 @@ async function gerarRelatorio() {
     document.querySelector(".nav-tab").classList.add("active");
     document.getElementById("abaDevocional").style.display="block";
     document.getElementById("abaRelatorio").style.display="none";
-    tela("paywall");
+    irParaLanding();
     return;
   }
   var btn = document.getElementById("btnRelatorio");
@@ -3558,7 +3558,7 @@ var _paragrafos = [];
 var _paragrafoAtual = 0;
 
 function toggleAudio() {
-  if (!planoUser || planoUser !== "mensal") { tela("paywall"); return; }
+  if (!planoUser || planoUser !== "mensal") { irParaLanding(); return; }
   if (!('speechSynthesis' in window)) { mostrarToast("⚠️ Seu navegador não suporta áudio"); return; }
   if (_audioAtivo) {
     pausarAudio();
@@ -4143,7 +4143,7 @@ async function criarGrupoFamilia() {
     document.querySelector(".nav-tab").classList.add("active");
     document.getElementById("abaDevocional").style.display = "block";
     document.getElementById("abaFamilia").style.display = "none";
-    tela("paywall");
+    irParaLanding(); return;
     return;
   }
   var nome = document.getElementById("nomeGrupo")?.value?.trim();
@@ -4174,8 +4174,7 @@ async function entrarGrupoFamilia() {
     document.querySelector(".nav-tab").classList.add("active");
     document.getElementById("abaDevocional").style.display = "block";
     document.getElementById("abaFamilia").style.display = "none";
-    tela("paywall");
-    return;
+    irParaLanding(); return;
   }
   var codigo = document.getElementById("codigoGrupo")?.value?.trim().toUpperCase();
   var apelido = document.getElementById("apelidoMembro")?.value?.trim() || "Membro";
@@ -4544,4 +4543,13 @@ function sairDaCelula() {
   document.getElementById("aulaResultado").style.display = "none";
   mostrarToast("Você saiu da célula");
 }
+// ── REDIRECIONAMENTO PARA LANDING ────────────────────
+function irParaLanding() {
+  window.location.href = "/landing";
+}
+
+function assinar() {
+  window.location.href = "/landing";
+}
+</script>
 </script>
