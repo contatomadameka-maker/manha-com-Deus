@@ -154,6 +154,18 @@ tr:hover td{background:var(--pale)}
   .stats-grid{grid-template-columns:1fr 1fr}
   .admin-content{padding:16px}
 }
+
+.editor-visual-content h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--deep);margin:16px 0 8px;font-weight:700}
+.editor-visual-content p{margin-bottom:10px}
+.editor-visual-content blockquote{border-left:3px solid var(--accent);padding:10px 14px;background:var(--light);border-radius:0 8px 8px 0;margin:12px 0;font-style:italic;color:var(--deep)}
+.editor-visual-content .versiculo-ref{font-size:0.72rem;color:var(--accent);font-weight:700;display:block;margin-top:4px;font-style:normal}
+#editorVisual:empty:before{content:attr(placeholder);color:var(--muted);pointer-events:none}
+#editorVisual h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--deep);margin:16px 0 8px;font-weight:700}
+#editorVisual blockquote{border-left:3px solid var(--accent);padding:10px 14px;background:var(--light);border-radius:0 8px 8px 0;margin:12px 0;font-style:italic;color:var(--deep)}
+#editorVisual .versiculo-ref{font-size:0.72rem;color:var(--accent);font-weight:700;display:block;margin-top:4px;font-style:normal;font-family:sans-serif}
+#editorVisual p{margin-bottom:10px}
+#editorVisual strong{font-weight:700}
+#editorVisual em{font-style:italic}
 </style>
 </head>
 <body>
@@ -402,19 +414,39 @@ tr:hover td{background:var(--pale)}
     </div>
 
     <div class="form-group">
-      <label class="form-label">Corpo do post (HTML)</label>
-      <textarea class="form-textarea corpo" id="pCorpo"
-        placeholder="<h2>Título da seção</h2>&#10;<p>Texto do parágrafo...</p>&#10;<blockquote>Versículo<span class=&quot;versiculo-ref&quot;>Ref</span></blockquote>"
-        oninput="atualizarPreview()"></textarea>
-      <div class="corpo-hint">
-        Use HTML: <code>&lt;h2&gt;</code> para seções · <code>&lt;p&gt;</code> para parágrafos ·
-        <code>&lt;blockquote&gt;texto&lt;span class="versiculo-ref"&gt;Ref&lt;/span&gt;&lt;/blockquote&gt;</code> para versículos
+      <label class="form-label">Conteúdo do post</label>
+      <!-- Barra de ferramentas -->
+      <div id="editorBar" style="display:flex;gap:4px;flex-wrap:wrap;padding:8px;background:var(--pale);border:1.5px solid var(--borda);border-bottom:none;border-radius:8px 8px 0 0">
+        <button type="button" onclick="inserirFormato('h2')" title="Título de seção" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:0.82rem;color:var(--deep)">T</button>
+        <button type="button" onclick="inserirFormato('p')" title="Parágrafo" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-size:0.8rem;color:var(--muted)">¶</button>
+        <div style="width:1px;background:var(--borda);margin:2px 4px"></div>
+        <button type="button" onclick="inserirFormato('negrito')" title="Negrito" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-weight:700;font-size:0.82rem">N</button>
+        <button type="button" onclick="inserirFormato('italico')" title="Itálico" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-style:italic;font-size:0.82rem">I</button>
+        <div style="width:1px;background:var(--borda);margin:2px 4px"></div>
+        <button type="button" onclick="inserirFormato('versiculo')" title="Versículo em destaque" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-size:0.8rem;color:var(--accent)">✦ Versículo</button>
+        <button type="button" onclick="inserirFormato('ref')" title="Referência bíblica" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-size:0.75rem;color:var(--gold)">Ref</button>
+        <div style="width:1px;background:var(--borda);margin:2px 4px"></div>
+        <button type="button" onclick="modoVisual()" id="btnVisual" title="Editor visual" style="padding:5px 10px;border:1px solid var(--accent);border-radius:5px;background:var(--light);cursor:pointer;font-size:0.78rem;color:var(--mid);font-weight:600">Visual</button>
+        <button type="button" onclick="modoHTML()" id="btnHTML" title="Ver HTML" style="padding:5px 10px;border:1px solid var(--borda);border-radius:5px;background:#fff;cursor:pointer;font-size:0.78rem;color:var(--muted)">HTML</button>
+      </div>
+      <!-- Editor visual (contenteditable) -->
+      <div id="editorVisual"
+        contenteditable="true"
+        spellcheck="true"
+        style="min-height:280px;padding:16px;border:1.5px solid var(--borda);border-top:none;border-radius:0 0 8px 8px;background:#fff;font-size:0.92rem;line-height:1.8;color:var(--ink);outline:none;font-family:Georgia,serif"
+        oninput="sincronizarEditorParaHTML()"
+        placeholder="Comece a escrever aqui... Use os botões acima para formatar."
+      ></div>
+      <!-- Campo HTML oculto (sincronizado) -->
+      <textarea id="pCorpo" style="display:none"></textarea>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:flex;gap:16px">
+        <span>💡 Dica: selecione um texto e clique em <strong>Negrito</strong> ou <strong>Itálico</strong></span>
+        <span>Para versículo: cole o texto e clique em <strong>✦ Versículo</strong></span>
       </div>
     </div>
-
     <div class="form-group">
-      <label class="form-label">Preview do corpo</label>
-      <div class="preview-box" id="postPreview"></div>
+      <label class="form-label">Preview</label>
+      <div id="postPreview" style="background:var(--pale);border:1px solid var(--borda);border-radius:8px;padding:16px;font-size:0.88rem;line-height:1.8;min-height:60px;max-height:200px;overflow-y:auto;color:var(--ink)"></div>
     </div>
 
     <div class="form-row">
@@ -636,7 +668,13 @@ function abrirModalPost(dados = null) {
   document.getElementById("pCorpo").value = dados?.corpo || "";
   document.getElementById("pDestaque").value = dados?.destaque ? "true" : "false";
   document.getElementById("pPublicado").value = dados?.publicado !== false ? "true" : "false";
-  atualizarPreview();
+  // Carrega no editor visual
+  setTimeout(() => {
+    const editor = document.getElementById("editorVisual");
+    if (editor) editor.innerHTML = dados?.corpo || "";
+    document.getElementById("postPreview").innerHTML = dados?.corpo || '<span style="color:var(--muted);font-size:0.8rem">Preview aparece aqui...</span>';
+    modoAtual = "visual";
+  }, 50);
   document.getElementById("modalPost").classList.add("show");
 }
 
@@ -687,9 +725,118 @@ function gerarSlug(titulo) {
   document.getElementById("pSlug").value = slug;
 }
 
-function atualizarPreview() {
+// ── EDITOR VISUAL ────────────────────────────────────────────────────
+let modoAtual = "visual";
+
+function inserirFormato(tipo) {
+  const editor = document.getElementById("editorVisual");
+  editor.focus();
+  const sel = window.getSelection();
+
+  if (tipo === "h2") {
+    const h2 = document.createElement("h2");
+    h2.textContent = sel.toString() || "Título da seção";
+    inserirElemento(h2);
+  } else if (tipo === "p") {
+    const p = document.createElement("p");
+    p.textContent = sel.toString() || "Novo parágrafo...";
+    inserirElemento(p);
+  } else if (tipo === "negrito") {
+    document.execCommand("bold", false, null);
+  } else if (tipo === "italico") {
+    document.execCommand("italic", false, null);
+  } else if (tipo === "versiculo") {
+    const textoSel = sel.toString() || "Cole o texto do versículo aqui";
+    const bq = document.createElement("blockquote");
+    bq.textContent = textoSel;
+    inserirElemento(bq);
+    // Adiciona campo para referência
+    const ref = document.createElement("p");
+    ref.style.fontSize = "0.78rem";
+    ref.style.color = "#534AB7";
+    ref.style.fontWeight = "600";
+    ref.setAttribute("data-ref", "true");
+    ref.textContent = "→ Digite a referência (ex: João 3:16)";
+    editor.appendChild(ref);
+  } else if (tipo === "ref") {
+    const span = document.createElement("span");
+    span.className = "versiculo-ref";
+    span.textContent = sel.toString() || "Livro Cap:Ver";
+    inserirElemento(span);
+  }
+  sincronizarEditorParaHTML();
+}
+
+function inserirElemento(el) {
+  const editor = document.getElementById("editorVisual");
+  const sel = window.getSelection();
+  if (sel.rangeCount) {
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(el);
+    range.setStartAfter(el);
+    range.setEndAfter(el);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else {
+    editor.appendChild(el);
+  }
+  editor.appendChild(document.createElement("p")).innerHTML = "<br>";
+}
+
+function sincronizarEditorParaHTML() {
+  const editor = document.getElementById("editorVisual");
+  // Limpa atributos desnecessários mas mantém estrutura
+  let html = editor.innerHTML
+    .replace(/ style="[^"]*"/g, (m) => {
+      // mantém apenas estilos funcionais
+      if (m.includes("font-size") || m.includes("color") || m.includes("font-weight")) return m;
+      return "";
+    })
+    .replace(/<div>/g, "<p>").replace(/<\/div>/g, "</p>")
+    .replace(/<br\s*\/?>/g, "")
+    .replace(/\n/g, "");
+  document.getElementById("pCorpo").value = html;
+  document.getElementById("postPreview").innerHTML = html || '<span style="color:var(--muted);font-size:0.8rem">Preview aparece aqui...</span>';
+}
+
+function sincronizarHTMLParaEditor() {
   const corpo = document.getElementById("pCorpo").value;
-  document.getElementById("postPreview").innerHTML = corpo || '<span style="color:var(--muted);font-size:0.8rem">Preview aparece aqui...</span>';
+  document.getElementById("editorVisual").innerHTML = corpo || "";
+}
+
+function modoVisual() {
+  modoAtual = "visual";
+  sincronizarHTMLParaEditor();
+  document.getElementById("editorVisual").style.display = "block";
+  // esconde textarea HTML
+  const ta = document.getElementById("pCorpoHTML");
+  if (ta) ta.style.display = "none";
+  document.getElementById("btnVisual").style.background = "var(--light)";
+  document.getElementById("btnVisual").style.borderColor = "var(--accent)";
+  document.getElementById("btnHTML").style.background = "#fff";
+  document.getElementById("btnHTML").style.borderColor = "var(--borda)";
+}
+
+function modoHTML() {
+  modoAtual = "html";
+  sincronizarEditorParaHTML();
+  document.getElementById("editorVisual").style.display = "none";
+  // mostra textarea editável de HTML
+  let ta = document.getElementById("pCorpoHTML");
+  if (!ta) {
+    ta = document.createElement("textarea");
+    ta.id = "pCorpoHTML";
+    ta.style.cssText = "width:100%;min-height:220px;padding:12px;border:1.5px solid var(--borda);border-top:none;border-radius:0 0 8px 8px;font-family:monospace;font-size:0.8rem;background:var(--pale);color:var(--ink);outline:none;resize:vertical;line-height:1.6";
+    ta.oninput = function() { document.getElementById("pCorpo").value = this.value; sincronizarEditorParaHTML(); };
+    document.getElementById("editorVisual").parentNode.insertBefore(ta, document.getElementById("editorVisual").nextSibling);
+  }
+  ta.style.display = "block";
+  ta.value = document.getElementById("pCorpo").value;
+  document.getElementById("btnHTML").style.background = "var(--light)";
+  document.getElementById("btnHTML").style.borderColor = "var(--accent)";
+  document.getElementById("btnVisual").style.background = "#fff";
+  document.getElementById("btnVisual").style.borderColor = "var(--borda)";
 }
 
 // ── NEWSLETTER ────────────────────────────────────────────────────────
