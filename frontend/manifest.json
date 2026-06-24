@@ -2,7 +2,7 @@
   "name": "Manhã com Deus",
   "short_name": "Manhã com Deus",
   "description": "Devocional diário com Inteligência Artificial",
-  "start_url": "/",
+  "start_url": "/manha-com-deus",
   "display": "standalone",
   "background_color": "#1A1208",
   "theme_color": "#1A1208",
