@@ -3,246 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#26215C">
-<meta name="description" content="Blog cristão sobre profecia, Apocalipse e vida espiritual — Manhã com Deus">
-<meta property="og:title" content="Blog — Manhã com Deus">
-<meta property="og:description" content="Artigos bíblicos sobre os últimos dias, apostasia, arrebatamento e crescimento espiritual">
-<title>Blog — Manhã com Deus</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1A1208">
+<meta name="description" content="Blog de Dirlei Luís — Reflexões bíblicas sobre fé, profecia e vida cristã">
+<meta property="og:title" content="Blog — Dirlei Luís">
+<meta property="og:description" content="Reflexões bíblicas profundas sobre fé, profecia e vida cristã">
+<title>Blog — Dirlei Luís</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --deep:#26215C;--mid:#534AB7;--accent:#7F77DD;--light:#EEEDFE;--pale:#F5F4FF;
-  --ink:#1a1a2e;--muted:#6B6890;--cream:#FAF9FF;
+  --gold:#C9A84C;--gold-light:#E2C97E;--gold-dim:#8A6E2F;--gold-pale:#F7EDD6;
+  --bg:#FAF6EE;--bg2:#F2EDE3;--deep:#1A1208;--warm:#2C1F0E;
+  --ink:#2A1F0F;--muted:#8A7560;--cream:#FAF6EE;
+  --purple:#26215C;--purple-mid:#534AB7;--purple-light:#EEEDFE;
   --sage:#0F6E56;--sage-light:#E1F5EE;
-  --gold:#C9A84C;--gold-pale:#F7EDD6;
-  --borda:rgba(127,119,221,0.15);
+  --borda:rgba(201,168,76,0.15);
 }
-html{-webkit-text-size-adjust:100%}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* ── NAV ── */
+nav{background:var(--deep);padding:16px 40px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:100;
+  border-bottom:1px solid rgba(201,168,76,0.1)}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;
+  text-decoration:none;letter-spacing:0.3px}
+.nav-logo span{color:#fff;font-style:italic}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:rgba(255,255,255,0.5);font-size:0.82rem;text-decoration:none;
+  transition:color 0.2s;letter-spacing:0.3px}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--deep)!important;padding:7px 16px;
+  border-radius:20px;font-size:0.75rem!important;font-weight:600}
+.nav-cta:hover{background:var(--gold-light)!important}
 
-/* ── HEADER ── */
-.header{background:var(--deep);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(127,119,221,0.2);position:sticky;top:0;z-index:100}
-.header-logo{font-family:'Playfair Display',serif;color:#fff;font-size:1.1rem}
-.header-logo em{color:var(--accent);font-style:normal}
-.header-nav{display:flex;gap:16px;align-items:center}
-.header-nav a{color:rgba(255,255,255,0.55);font-size:0.8rem;text-decoration:none;transition:color 0.2s}
-.header-nav a:hover{color:#fff}
-.btn-app{background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;
-  font-size:0.75rem;font-weight:700;text-decoration:none}
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,var(--deep) 0%,#2C1F0E 50%,#1A3020 100%);
+  padding:72px 40px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(201,168,76,0.12) 0%,transparent 70%)}
+.hero-eyebrow{font-size:0.65rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(201,168,76,0.7);margin-bottom:16px;position:relative}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);
+  color:#fff;position:relative;margin-bottom:16px;line-height:1.15}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero p{color:rgba(255,255,255,0.45);font-size:0.95rem;position:relative;
+  max-width:520px;margin:0 auto;line-height:1.75}
 
-/* ── HERO DO BLOG ── */
-.blog-hero{background:linear-gradient(135deg,var(--deep) 0%,#3C3489 60%,#1a3020 100%);
-  padding:48px 20px;text-align:center;position:relative;overflow:hidden}
-.blog-hero::before{content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(127,119,221,0.2),transparent 65%)}
-.blog-hero-tag{font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
-  color:rgba(127,119,221,0.8);margin-bottom:12px;position:relative}
-.blog-hero h1{font-family:'Playfair Display',serif;font-size:2rem;color:#fff;
-  position:relative;margin-bottom:10px;line-height:1.2}
-.blog-hero p{color:rgba(255,255,255,0.5);font-size:0.88rem;position:relative;
-  max-width:440px;margin:0 auto;line-height:1.6}
-
-/* ── CATEGORIAS ── */
-.cats{display:flex;gap:8px;padding:16px 20px;overflow-x:auto;border-bottom:1px solid var(--borda);
-  background:#fff;scrollbar-width:none}
-.cats::-webkit-scrollbar{display:none}
-.cat{font-size:0.75rem;padding:6px 14px;border-radius:20px;border:1px solid var(--borda);
-  color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.cat:hover,.cat.active{background:var(--light);color:var(--mid);border-color:var(--accent)}
+/* ── FILTROS ── */
+.filtros{background:#fff;border-bottom:1px solid var(--borda);padding:0 40px;
+  display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.filtros::-webkit-scrollbar{display:none}
+.filtro{font-size:0.8rem;padding:14px 18px;color:var(--muted);cursor:pointer;
+  white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s;
+  font-weight:500;font-family:'Inter',sans-serif;background:none;border-top:none;
+  border-left:none;border-right:none}
+.filtro:hover{color:var(--ink)}
+.filtro.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
 
 /* ── LAYOUT ── */
-.layout{max-width:1080px;margin:0 auto;padding:32px 16px;display:grid;
-  grid-template-columns:1fr 300px;gap:28px}
-@media(max-width:720px){.layout{grid-template-columns:1fr}.sidebar{display:none}}
+.wrapper{max-width:1140px;margin:0 auto;padding:48px 40px;
+  display:grid;grid-template-columns:1fr 320px;gap:40px}
+@media(max-width:860px){.wrapper{grid-template-columns:1fr;padding:32px 20px}
+  .sidebar-col{display:none}.nav{padding:14px 20px}.hero{padding:48px 20px}
+  .filtros{padding:0 20px}}
 
 /* ── ARTIGO CARD ── */
-.artigos-grid{display:flex;flex-direction:column;gap:20px}
+.arts-col{display:flex;flex-direction:column;gap:24px}
 
-.art-card{background:#fff;border:1px solid var(--borda);border-radius:16px;
-  overflow:hidden;animation:fadeUp 0.4s ease;cursor:pointer;transition:border-color 0.2s}
-.art-card:hover{border-color:var(--accent)}
-.art-card.destaque{border:none;background:linear-gradient(135deg,var(--deep),#3C3489);color:#fff}
+.card{background:#fff;border:1px solid var(--borda);border-radius:16px;
+  overflow:hidden;transition:border-color 0.2s,box-shadow 0.2s;cursor:pointer;
+  animation:fadeUp 0.4s ease both}
+.card:hover{border-color:rgba(201,168,76,0.4);box-shadow:0 8px 32px rgba(201,168,76,0.08)}
+.card.destaque{background:linear-gradient(135deg,var(--deep),#2C1F0E,#1A3020);
+  border-color:rgba(201,168,76,0.25)}
 
-.art-img{height:180px;background:linear-gradient(135deg,var(--light),var(--pale));
-  display:flex;align-items:center;justify-content:center;font-size:2.5rem;flex-shrink:0}
-.art-img.deep{background:linear-gradient(135deg,var(--deep),var(--mid))}
-.art-img.sage{background:linear-gradient(135deg,#085041,#1D9E75)}
-.art-img.amber{background:linear-gradient(135deg,#412402,#BA7517)}
+.card-img{height:200px;display:flex;align-items:center;justify-content:center;font-size:3rem;
+  background:linear-gradient(135deg,var(--purple-light),#E8E6FF)}
+.card-img.deep{background:linear-gradient(135deg,var(--deep),#3C3489)}
+.card-img.sage{background:linear-gradient(135deg,#085041,#1D9E75)}
+.card-img.amber{background:linear-gradient(135deg,#412402,#BA7517)}
 
-.art-body{padding:16px 18px}
-.art-cat{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-  color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.art-card.destaque .art-cat{color:rgba(127,119,221,0.8)}
-.art-titulo{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);
-  line-height:1.35;margin-bottom:8px}
-.art-card.destaque .art-titulo{color:#fff}
-.art-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:12px}
-.art-card.destaque .art-excerpt{color:rgba(255,255,255,0.55)}
-.art-meta{font-size:0.7rem;color:var(--muted);display:flex;align-items:center;gap:10px}
-.art-card.destaque .art-meta{color:rgba(255,255,255,0.4)}
-.art-leitura{margin-left:auto;background:var(--light);color:var(--mid);
-  padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;
-  text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
-.art-card.destaque .art-leitura{background:rgba(127,119,221,0.2);color:rgba(255,255,255,0.7)}
+.card-body{padding:22px}
+.card-cat{font-size:0.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card.destaque .card-cat{color:rgba(201,168,76,0.7)}
+.card-titulo{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--ink);
+  line-height:1.3;margin-bottom:10px;font-weight:600}
+.card.destaque .card-titulo{color:#fff}
+.card-excerpt{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.card.destaque .card-excerpt{color:rgba(255,255,255,0.5)}
+.card-meta{font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.card.destaque .card-meta{color:rgba(255,255,255,0.35)}
+.btn-ler{margin-left:auto;background:var(--gold-pale);color:var(--gold-dim);
+  padding:5px 14px;border-radius:20px;font-size:0.72rem;font-weight:600;
+  border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-ler:hover{background:var(--gold);color:var(--deep)}
+.card.destaque .btn-ler{background:rgba(201,168,76,0.15);color:rgba(255,255,255,0.6)}
 
 /* ── ARTIGO ABERTO ── */
-.artigo-full{display:none;background:#fff;border:1px solid var(--borda);border-radius:16px;
-  padding:28px 24px;animation:fadeUp 0.4s ease}
-.artigo-full.show{display:block}
-.af-back{font-size:0.8rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;margin-bottom:20px}
-.af-cat{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-  color:var(--accent);margin-bottom:8px}
-.af-titulo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--deep);
-  line-height:1.3;margin-bottom:10px}
-.af-meta{font-size:0.72rem;color:var(--muted);margin-bottom:20px;display:flex;gap:10px;
-  padding-bottom:16px;border-bottom:1px solid var(--borda)}
-.af-corpo{font-size:0.93rem;line-height:1.85;color:var(--ink)}
-.af-corpo h2{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--deep);
-  margin:24px 0 10px}
-.af-corpo p{margin-bottom:14px}
-.af-corpo blockquote{border-left:3px solid var(--accent);padding:10px 16px;
-  background:var(--light);border-radius:0 8px 8px 0;margin:16px 0;
-  font-family:'Playfair Display',serif;font-style:italic;color:var(--deep);font-size:0.92rem}
-.af-corpo .versiculo-ref{font-size:0.72rem;color:var(--mid);font-weight:700;display:block;margin-top:4px;font-style:normal}
-.af-cta{background:linear-gradient(135deg,var(--deep),var(--mid));border-radius:12px;
-  padding:20px;margin-top:28px;text-align:center}
-.af-cta h3{font-family:'Playfair Display',serif;font-size:1rem;color:#fff;margin-bottom:6px}
-.af-cta p{font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:14px}
-.btn-cta{display:inline-block;background:var(--accent);color:#fff;padding:10px 22px;
-  border-radius:20px;font-size:0.82rem;font-weight:700;text-decoration:none}
+.artigo{display:none;background:#fff;border-radius:16px;padding:40px;
+  border:1px solid var(--borda);animation:fadeUp 0.4s ease}
+.artigo.show{display:block}
+.art-back{font-size:0.82rem;color:var(--muted);cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:28px;
+  transition:color 0.2s}
+.art-back:hover{color:var(--gold)}
+.art-cat{font-size:0.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px}
+.art-titulo{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2.2rem);
+  color:var(--deep);line-height:1.25;margin-bottom:14px;font-weight:700}
+.art-meta{font-size:0.75rem;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;
+  padding-bottom:20px;border-bottom:1px solid var(--borda);margin-bottom:32px}
+.art-corpo{font-size:0.95rem;line-height:1.9;color:var(--ink)}
+.art-corpo h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--deep);
+  margin:32px 0 12px;font-weight:600}
+.art-corpo p{margin-bottom:16px}
+.art-corpo blockquote{border-left:3px solid var(--gold);padding:14px 20px;
+  background:var(--gold-pale);border-radius:0 10px 10px 0;margin:24px 0;
+  font-family:'Playfair Display',serif;font-style:italic;color:var(--deep);font-size:1rem}
+.art-corpo .versiculo-ref{font-size:0.75rem;color:var(--gold-dim);font-weight:600;
+  display:block;margin-top:6px;font-style:normal;font-family:'Inter',sans-serif}
+.art-corpo em{font-style:italic;color:var(--deep)}
+.art-corpo strong{font-weight:600}
+.art-cta{background:linear-gradient(135deg,var(--deep),#2C1F0E);border-radius:14px;
+  padding:28px;margin-top:40px;text-align:center}
+.art-cta h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;margin-bottom:8px}
+.art-cta p{font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:18px;line-height:1.6}
+.btn-cta{display:inline-block;background:var(--gold);color:var(--deep);
+  padding:12px 28px;border-radius:20px;font-size:0.85rem;font-weight:700;
+  text-decoration:none;transition:background 0.2s}
+.btn-cta:hover{background:var(--gold-light)}
 
 /* ── SIDEBAR ── */
-.sidebar{display:flex;flex-direction:column;gap:20px}
-.side-card{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px}
-.side-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-  color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sidebar-col{display:flex;flex-direction:column;gap:20px}
+.side{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:20px}
+.side-title{font-size:0.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .side-title::after{content:'';flex:1;height:1px;background:var(--borda)}
 
-.side-app{background:linear-gradient(135deg,var(--deep),var(--mid));border-radius:14px;
-  padding:18px;text-align:center}
-.side-app-emoji{font-size:2rem;margin-bottom:10px}
-.side-app h3{font-family:'Playfair Display',serif;font-size:1rem;color:#fff;margin-bottom:6px}
-.side-app p{font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.5}
-.btn-side-app{display:block;background:var(--accent);color:#fff;padding:10px 16px;
-  border-radius:10px;font-size:0.8rem;font-weight:700;text-decoration:none;margin-bottom:8px}
-.btn-side-escola{display:block;background:rgba(127,119,221,0.15);color:rgba(255,255,255,0.7);
-  padding:9px 16px;border-radius:10px;font-size:0.78rem;text-decoration:none;border:1px solid rgba(127,119,221,0.25)}
+.side-app{background:linear-gradient(135deg,var(--deep),#2C1F0E,#1A3020);
+  border-radius:14px;padding:22px;text-align:center;border:1px solid rgba(201,168,76,0.2)}
+.side-app-icon{font-size:2.2rem;margin-bottom:12px}
+.side-app h3{font-family:'Playfair Display',serif;font-size:1rem;color:#fff;margin-bottom:8px}
+.side-app p{font-size:0.78rem;color:rgba(255,255,255,0.45);margin-bottom:18px;line-height:1.6}
+.btn-side{display:block;padding:11px 16px;border-radius:10px;font-size:0.8rem;
+  font-weight:600;text-decoration:none;transition:all 0.2s;text-align:center;margin-bottom:8px}
+.btn-side.gold{background:var(--gold);color:var(--deep)}
+.btn-side.gold:hover{background:var(--gold-light)}
+.btn-side.outline{background:rgba(201,168,76,0.1);color:rgba(255,255,255,0.6);
+  border:1px solid rgba(201,168,76,0.2)}
 
-.pop-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--borda);
+.pop-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--borda);
   cursor:pointer;transition:all 0.2s}
 .pop-item:last-child{border:none;padding-bottom:0}
-.pop-item:hover .pop-titulo{color:var(--accent)}
-.pop-num{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--accent);
-  font-weight:700;flex-shrink:0;width:22px}
-.pop-titulo{font-size:0.82rem;font-weight:600;color:var(--ink);line-height:1.4;
-  margin-bottom:3px;transition:color 0.2s}
+.pop-item:hover .pop-titulo{color:var(--gold)}
+.pop-num{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);
+  font-weight:700;flex-shrink:0;width:22px;line-height:1.3}
+.pop-titulo{font-size:0.83rem;font-weight:500;color:var(--ink);line-height:1.4;
+  margin-bottom:2px;transition:color 0.2s}
 .pop-meta{font-size:0.68rem;color:var(--muted)}
 
-.newsletter-wrap{display:flex;flex-direction:column;gap:8px}
-.nl-input{font-size:0.82rem;padding:10px 12px;border:1px solid var(--borda);
-  border-radius:8px;background:var(--pale);color:var(--ink);outline:none;
-  font-family:'DM Sans',sans-serif}
-.btn-nl{background:var(--mid);color:#fff;border:none;padding:10px;border-radius:8px;
-  font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
-.nl-ok{font-size:0.75rem;color:var(--sage);text-align:center;display:none}
+/* Newsletter */
+.nl-form{display:flex;flex-direction:column;gap:8px}
+.nl-input{padding:11px 14px;border:1.5px solid var(--borda);border-radius:8px;
+  font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink);outline:none;
+  background:var(--bg2);transition:border-color 0.2s}
+.nl-input:focus{border-color:var(--gold)}
+.btn-nl{background:var(--deep);color:var(--gold);border:1px solid rgba(201,168,76,0.3);
+  padding:11px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-nl:hover{background:var(--gold);color:var(--deep);border-color:var(--gold)}
+.nl-ok{font-size:0.78rem;color:var(--sage);text-align:center;padding:8px;
+  background:var(--sage-light);border-radius:8px;display:none}
 
 .tag-cloud{display:flex;flex-wrap:wrap;gap:6px}
-.tag{font-size:0.7rem;padding:4px 10px;border-radius:20px;border:1px solid var(--borda);
-  color:var(--muted);cursor:pointer;transition:all 0.2s}
-.tag:hover{background:var(--light);color:var(--mid)}
+.tag{font-size:0.72rem;padding:4px 12px;border-radius:20px;
+  border:1px solid var(--borda);color:var(--muted);cursor:pointer;
+  transition:all 0.2s;font-family:'Inter',sans-serif}
+.tag:hover{background:var(--gold-pale);color:var(--gold-dim);border-color:rgba(201,168,76,0.3)}
+
+/* Loading */
+.loading{text-align:center;padding:60px 20px}
+.spinner{width:36px;height:36px;border:2px solid var(--borda);border-top-color:var(--gold);
+  border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+.loading p{font-size:0.85rem;color:var(--muted);font-style:italic}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
 
 /* ── FOOTER ── */
-.footer{background:var(--deep);padding:32px 20px;text-align:center;margin-top:48px}
-.footer-logo{font-family:'Playfair Display',serif;color:var(--accent);font-size:1.1rem;margin-bottom:8px}
-.footer p{font-size:0.78rem;color:rgba(255,255,255,0.35);line-height:1.6}
-.footer-links{display:flex;gap:16px;justify-content:center;margin-top:16px;flex-wrap:wrap}
-.footer-links a{font-size:0.75rem;color:rgba(255,255,255,0.4);text-decoration:none}
-.footer-links a:hover{color:var(--accent)}
+footer{background:var(--deep);padding:48px 40px;text-align:center;margin-top:0;
+  border-top:1px solid rgba(201,168,76,0.08)}
+.footer-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px}
+footer p{font-size:0.8rem;color:rgba(255,255,255,0.3);line-height:1.7;margin-bottom:20px}
+.footer-links{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.footer-links a{font-size:0.75rem;color:rgba(255,255,255,0.35);text-decoration:none;
+  transition:color 0.2s}
+.footer-links a:hover{color:var(--gold)}
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-logo">Manhã <em>com Deus</em> · Blog</div>
-  <nav class="header-nav">
-    <a href="/">App</a>
-    <a href="/escola/">Escola</a>
-    <a href="#" class="btn-app">Entrar no App</a>
-  </nav>
-</header>
+<nav>
+  <a href="/" class="nav-logo">Dirlei <span>Luís</span></a>
+  <div class="nav-links">
+    <a href="/">Início</a>
+    <a href="/escola/landing">Escola Profética</a>
+    <a href="/manha-com-deus" class="nav-cta">☀️ Manhã com Deus</a>
+  </div>
+</nav>
 
-<!-- HERO -->
-<div class="blog-hero">
-  <div class="blog-hero-tag">✦ Crescendo na Palavra</div>
-  <h1>Blog Profético</h1>
-  <p>Artigos bíblicos sobre os últimos dias, apostasia, arrebatamento e vida espiritual — para fortalecer sua fé no dia a dia.</p>
+<div class="hero">
+  <div class="hero-eyebrow">✦ Palavra · Fé · Reflexão</div>
+  <h1>Blog de <em>Dirlei Luís</em></h1>
+  <p>Artigos profundos sobre fé, profecia, vida cristã e os desafios espirituais do nosso tempo.</p>
 </div>
 
-<!-- CATEGORIAS -->
-<div class="cats">
-  <button class="cat active" onclick="filtrar('todos',this)">Todos</button>
-  <button class="cat" onclick="filtrar('apostasia',this)">Apostasia</button>
-  <button class="cat" onclick="filtrar('profecias',this)">Profecias</button>
-  <button class="cat" onclick="filtrar('vida-crista',this)">Vida cristã</button>
-  <button class="cat" onclick="filtrar('arrebatamento',this)">Arrebatamento</button>
-  <button class="cat" onclick="filtrar('apocalipse',this)">Apocalipse</button>
-  <button class="cat" onclick="filtrar('oracao',this)">Oração</button>
+<div class="filtros">
+  <button class="filtro active" onclick="filtrar('todos',this)">Todos</button>
+  <button class="filtro" onclick="filtrar('apostasia',this)">Apostasia</button>
+  <button class="filtro" onclick="filtrar('profecias',this)">Profecias</button>
+  <button class="filtro" onclick="filtrar('vida-crista',this)">Vida cristã</button>
+  <button class="filtro" onclick="filtrar('arrebatamento',this)">Arrebatamento</button>
+  <button class="filtro" onclick="filtrar('apocalipse',this)">Apocalipse</button>
+  <button class="filtro" onclick="filtrar('oracao',this)">Oração</button>
+  <button class="filtro" onclick="filtrar('discernimento',this)">Discernimento</button>
 </div>
 
-<div class="layout">
-  <!-- COLUNA PRINCIPAL -->
-  <div>
-    <!-- Artigo aberto (escondido por padrão) -->
-    <div class="artigo-full" id="artigoFull">
-      <div class="af-back" onclick="fecharArtigo()">← Voltar aos artigos</div>
-      <div class="af-cat" id="afCat"></div>
-      <h1 class="af-titulo" id="afTitulo"></h1>
-      <div class="af-meta" id="afMeta"></div>
-      <div class="af-corpo" id="afCorpo"></div>
-      <div class="af-cta">
-        <h3>Estude o Apocalipse em profundidade</h3>
-        <p>8 módulos completos com IA, anotações e comunidade na Escola Profética</p>
-        <a href="/escola/" class="btn-cta">✦ Acessar a Escola Profética</a>
+<div class="wrapper">
+  <div class="arts-col">
+    <div class="artigo" id="artigoFull">
+      <div class="art-back" onclick="fecharArtigo()">← Voltar aos artigos</div>
+      <div class="art-cat" id="afCat"></div>
+      <h1 class="art-titulo" id="afTitulo"></h1>
+      <div class="art-meta" id="afMeta"></div>
+      <div class="art-corpo" id="afCorpo"></div>
+      <div class="art-cta">
+        <h3>Aprofunde-se na Palavra</h3>
+        <p>8 módulos completos sobre o Apocalipse na Escola Profética — com IA e comunidade.</p>
+        <a href="/escola/landing" class="btn-cta">✦ Conhecer a Escola Profética</a>
       </div>
     </div>
-
-    <!-- Grid de artigos -->
-    <div class="artigos-grid" id="artigosGrid"></div>
+    <div id="artigosGrid">
+      <div class="loading"><div class="spinner"></div><p>Carregando artigos...</p></div>
+    </div>
   </div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <!-- App -->
+  <aside class="sidebar-col">
     <div class="side-app">
-      <div class="side-app-emoji">☀️</div>
+      <div class="side-app-icon">☀️</div>
       <h3>Devocional diário com IA</h3>
-      <p>Receba um devocional personalizado todo dia, oração guiada e muito mais.</p>
-      <a href="/" class="btn-side-app">✦ Abrir o App</a>
-      <a href="/escola/" class="btn-side-escola">📖 Escola Profética</a>
+      <p>Reflexões personalizadas, oração guiada e muito mais no Manhã com Deus.</p>
+      <a href="/manha-com-deus" class="btn-side gold">✦ Abrir o app grátis</a>
+      <a href="/escola/landing" class="btn-side outline">📖 Escola Profética</a>
     </div>
 
-    <!-- Populares -->
-    <div class="side-card">
+    <div class="side">
       <div class="side-title">Mais lidos</div>
-      <div id="populares"></div>
-    </div>
-
-    <!-- Newsletter -->
-    <div class="side-card">
-      <div class="side-title">Receba por email</div>
-      <div class="newsletter-wrap">
-        <input class="nl-input" id="nlEmail" type="email" placeholder="seu@email.com">
-        <button class="btn-nl" onclick="assinarNL()">✦ Quero receber</button>
-        <div class="nl-ok" id="nlOk">✓ Você foi adicionado! Que Deus abençoe!</div>
+      <div id="populares">
+        <div class="loading" style="padding:20px"><div class="spinner"></div></div>
       </div>
     </div>
 
-    <!-- Tags -->
-    <div class="side-card">
+    <div class="side">
+      <div class="side-title">Receba por email</div>
+      <div class="nl-form">
+        <input class="nl-input" id="nlEmail" type="email" placeholder="seu@email.com">
+        <input class="nl-input" id="nlNome" type="text" placeholder="Seu nome (opcional)">
+        <button class="btn-nl" onclick="assinarNL()">✦ Quero receber os artigos</button>
+        <div class="nl-ok" id="nlOk">✓ Inscrito! Que Deus abençoe você!</div>
+      </div>
+    </div>
+
+    <div class="side">
       <div class="side-title">Temas</div>
       <div class="tag-cloud">
         <span class="tag" onclick="filtrar('apostasia')">Apostasia</span>
@@ -250,7 +286,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
         <span class="tag" onclick="filtrar('apocalipse')">Apocalipse</span>
         <span class="tag" onclick="filtrar('profecias')">Profecias</span>
         <span class="tag" onclick="filtrar('oracao')">Oração</span>
-        <span class="tag" onclick="filtrar('tribulacao')">Tribulação</span>
         <span class="tag" onclick="filtrar('vida-crista')">Vida cristã</span>
         <span class="tag" onclick="filtrar('discernimento')">Discernimento</span>
       </div>
@@ -258,232 +293,141 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
   </aside>
 </div>
 
-<footer class="footer">
-  <div class="footer-logo">✦ Manhã com Deus</div>
-  <p>Devocional diário com Inteligência Artificial · Escola Profética<br>
-  Fortalecendo a fé nos últimos dias</p>
+<footer>
+  <div class="footer-logo">✦ Dirlei Luís</div>
+  <p>Criador de conteúdo sobre a Palavra de Deus · Itajaí, Santa Catarina<br>
+  Reflexões diárias, fé e propósito para o dia a dia.</p>
   <div class="footer-links">
-    <a href="/">App</a>
-    <a href="/escola/">Escola Profética</a>
-    <a href="/blog/">Blog</a>
-    <a href="/landing">Conheça o app</a>
+    <a href="/">Início</a>
+    <a href="/manha-com-deus">Manhã com Deus</a>
+    <a href="/escola/landing">Escola Profética</a>
+    <a href="/blog">Blog</a>
+    <a href="/links">Links</a>
   </div>
 </footer>
 
 <script>
-// ── Base de artigos ──────────────────────────────────────────────────
-// Para escalar: mova para uma API ou CMS (Contentful, Sanity, Notion API)
-const ARTIGOS = [
-  {
-    id: 1, cat: "apostasia", destaque: true,
-    emoji: "✝️", imgClass: "deep",
-    titulo: "O que é Apostasia? A ameaça silenciosa dentro da Igreja",
-    excerpt: "A apostasia não chega com cartaz. Ela se instala gradualmente — uma concessão aqui, uma interpretação conveniente ali. Entenda o que as Escrituras realmente dizem sobre esse fenômeno dos últimos dias.",
-    autor: "Escola Profética", data: "18 Jun 2025", leitura: "8 min",
-    tags: ["apostasia", "últimos dias"],
-    corpo: `
-      <h2>O que significa apostasia?</h2>
-      <p>A palavra vem do grego <em>apostasía</em> — literalmente "afastamento" ou "rebelião". Não se trata de uma dúvida momentânea ou de uma fase de fraqueza espiritual. Apostasia é o abandono consciente e deliberado da verdade revelada por Deus.</p>
-      <blockquote>"Alguns apostatarão da fé, por obedecerem a espíritos enganadores e ensinos de demônios."<span class="versiculo-ref">1 Timóteo 4:1</span></blockquote>
-      <p>A distinção é crucial: todo cristão passa por momentos de dúvida, de questionamento, de crise. Isso é humano e até pode fortalecer a fé quando confrontado com honestidade diante de Deus. A apostasia é diferente — é a rejeição voluntária do que se conhece como verdade.</p>
-      <h2>Como a apostasia começa?</h2>
-      <p>Raramente de uma vez. O processo costuma seguir um padrão: primeiro vêm pequenas concessões — uma interpretação da Escritura que "se encaixa melhor" com a cultura do momento; depois, ensinamentos que minimizam o pecado e o julgamento; por fim, a negação das doutrinas centrais da fé cristã.</p>
-      <p>Paulo foi preciso ao descrever esse processo aos tessalonicenses. Antes da volta de Cristo, haverá uma "rebelião" — uma apostasia em escala global (2 Tessalonicenses 2:3). Isso não é ficção profética distante; os sinais estão visivelmente presentes.</p>
-      <h2>Sinais práticos nos dias atuais</h2>
-      <p>Movimentos como o universalismo — que nega a realidade do julgamento e da necessidade de arrependimento — e a teologia da prosperidade, que transforma Jesus em um prestador de serviços materiais, são exemplos concretos. Ambos distorcem o Evangelho de formas diferentes, mas com o mesmo resultado: retiram da mensagem cristã a sua espinha dorsal.</p>
-      <blockquote>"Porque virá tempo em que não suportarão a sã doutrina; mas, tendo comichão nos ouvidos, amontoarão para si mestres conforme os seus próprios desejos."<span class="versiculo-ref">2 Timóteo 4:3-4</span></blockquote>
-      <h2>O que fazer diante disso?</h2>
-      <p>A resposta das Escrituras é clara: permanecer ancorado na Palavra. "Fazei como os bereanos" — examinem tudo à luz das Escrituras (Atos 17:11). Cultivar comunhão real com outros crentes, orar com consistência, e resistir à tentação de ouvir apenas o que nos agrada.</p>
-      <p>A apostasia prospera no isolamento e na superficialidade. Ela murcha diante de uma fé que mergulha fundo na Palavra e cresce em comunidade genuína.</p>
-    `
-  },
-  {
-    id: 2, cat: "arrebatamento", destaque: false,
-    emoji: "☁️", imgClass: "deep",
-    titulo: "Arrebatamento: o que a Bíblia realmente ensina",
-    excerpt: "Separando o joio do trigo em um dos temas mais debatidos da escatologia cristã. Três posições, uma certeza: Cristo voltará.",
-    autor: "Escola Profética", data: "10 Jun 2025", leitura: "7 min",
-    tags: ["arrebatamento", "escatologia"],
-    corpo: `
-      <h2>A promessa que fundamenta tudo</h2>
-      <p>Antes de debater o <em>quando</em> do arrebatamento, é essencial firmar o <em>que</em>: Jesus prometeu que voltaria buscar os Seus. João 14:2-3 é o fundamento inabalável desta esperança.</p>
-      <blockquote>"Porque o Senhor mesmo descerá do céu com alarido, e com voz de arcanjo, e com a trombeta de Deus; e os que morreram em Cristo ressuscitarão primeiro; depois nós, os que ficarmos vivos, seremos arrebatados juntamente com eles nas nuvens."<span class="versiculo-ref">1 Tessalonicenses 4:16-17</span></blockquote>
-      <h2>As três posições principais</h2>
-      <p>A discussão teológica se divide basicamente em três visões sobre o <em>momento</em> do arrebatamento em relação à Grande Tribulação:</p>
-      <p><strong>Pré-tribulacionista:</strong> a Igreja é arrebatada antes dos sete anos de tribulação. É a posição mais popular no evangelicalismo brasileiro, baseada na promessa de que os crentes serão guardados da "hora da tentação" (Apocalipse 3:10).</p>
-      <p><strong>Midi-tribulacionista:</strong> o arrebatamento ocorre no meio da tribulação, após os primeiros três anos e meio.</p>
-      <p><strong>Pós-tribulacionista:</strong> a Igreja passa pela tribulação e é arrebatada ao final, imediatamente antes da Segunda Vinda visível de Cristo.</p>
-      <h2>O que é consenso</h2>
-      <p>Independente da posição sobre o timing, todos os crentes que levam as Escrituras a sério concordam: o arrebatamento é real, é iminente, e é exclusivo para aqueles que pertencem a Cristo. Esta esperança não é escapismo — é motivação para viver com santidade e urgência no testemunho.</p>
-    `
-  },
-  {
-    id: 3, cat: "vida-crista", destaque: false,
-    emoji: "🙏", imgClass: "sage",
-    titulo: "Como manter a fé firme em tempos de apostasia",
-    excerpt: "Cinco práticas bíblicas concretas para permanecer enraizado quando o mundo ao redor muda de opinião mais rápido do que muda de roupa.",
-    autor: "Escola Profética", data: "3 Jun 2025", leitura: "5 min",
-    tags: ["vida-crista", "discernimento"],
-    corpo: `
-      <h2>A âncora que não arrasta</h2>
-      <p>Em tempos de apostasia crescente, a questão não é apenas teológica — é profundamente prática. Como um cristão comum, com trabalho, família e distrações, permanece firme?</p>
-      <p>As Escrituras apontam cinco práticas que, juntas, formam uma âncora espiritual robusta:</p>
-      <h2>1. Leitura bíblica sistemática</h2>
-      <p>Não devocional aleatório — leitura sistemática, que percorre o Antigo e o Novo Testamento. Quem conhece a Bíblia em sua totalidade dificilmente é enganado por doutrinas que tiram versículos de contexto.</p>
-      <h2>2. Comunhão real (não digital)</h2>
-      <p>A carta aos Hebreus é enfática: "não abandoneis a vossa reunião" (10:25). A comunhão presencial com outros crentes não é opcional — é proteção. Somos mais vulneráveis ao engano quando estamos isolados.</p>
-      <blockquote>"Encorajai-vos uns aos outros dia a dia, enquanto ainda se chama hoje."<span class="versiculo-ref">Hebreus 3:13</span></blockquote>
-      <h2>3. Examine tudo como os bereanos</h2>
-      <p>Quando ouvir um ensinamento — em culto, podcast, ou Instagram — verifique as Escrituras. Não por desconfiança paranoica, mas por responsabilidade espiritual. Os bereanos eram "mais nobres" exatamente por isso (Atos 17:11).</p>
-      <h2>4. Oração consistente</h2>
-      <p>Jesus ligou diretamente vigilância e oração: "Vigiai e orai, para que não entreis em tentação" (Mateus 26:41). A oração não é apenas um ritual matinal — é a respiração da vida espiritual.</p>
-      <h2>5. Discernimento com amor</h2>
-      <p>O objetivo não é construir uma mentalidade de "caçador de hereges", mas de pastor — identificar o erro para proteger, não para atacar. Paulo corrigiu com lágrimas (Filipenses 3:18), não com arrogância.</p>
-    `
-  },
-  {
-    id: 4, cat: "profecias", destaque: false,
-    emoji: "📖", imgClass: "amber",
-    titulo: "As Setenta Semanas de Daniel e o nosso tempo",
-    excerpt: "Daniel 9 é uma das profecias mais precisas da Bíblia — e aponta diretamente para os eventos finais da história humana. Entenda o que o profeta viu.",
-    autor: "Escola Profética", data: "25 Mai 2025", leitura: "9 min",
-    tags: ["profecias", "apocalipse"],
-    corpo: `
-      <h2>O contexto da profecia</h2>
-      <p>Daniel estava em exílio na Babilônia quando recebeu esta visão. Ele havia compreendido, pelos escritos de Jeremias, que os setenta anos de cativeiro estavam chegando ao fim. Enquanto orava e confessava os pecados do povo, o anjo Gabriel lhe trouxe uma revelação que se estenderia milênios além do seu tempo.</p>
-      <blockquote>"Setenta semanas estão determinadas sobre o teu povo e sobre a tua santa cidade."<span class="versiculo-ref">Daniel 9:24</span></blockquote>
-      <h2>O que são as "setenta semanas"?</h2>
-      <p>Na profecia hebraica, a palavra traduzida como "semanas" é <em>shabua</em> — grupos de sete. A interpretação mais amplamente aceita pelos estudiosos é que cada "semana" representa sete anos, totalizando 490 anos no período profético.</p>
-      <p>As primeiras 69 semanas (483 anos) teriam uma aplicação histórica específica — e estudiosos como Sir Robert Anderson calcularam que elas se cumpriram com precisão impressionante até a entrada triunfal de Jesus em Jerusalém.</p>
-      <h2>A septuagésima semana</h2>
-      <p>A última semana — sete anos — é separada das anteriores. Muitos teólogos a identificam com a Grande Tribulação descrita no Apocalipse. Daniel 9:27 descreve um líder que firmará um pacto, e na metade desse período o quebrará, desencadeando um tempo de perseguição sem precedentes.</p>
-      <p>O que nos diz essa profecia hoje? Que estamos vivendo no intervalo entre a 69ª e a 70ª semana — o tempo da Igreja, da proclamação do Evangelho a todas as nações. E que o relógio profético voltará a correr quando Deus assim determinar.</p>
-    `
-  },
-  {
-    id: 5, cat: "oracao", destaque: false,
-    emoji: "🌙", imgClass: "deep",
-    titulo: "Por que a oração se torna mais difícil nos últimos dias?",
-    excerpt: "Não é coincidência que justamente nos tempos em que mais precisamos orar é quando sente mais difícil. Jesus avisou sobre isso.",
-    autor: "Escola Profética", data: "15 Mai 2025", leitura: "4 min",
-    tags: ["oracao", "vida-crista"],
-    corpo: `
-      <h2>O diagnóstico de Jesus</h2>
-      <p>No Getsêmani, os discípulos — que haviam jurado lealdade horas antes — dormiram enquanto Jesus orava. Não por má vontade. A resposta de Jesus foi reveladora: "O espírito está pronto, mas a carne é fraca" (Mateus 26:41).</p>
-      <p>A carne sempre preferirá conforto à oração. E nos dias em que vivemos, o número de alternativas confortáveis multiplicou-se exponencialmente.</p>
-      <blockquote>"Vigiai e orai, para que não entreis em tentação."<span class="versiculo-ref">Mateus 26:41</span></blockquote>
-      <h2>A conexão entre apostasia e oração fria</h2>
-      <p>Há uma ligação direta: quando a oração esfria, o amor esfria. Quando o amor esfria, a fé enfraquece. Quando a fé enfraquece, a porta da apostasia abre um centímetro.</p>
-      <p>Não é acidental que Jesus, ao descrever os sinais dos últimos dias, mencione o esfriamento do amor (Mateus 24:12). Uma das causas mais silenciosas desse esfriamento é a oração negligenciada.</p>
-      <h2>O que fazer?</h2>
-      <p>Comece pequeno. Cinco minutos de oração real valem mais do que trinta minutos de performance religiosa. Seja honesto com Deus sobre a secura espiritual que está sentindo — essa honestidade já é uma forma de oração. E confie na promessa: quem busca, acha (Mateus 7:8).</p>
-    `
-  },
-  {
-    id: 6, cat: "apocalipse", destaque: false,
-    emoji: "⚡", imgClass: "deep",
-    titulo: "Os 4 Cavaleiros do Apocalipse: o que representam hoje?",
-    excerpt: "As imagens dos quatro cavaleiros de Apocalipse 6 intrigam leitores há dois mil anos. Mais do que símbolos, eles são uma radiografia da história humana.",
-    autor: "Escola Profética", data: "5 Mai 2025", leitura: "6 min",
-    tags: ["apocalipse", "profecias"],
-    corpo: `
-      <h2>Quem são os cavaleiros?</h2>
-      <p>Quando o Cordeiro abre os primeiros quatro selos em Apocalipse 6, quatro cavaleiros emergem. Cada um monta um cavalo de uma cor diferente, carregando uma missão específica. A interpretação mais coerente com o contexto bíblico os identifica como forças que operam ao longo da história humana, intensificando-se nos últimos tempos.</p>
-      <blockquote>"E olhei, e eis um cavalo branco; e aquele que estava assentado sobre ele tinha um arco; e foi-lhe dada uma coroa, e saiu vencendo, e para vencer."<span class="versiculo-ref">Apocalipse 6:2</span></blockquote>
-      <h2>O Cavaleiro Branco: conquistadores e falsos cristos</h2>
-      <p>O primeiro cavaleiro porta um arco sem flechas e recebe uma coroa. Muitos intérpretes o veem como representando o poder político que conquista pela persuasão e pela enganação — uma figura que precede e prepara o caminho para o Anticristo. Outros o veem como o próprio Anticristo.</p>
-      <h2>Vermelho, Preto e Amarelo-pálido</h2>
-      <p>O segundo cavaleiro, vermelho, representa a guerra — o poder de tirar a paz da terra. O terceiro, preto com balança, simboliza escassez econômica e fome. O quarto, de cor amarelo-pálida, é identificado como a Morte, sendo seguido pelo Hades.</p>
-      <p>O que chama atenção é que esses quatro cavaleiros não são eventos isolados — são forças que andam juntas. A guerra gera fome; a fome gera morte; a morte abre as portas para o caos social. O mundo contemporâneo conhece bem esse ciclo.</p>
-      <h2>A esperança que permanece</h2>
-      <p>Mesmo diante dessas imagens sombrias, o Apocalipse não é um livro de desespero. É um livro de vitória. O Cordeiro está no controle dos selos — Ele abre cada um no momento determinado. E o desfecho já está escrito: "o reino do mundo passou a ser do nosso Senhor e do seu Cristo" (Apocalipse 11:15).</p>
-    `
-  }
-];
+const SUPABASE_URL = "https://ttcdhthjtdnudczakuhu.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0Y2RodGhqdGRudWRjemFrdWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTkxODIsImV4cCI6MjA5NDYzNTE4Mn0.fDVyCS3uj2qIJHDJOqMvRSLhkW_aGC5lXzQnLNdH6AI";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── Estado ──────────────────────────────────────────────────────────
 let catAtual = "todos";
-let artigoAbertoId = null;
+let todosOsPosts = [];
 
-// ── Init ─────────────────────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-  renderArtigos();
-  renderPopulares();
+document.addEventListener("DOMContentLoaded", async () => {
+  await carregarPosts();
+  await carregarPopulares();
 });
 
-function renderArtigos(cat = "todos") {
+async function carregarPosts(cat = "todos") {
   const grid = document.getElementById("artigosGrid");
-  const filtrados = cat === "todos" ? ARTIGOS : ARTIGOS.filter(a => a.cat === cat || a.tags.includes(cat));
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando artigos...</p></div>';
+  let query = sb.from("blog_posts").select("*").eq("publicado", true).order("destaque",{ascending:false}).order("created_at",{ascending:false});
+  if (cat !== "todos") query = query.eq("categoria", cat);
+  const { data, error } = await query;
+  if (error || !data || !data.length) {
+    grid.innerHTML = '<div class="empty"><p style="font-size:2rem;margin-bottom:12px">📖</p><p>Nenhum artigo nesta categoria ainda.</p></div>';
+    return;
+  }
+  todosOsPosts = data;
+  renderCards(data);
+}
 
-  grid.innerHTML = filtrados.map((a, i) => `
-  <div class="art-card${a.destaque ? " destaque" : ""}" onclick="abrirArtigo(${a.id})" style="animation-delay:${i * 0.06}s">
-    <div class="art-img ${a.imgClass}">${a.emoji}</div>
-    <div class="art-body">
-      <div class="art-cat">✦ ${a.cat.replace("-", " ")}</div>
-      <div class="art-titulo">${a.titulo}</div>
-      <div class="art-excerpt">${a.excerpt}</div>
-      <div class="art-meta">
-        <span>${a.data}</span>
+function renderCards(posts) {
+  const grid = document.getElementById("artigosGrid");
+  grid.style.display = "flex";
+  grid.style.flexDirection = "column";
+  grid.style.gap = "24px";
+  grid.innerHTML = posts.map((p, i) => `
+  <div class="card${p.destaque?" destaque":""}" onclick="abrirArtigo('${p.id}')" style="animation-delay:${i*0.07}s">
+    <div class="card-img ${p.img_class||'deep'}">${p.emoji||'✦'}</div>
+    <div class="card-body">
+      <div class="card-cat">✦ ${(p.categoria||'').replace("-"," ")}</div>
+      <div class="card-titulo">${p.titulo}</div>
+      <div class="card-excerpt">${p.excerpt||''}</div>
+      <div class="card-meta">
+        <span>${p.autor||'Dirlei Luís'}</span>
         <span>·</span>
-        <span>${a.leitura} de leitura</span>
-        <button class="art-leitura" onclick="abrirArtigo(${a.id});event.stopPropagation()">Ler →</button>
+        <span>${formatarData(p.created_at)}</span>
+        <span>·</span>
+        <span>${p.leitura_min||5} min de leitura</span>
+        <button class="btn-ler" onclick="abrirArtigo('${p.id}');event.stopPropagation()">Ler →</button>
       </div>
     </div>
   </div>`).join("");
 }
 
-function renderPopulares() {
-  const top = ARTIGOS.slice(0, 4);
-  document.getElementById("populares").innerHTML = top.map((a, i) => `
-  <div class="pop-item" onclick="abrirArtigo(${a.id})">
-    <div class="pop-num">${i + 1}</div>
+async function carregarPopulares() {
+  const { data } = await sb.from("blog_posts").select("id,titulo,leitura_min,created_at")
+    .eq("publicado",true).order("created_at",{ascending:false}).limit(4);
+  const el = document.getElementById("populares");
+  if (!data||!data.length) { el.innerHTML = '<p style="font-size:0.82rem;color:var(--muted);text-align:center">Em breve</p>'; return; }
+  el.innerHTML = data.map((p,i) => `
+  <div class="pop-item" onclick="abrirArtigo('${p.id}')">
+    <div class="pop-num">${i+1}</div>
     <div>
-      <div class="pop-titulo">${a.titulo}</div>
-      <div class="pop-meta">${a.leitura} de leitura</div>
+      <div class="pop-titulo">${p.titulo}</div>
+      <div class="pop-meta">${p.leitura_min||5} min · ${formatarData(p.created_at)}</div>
     </div>
   </div>`).join("");
 }
 
 function filtrar(cat, btn) {
   catAtual = cat;
-  document.querySelectorAll(".cat").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".filtro").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
   fecharArtigo();
-  renderArtigos(cat);
+  carregarPosts(cat);
 }
 
-function abrirArtigo(id) {
-  const art = ARTIGOS.find(a => a.id === id);
+async function abrirArtigo(id) {
+  // Busca do cache ou banco
+  let art = todosOsPosts.find(p => p.id === id);
+  if (!art) {
+    const { data } = await sb.from("blog_posts").select("*").eq("id", id).single();
+    art = data;
+  }
   if (!art) return;
-  artigoAbertoId = id;
 
-  document.getElementById("afCat").textContent = "✦ " + art.cat.replace("-", " ");
+  document.getElementById("afCat").textContent = "✦ " + (art.categoria||'').replace("-"," ");
   document.getElementById("afTitulo").textContent = art.titulo;
-  document.getElementById("afMeta").innerHTML = `<span>${art.autor}</span><span>·</span><span>${art.data}</span><span>·</span><span>${art.leitura} de leitura</span>`;
-  document.getElementById("afCorpo").innerHTML = art.corpo;
+  document.getElementById("afMeta").innerHTML = `
+    <span>${art.autor||'Dirlei Luís'}</span>
+    <span>·</span>
+    <span>${formatarData(art.created_at)}</span>
+    <span>·</span>
+    <span>${art.leitura_min||5} min de leitura</span>`;
+  document.getElementById("afCorpo").innerHTML = art.corpo || "";
 
   document.getElementById("artigoFull").classList.add("show");
   document.getElementById("artigosGrid").style.display = "none";
+  document.title = art.titulo + " — Dirlei Luís";
   window.scrollTo({ top: 0, behavior: "smooth" });
-
-  // SEO dinâmico
-  document.title = art.titulo + " — Blog Manhã com Deus";
 }
 
 function fecharArtigo() {
-  artigoAbertoId = null;
   document.getElementById("artigoFull").classList.remove("show");
   document.getElementById("artigosGrid").style.display = "flex";
-  document.title = "Blog — Manhã com Deus";
+  document.title = "Blog — Dirlei Luís";
 }
 
-function assinarNL() {
+async function assinarNL() {
   const email = document.getElementById("nlEmail").value.trim();
-  if (!email || !email.includes("@")) return;
-  // Integre com Mailchimp, ConvertKit ou Supabase aqui
+  const nome  = document.getElementById("nlNome").value.trim();
+  if (!email || !email.includes("@")) { alert("Digite um email válido"); return; }
+  const btn = document.querySelector(".btn-nl");
+  btn.textContent = "⏳ Inscrevendo..."; btn.disabled = true;
+  const { error } = await sb.from("newsletter_subscribers").upsert({ email, nome, ativo: true, origem: "blog" }, { onConflict: "email" });
+  btn.textContent = "✦ Quero receber os artigos"; btn.disabled = false;
   document.getElementById("nlEmail").value = "";
+  document.getElementById("nlNome").value = "";
   document.getElementById("nlOk").style.display = "block";
-  setTimeout(() => document.getElementById("nlOk").style.display = "none", 4000);
+  setTimeout(() => document.getElementById("nlOk").style.display = "none", 5000);
+}
+
+function formatarData(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("pt-BR", { day:"numeric", month:"long", year:"numeric" });
 }
 </script>
 </body>
