@@ -1295,7 +1295,7 @@ function selEstado(e){
   const btn=document.getElementById("btnGerar");btn.textContent="✦ Gerar Meu Devocional";btn.disabled=false;
 }
 
-function gerarOuPaywall(){if(modo===2&&planoUser==="gratis"){tela("paywall");return;}gerarDevocional();}
+function gerarOuPaywall(){if(modo===2&&planoUser==="gratis"){window.location.href="/landing";return;}gerarDevocional();}
 function assinar(){ window.location.href = "/landing"; }
 function voltarInicial(){tela("inicial");}
 
