@@ -259,7 +259,7 @@ body.auth-mode { overflow: hidden; max-height: 100vh; }
     <div class="share-card-texto" id="shareCardTexto"></div>
     <div class="share-card-linha"></div>
     <div class="share-card-ref" id="shareCardRef"></div>
-    <div class="share-card-tag">manhacomdeus.com.br</div>
+    <div class="share-card-tag">dirleiluis.online/manha-com-deus</div>
   </div>
 </div>
 
@@ -1132,7 +1132,7 @@ function copiarVersiculo(){
 }
 
 function compartilharVersiculo(){
-  const txt=`✦ Versículo do Dia\n\n"${versiculoAtual.texto}"\n— ${versiculoAtual.ref}\n\nManhã com Deus · manhacomdeus.com.br`;
+  const txt=`✦ Versículo do Dia\n\n"${versiculoAtual.texto}"\n— ${versiculoAtual.ref}\n\nManhã com Deus · dirleiluis.online/manha-com-deus`;
   if(navigator.share)navigator.share({title:"Versículo do Dia",text:txt});
   else navigator.clipboard.writeText(txt).then(()=>alert("Copiado!"));
 }
@@ -1415,7 +1415,7 @@ function reiniciar(){
 }
 
 function compartilhar(){
-  const t=`✦ Manhã com Deus\n\n${textoCompleto.slice(0,400)}...\n\nAcesse: manhacomdeus.com.br`;
+  const t=`✦ Manhã com Deus\n\n${textoCompleto.slice(0,400)}...\n\nAcesse: dirleiluis.online/manha-com-deus`;
   if(navigator.share)navigator.share({title:"Manhã com Deus",text:t});
   else navigator.clipboard.writeText(t).then(()=>alert("Copiado!"));
 }
@@ -2704,7 +2704,7 @@ async function salvarOracao() {
 }
 
 function compartilharOracao() {
-  var txt = "🙏 " + (_oracaoTipo === "noturna" ? "Oração da Noite" : "Oração da Manhã") + "\n\n" + _oracaoTexto.slice(0, 400) + "...\n\nManhã com Deus · manhacomdeus.com.br";
+  var txt = "🙏 " + (_oracaoTipo === "noturna" ? "Oração da Noite" : "Oração da Manhã") + "\n\n" + _oracaoTexto.slice(0, 400) + "...\n\nManhã com Deus · dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title: "Oração — Manhã com Deus", text: txt});
   else navigator.clipboard.writeText(txt).then(function() { mostrarToast("Copiado!"); });
 }
@@ -3031,7 +3031,7 @@ async function salvarMeditacao() {
 }
 
 function compartilharMeditacao() {
-  var txt = "🌙 Meditação Noturna\n\n" + _meditacaoTexto.slice(0, 400) + "...\n\nManhã com Deus · manhacomdeus.com.br";
+  var txt = "🌙 Meditação Noturna\n\n" + _meditacaoTexto.slice(0, 400) + "...\n\nManhã com Deus · dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title: "Meditação Noturna", text: txt});
   else navigator.clipboard.writeText(txt).then(function() { mostrarToast("Copiado!"); });
 }
@@ -3442,7 +3442,7 @@ function renderRelatorio(texto) {
 }
 
 function compartilharRelatorio() {
-  var txt = "📊 Meu Relatório Espiritual\n\n" + _relatorioTexto.slice(0,500) + "...\n\nManhã com Deus · manhacomdeus.com.br";
+  var txt = "📊 Meu Relatório Espiritual\n\n" + _relatorioTexto.slice(0,500) + "...\n\nManhã com Deus · dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title:"Meu Relatório Espiritual",text:txt});
   else navigator.clipboard.writeText(txt).then(function(){mostrarToast("Copiado!");});
 }
@@ -3543,7 +3543,7 @@ function abrirPalavraProfetica() {
 }
 
 function compartilharPalavra() {
-  var txt = "⚡ Palavra da Semana\n\n" + _palavraProfeticaTexto.slice(0,400) + "...\n\nManhã com Deus · manhacomdeus.com.br";
+  var txt = "⚡ Palavra da Semana\n\n" + _palavraProfeticaTexto.slice(0,400) + "...\n\nManhã com Deus · dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title:"Palavra da Semana",text:txt});
   else navigator.clipboard.writeText(txt).then(function(){mostrarToast("Copiado!");});
 }
@@ -3862,7 +3862,7 @@ function gerarCardStory() {
     '</div>' +
     // Rodapé
     '<div style="position:absolute;bottom:32px;left:0;right:0;text-align:center">' +
-    '<div style="font-size:0.58rem;color:rgba(255,255,255,0.25);letter-spacing:2px;text-transform:uppercase">manhacomdeus.com.br</div>' +
+    '<div style="font-size:0.58rem;color:rgba(255,255,255,0.25);letter-spacing:2px;text-transform:uppercase">dirleiluis.online/manha-com-deus</div>' +
     '</div>' +
     '</div>' +
     '<div style="display:flex;gap:12px;margin-top:20px;width:100%;max-width:340px">' +
@@ -4295,7 +4295,7 @@ function compartilharCodigo() {
   if (!_grupoAtual) return;
   var codigo = _grupoAtual.codigo;
   var nome = _grupoAtual.nome;
-  var txt = "👨‍👩‍👧 Vamos ler a Palavra juntos!\n\nEntre no grupo " + nome + " no app Manhã com Deus:\n\n🔑 Código: " + codigo + "\n\n📲 Baixe o app: manhacomdeus.com.br";
+  var txt = "👨‍👩‍👧 Vamos ler a Palavra juntos!\n\nEntre no grupo " + nome + " no app Manhã com Deus:\n\n🔑 Código: " + codigo + "\n\n📲 Baixe o app: dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title: "Grupo Família", text: txt});
   else navigator.clipboard.writeText(txt).then(function(){ mostrarToast("✓ Copiado! Cole no WhatsApp 📱"); });
 }
@@ -4325,6 +4325,7 @@ async function carregarCelula() {
 }
 
 async function criarCelula() {
+  if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (!userAtual) return;
   var nome = document.getElementById("nomeCelula")?.value?.trim();
   if (!nome) { mostrarToast("⚠️ Digite o nome da célula"); return; }
@@ -4348,6 +4349,7 @@ async function criarCelula() {
 }
 
 async function entrarCelula() {
+  if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (!userAtual) return;
   var codigo = document.getElementById("codigoCelula")?.value?.trim().toUpperCase();
   var nome = document.getElementById("nomeMembro")?.value?.trim() || "Membro";
@@ -4477,7 +4479,7 @@ function renderAula(texto) {
 function compartilharAula() {
   var txt = window._aulaTextoAtual || "";
   if (!txt) return;
-  var resumo = txt.slice(0, 600) + "...\n\nGerado por Manhã com Deus · manhacomdeus.com.br";
+  var resumo = txt.slice(0, 600) + "...\n\nGerado por Manhã com Deus · dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title: "Aula da Célula", text: resumo});
   else navigator.clipboard.writeText(txt).then(function(){ mostrarToast("✓ Aula copiada! Cole no WhatsApp 📱"); });
 }
@@ -4525,7 +4527,7 @@ async function carregarPresencasHoje() {
 
 function compartilharCodigoCelula() {
   if (!_celulaAtual) return;
-  var txt = "⛪ Entre na nossa célula!\n\nCódigo: " + _celulaAtual.codigo + "\n\n📲 Baixe o app Manhã com Deus: manhacomdeus.com.br";
+  var txt = "⛪ Entre na nossa célula!\n\nCódigo: " + _celulaAtual.codigo + "\n\n📲 Baixe o app Manhã com Deus: dirleiluis.online/manha-com-deus";
   if (navigator.share) navigator.share({title: "Célula", text: txt});
   else navigator.clipboard.writeText(txt).then(function(){ mostrarToast("✓ Copiado! Cole no WhatsApp"); });
 }
