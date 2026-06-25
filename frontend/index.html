@@ -4324,7 +4324,7 @@ async function carregarCelula() {
   }
 }
 
-async function criarCelula() {
+async function criarCelula() { if(planoUser!=="mensal"){window.location.href="/landing";return;}
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
@@ -4350,7 +4350,7 @@ async function criarCelula() {
   }
 }
 
-async function entrarCelula() {
+async function entrarCelula() { if(planoUser!=="mensal"){window.location.href="/landing";return;}
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (!userAtual) return;
