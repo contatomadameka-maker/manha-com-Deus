@@ -4326,6 +4326,8 @@ async function carregarCelula() {
 
 async function criarCelula() {
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
+  if (planoUser !== "mensal") { window.location.href="/landing"; return; }
+  if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (!userAtual) return;
   var nome = document.getElementById("nomeCelula")?.value?.trim();
   if (!nome) { mostrarToast("⚠️ Digite o nome da célula"); return; }
@@ -4349,6 +4351,7 @@ async function criarCelula() {
 }
 
 async function entrarCelula() {
+  if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (planoUser !== "mensal") { window.location.href="/landing"; return; }
   if (!userAtual) return;
   var codigo = document.getElementById("codigoCelula")?.value?.trim().toUpperCase();
